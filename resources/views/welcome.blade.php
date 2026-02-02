@@ -72,7 +72,7 @@
     </nav>
 
     <!-- Hero / Internship Section -->
-    <section id="internship" class="scroll-mt-32 relative bg-gray-900 h-screen sm:min-h-[600px] flex items-center justify-center">
+    <section id="internship" class="scroll-mt-32 relative bg-gray-900 h-screen sm:min-h-[600px] flex items-start justify-center pt-40 md:pt-52">
         <!-- Background Image -->
         <div class="absolute inset-0 overflow-hidden">
              <!-- Placeholder for Hero Image - using a nice office/tech background -->
