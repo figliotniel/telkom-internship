@@ -9,7 +9,7 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <form id="updateInternshipForm" method="POST" action="{{ route('admin.internships.update', $internship->id) }}">
+                    <form id="updateInternshipForm" method="POST" action="{{ route('admin.internships.update', $internship->id) }}" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         
@@ -17,13 +17,34 @@
                             <!-- Student Name (Read Only) -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700">Student Name</label>
-                                <input type="text" value="{{ $internship->student->name }}" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm" disabled>
+                                <input type="text" value="{{ $internship->student?->name ?? 'Unknown' }}" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm" disabled>
                             </div>
 
-                            <!-- Division (Read Only) -->
+                            <!-- Division (Admin can assign) -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700">Division</label>
-                                <input type="text" value="{{ $internship->division->name }}" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm" disabled>
+                                <label for="division_id" class="block text-sm font-medium text-gray-700">Division</label>
+                                <select name="division_id" id="division_id" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                                    <option value="">-- Unassigned --</option>
+                                    @foreach($divisions as $division)
+                                        <option value="{{ $division->id }}" {{ $internship->division_id == $division->id ? 'selected' : '' }}>
+                                            {{ $division->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <!-- Location & Education (Read Only) -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Location</label>
+                                <input type="text" value="{{ $internship->location ?? 'Witel Semarang' }}" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm" disabled>
+                            </div>
+                            
+                            @php
+                                $profile = \App\Models\StudentProfile::where('user_id', $internship->student_id)->first();
+                            @endphp
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Education Level</label>
+                                <input type="text" value="{{ $profile->education_level ?? '-' }}" class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm sm:text-sm" disabled>
                             </div>
 
                             <!-- Status -->
@@ -31,8 +52,8 @@
                                 <label for="status" class="block text-sm font-medium text-gray-700">Status</label>
                                 <select name="status" id="status" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
                                     <option value="pending" {{ $internship->status == 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="onboarding" {{ $internship->status == 'onboarding' ? 'selected' : '' }}>Onboarding</option>
-                                    <option value="active" {{ $internship->status == 'active' ? 'selected' : '' }}>Active (Approved)</option>
+                                    <option value="onboarding" {{ $internship->status == 'onboarding' ? 'selected' : '' }}>Onboarding (Accepted)</option>
+                                    <option value="active" {{ $internship->status == 'active' ? 'selected' : '' }}>Active (Start Internship)</option>
                                     <option value="finished" {{ $internship->status == 'finished' ? 'selected' : '' }}>Finished</option>
                                     <option value="rejected" {{ $internship->status == 'rejected' ? 'selected' : '' }}>Rejected</option>
                                 </select>
@@ -51,11 +72,32 @@
                                 </select>
                             </div>
 
+                            <!-- Response Letter (Acceptance/Rejection) -->
+                            <div class="col-span-2 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <label for="response_letter" class="block text-sm font-bold text-blue-800 mb-1">Upload Surat Balasan Penerimaan</label>
+                                <input type="file" name="response_letter" id="response_letter" accept=".pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200">
+                                <p class="text-xs text-blue-600 mt-1">Upload surat resmi dari Witel yang akan didownload oleh mahasiswa.</p>
+                                @if($internship->response_letter)
+                                    <p class="text-xs text-green-600 mt-2 font-semibold">
+                                        Sudah ada surat terupload: <a href="{{ Storage::url($internship->response_letter) }}" target="_blank" class="underline">Lihat Surat</a>
+                                    </p>
+                                @endif
+                            </div>
+
                             <!-- Document Verification -->
                             <div class="md:col-span-2 mt-4 bg-gray-50 p-4 rounded-lg border">
                                 <h3 class="font-bold text-gray-800 mb-2">Verifikasi Berkas</h3>
-                                @if($internship->documents && $internship->documents->count() > 0)
-                                    <ul class="list-disc pl-5 space-y-1">
+                                <ul class="list-disc pl-5 space-y-1">
+                                    @if($internship->pact_integrity)
+                                        <li>
+                                            <span class="uppercase font-semibold text-xs text-gray-500">PAKTA INTEGRITAS</span>: 
+                                            <a href="{{ Storage::url($internship->pact_integrity) }}" target="_blank" class="text-blue-600 hover:underline">
+                                                Lihat Foto
+                                            </a>
+                                        </li>
+                                    @endif
+
+                                    @if($internship->documents && $internship->documents->count() > 0)
                                         @foreach($internship->documents as $doc)
                                             <li>
                                                 <span class="uppercase font-semibold text-xs text-gray-500">{{ str_replace('_', ' ', $doc->type) }}</span>: 
@@ -64,10 +106,12 @@
                                                 </a>
                                             </li>
                                         @endforeach
-                                    </ul>
-                                @else
-                                    <p class="text-sm text-gray-500 italic">Belum ada berkas yang diupload.</p>
-                                @endif
+                                    @endif
+                                    
+                                    @if(!$internship->pact_integrity && (!$internship->documents || $internship->documents->count() == 0))
+                                        <p class="text-sm text-gray-500 italic">Belum ada berkas yang diupload.</p>
+                                    @endif
+                                </ul>
                             </div>
 
                              <!-- Start Date -->

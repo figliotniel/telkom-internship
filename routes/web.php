@@ -54,11 +54,16 @@ Route::get('/dashboard', function () {
 
     // Jika sudah ada data magang dan status active/finished, tampilkan dashboard mahasiswa normal
     $logbooks = DailyLogbook::where('internship_id', $internship->id)->latest()->get();
+    
     $todayAttendance = Attendance::where('internship_id', $internship->id)
         ->whereDate('date', Carbon::today())
         ->first();
 
-    return view('dashboard', compact('logbooks', 'todayAttendance'));
+    $todayLogbook = DailyLogbook::where('internship_id', $internship->id)
+        ->whereDate('date', Carbon::today())
+        ->exists();
+
+    return view('dashboard', compact('logbooks', 'todayAttendance', 'todayLogbook'));
 
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -72,7 +77,9 @@ Route::middleware('auth')->group(function () {
     
     // route documents (placeholder)
     Route::get('/documents', function () {
-        return view('documents.index');
+        $internship = \App\Models\Internship::where('student_id', Auth::id())->first();
+        $isFinished = $internship && \Carbon\Carbon::now()->gte($internship->end_date);
+        return view('documents.index', compact('internship', 'isFinished'));
     })->name('documents.index');
 
     // route profile
@@ -83,6 +90,12 @@ Route::middleware('auth')->group(function () {
     // route attendance atau absen
     Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn'])->name('attendance.checkIn');
     Route::post('/attendance/check-out', [AttendanceController::class, 'checkOut'])->name('attendance.checkOut');
+    Route::post('/attendance/permission', [AttendanceController::class, 'permission'])->name('attendance.permission');
+    Route::get('/attendance/report', [AttendanceController::class, 'downloadReport'])->name('attendance.report');
+
+    // route documents
+    Route::post('/documents/extension', [App\Http\Controllers\DocumentController::class, 'storeExtension'])->name('documents.storeExtension');
+    Route::post('/documents/final-report', [App\Http\Controllers\DocumentController::class, 'storeFinalReport'])->name('documents.storeFinalReport');
 }); 
 
 // Group Route Khusus Mentor (Dashboard Mentor)

@@ -39,7 +39,7 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="text-sm text-gray-900">{{ $internship->division->name }}</div>
+                                            <div class="text-sm text-gray-900">{{ $internship->division?->name ?? 'Unassigned' }}</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-900">{{ $internship->mentor?->name ?? 'Unassigned' }}</div>

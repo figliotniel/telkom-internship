@@ -186,7 +186,8 @@ class AdminController extends Controller
     {
         $internship = Internship::with(['student', 'division', 'documents'])->findOrFail($id);
         $mentors = User::where('role', 'mentor')->get();
-        return view('admin.internships.edit', compact('internship', 'mentors'));
+        $divisions = Division::all();
+        return view('admin.internships.edit', compact('internship', 'mentors', 'divisions'));
     }
 
     /**
@@ -195,21 +196,31 @@ class AdminController extends Controller
     public function updateInternship(Request $request, $id)
     {
         $request->validate([
-            'status' => 'required|in:active,finished,onboarding,pending,rejected',
+            'status' => 'required',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'mentor_id' => 'nullable|exists:users,id',
+            'division_id' => 'nullable|exists:divisions,id',
+            'response_letter' => 'nullable|file|mimes:pdf|max:2048', // Validation for letter
         ]);
 
         $internship = Internship::findOrFail($id);
         $previousStatus = $internship->status;
-
-        $internship->update([
+        $dataToUpdate = [
             'status' => $request->status,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'mentor_id' => $request->mentor_id,
-        ]);
+            'division_id' => $request->division_id,
+        ];
+
+        // Handle Response Letter Upload
+        if ($request->hasFile('response_letter')) {
+            $path = $request->file('response_letter')->store('response_letters', 'public');
+            $dataToUpdate['response_letter'] = $path;
+        }
+
+        $internship->update($dataToUpdate);
 
         // Trigger Email Notification if status changes to 'active'
         if ($previousStatus !== 'active' && $request->status === 'active') {

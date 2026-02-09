@@ -28,9 +28,7 @@
                         @include('profile.partials.update-password-form')
                     </div>
 
-                    <div class="p-8 bg-white shadow-lg shadow-rose-100/50 sm:rounded-2xl border border-rose-100">
-                        @include('profile.partials.delete-user-form')
-                    </div>
+
                 </div>
             </div>
         </div>

@@ -1,18 +1,7 @@
 <x-guest-layout>
     <div x-data="{
         step: 1,
-        selectedDivision: null,
-        divisions: {{ $divisions->map(fn($d) => [
-            'id' => $d->id, 
-            'name' => $d->name, 
-            'description' => $d->description ?? 'Bertanggung jawab dalam pengelolaan administrasi, teknis, atau operasional sesuai dengan fungsi divisi. Memberikan pengalaman kerja nyata di lingkungan profesional.', 
-            'quota' => 5, 
-            'duration' => '3 Bulan', 
-            'location' => 'Semarang • Onsite',
-            'education' => 'Sarjana, Diploma',
-            'majors' => 'Sesuai Jurusan Terkait' 
-        ]) }},
-        
+        student_type: 'mahasiswa',        
         nextStep() {
              // Validate Step 1 selection
              if (this.step === 1) {
@@ -32,20 +21,10 @@
                 }
             }
 
-            // Validate Step 2 selection
-            if (this.step === 2 && !this.selectedDivision) {
-                alert('Silakan pilih posisi magang terlebih dahulu.');
-                return;
-            }
-
-            if (this.step < 4) this.step++;
+            if (this.step < 3) this.step++;
         },
         prevStep() {
             if (this.step > 1) this.step--;
-        },
-        selectDivision(id) {
-            this.selectedDivision = this.divisions.find(d => d.id === id);
-            document.getElementById('division_id').value = id;
         }
     }" class="w-full max-w-6xl mx-auto my-10 bg-white shadow-2xl rounded-2xl overflow-hidden font-sans">
 
@@ -53,20 +32,18 @@
         <div class="bg-gray-50 border-b border-gray-100 p-8">
             <div class="relative">
                 <div class="overflow-hidden h-2 mb-4 text-xs flex rounded-full bg-gray-200">
-                    <div :style="'width: ' + ((step / 4) * 100) + '%'" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-600 transition-all duration-500 ease-out"></div>
+                    <div :style="'width: ' + ((step / 3) * 100) + '%'" class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-red-600 transition-all duration-500 ease-out"></div>
                 </div>
                 <div class="flex justify-between text-[10px] sm:text-sm font-semibold text-gray-500 tracking-wide uppercase">
                     <span :class="{'text-red-600': step >= 1}">1. Akun & Ketentuan</span>
-                    <span :class="{'text-red-600': step >= 2}">2. Pilih Posisi</span>
-                    <span :class="{'text-red-600': step >= 3}">3. Data diri</span>
-                    <span :class="{'text-red-600': step >= 4}">4. Konfirmasi</span>
+                    <span :class="{'text-red-600': step >= 2}">2. Data diri</span>
+                    <span :class="{'text-red-600': step >= 3}">3. Konfirmasi</span>
                 </div>
             </div>
         </div>
 
         <form method="POST" action="{{ route('register') }}" enctype="multipart/form-data" class="p-8 md:p-12 h-[750px] flex flex-col relative">
             @csrf
-            <input type="hidden" name="division_id" id="division_id" required>
 
             <!-- Step 1: Ketentuan & Akun -->
             <div x-show="step === 1" class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
@@ -95,12 +72,7 @@
                             </div>
                         </div>
 
-                        <label class="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-red-300 transition cursor-pointer">
-                            <input type="checkbox" name="term" id="term" class="mt-1 w-5 h-5 text-red-600 rounded border-gray-300 focus:ring-red-500" required>
-                            <span class="text-sm text-gray-700 select-none">
-                                Saya telah membaca, memahami, dan menyetujui seluruh ketentuan dan persyaratan yang berlaku untuk program magang ini.
-                            </span>
-                        </label>
+
                    </div>
 
                    <!-- Form Akun -->
@@ -130,73 +102,51 @@
                                 <x-text-input id="password_confirmation" class="block mt-1 w-full bg-gray-50 focus:bg-white transition" type="password" name="password_confirmation" required />
                             </div>
                         </div>
+                        </div>
+
+                        <label class="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-200 hover:border-red-300 transition cursor-pointer mt-4">
+                            <input type="checkbox" name="term" id="term" class="mt-1 w-5 h-5 text-red-600 rounded border-gray-300 focus:ring-red-500" required>
+                            <span class="text-sm text-gray-700 select-none">
+                                Saya telah membaca, memahami, dan menyetujui seluruh ketentuan dan persyaratan yang berlaku untuk program magang ini.
+                            </span>
+                        </label>
                    </div>
                 </div>
             </div>
 
-            <!-- Step 2: Pilih Lowongan -->
-            <div x-show="step === 2" style="display: none;" class="flex-1 flex flex-col h-full overflow-hidden">
-                <div class="mb-6 flex-shrink-0">
-                    <h2 class="text-2xl font-bold text-gray-900">Pilih Posisi Magang</h2>
-                    <p class="text-gray-500">Pilih divisi yang sesuai dengan minat dan jurusanmu.</p>
-                </div>
-
-                <div class="flex flex-col lg:flex-row gap-8 flex-1 overflow-hidden">
-                    <!-- List -->
-                    <div class="w-full lg:w-5/12 overflow-y-auto pr-2 custom-scrollbar space-y-3 h-full">
-                        <template x-for="divisi in divisions" :key="divisi.id">
-                            <div @click="selectDivision(divisi.id)" 
-                                 :class="selectedDivision?.id === divisi.id ? 'border-red-600 bg-red-50 ring-2 ring-red-500 ring-offset-2' : 'border-gray-200 hover:border-red-300 hover:bg-red-50/30'"
-                                 class="p-5 border rounded-xl cursor-pointer transition-all duration-200 relative group bg-white shadow-sm hover:shadow-md">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h3 class="font-bold text-gray-800 group-hover:text-red-700 transition" x-text="divisi.name"></h3>
-                                    <span class="bg-gradient-to-r from-green-500 to-green-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow-sm uppercase tracking-wide">Dibuka</span>
-                                </div>
-                                <div class="flex items-center text-xs text-gray-500 gap-3">
-                                    <span class="flex items-center"><svg class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg><span x-text="divisi.duration"></span></span>
-                                    <span class="flex items-center"><svg class="w-3 h-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>Onsite</span>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-
-                    <!-- Detail -->
-                    <div class="w-full lg:w-7/12 bg-gray-50 rounded-2xl border border-gray-200 p-8 flex flex-col relative overflow-hidden h-full">
-                         <div x-show="!selectedDivision" class="flex flex-col items-center justify-center h-full text-gray-400 absolute inset-0 z-10 bg-gray-50">
-                            <svg class="w-20 h-20 mb-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
-                            <span class="font-medium">Pilih posisi untuk melihat detail</span>
-                        </div>
-                        
-                        <div x-show="selectedDivision" x-transition.opacity class="relative z-20 h-full overflow-y-auto custom-scrollbar">
-                            <h2 class="text-3xl font-bold text-gray-900 mb-1" x-text="selectedDivision?.name"></h2>
-                            <span class="inline-block bg-red-100 text-red-700 text-xs font-semibold px-3 py-1 rounded-full mb-6">Full Time Internship</span>
-                            
-                            <div class="space-y-6">
-                                <div>
-                                    <h4 class="font-bold text-gray-900 flex items-center mb-2">
-                                        <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></span>
-                                        Deskripsi Pekerjaan
-                                    </h4>
-                                    <p class="text-gray-600 text-sm leading-relaxed pl-11" x-text="selectedDivision?.description"></p>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-gray-900 flex items-center mb-2">
-                                         <span class="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center mr-3"><svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /></svg></span>
-                                        Kualifikasi Jurusan
-                                    </h4>
-                                    <p class="text-gray-600 text-sm pl-11" x-text="selectedDivision?.majors"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Step 3: Lengkapi Data -->
-            <div x-show="step === 3" style="display: none;" class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
+            <!-- Step 2: Lengkapi Data (Was Step 3) -->
+            <div x-show="step === 2" style="display: none;" class="flex-1 overflow-y-auto pr-2 custom-scrollbar">
                 <div class="mb-6">
                     <h2 class="text-2xl font-bold text-gray-900">Lengkapi Administrasi</h2>
                     <p class="text-gray-500">Isi data diri dan upload dokumen yang diperlukan.</p>
+                </div>
+
+                <!-- Type Selection -->
+                <div class="mb-8">
+                    <label class="text-sm font-medium text-gray-700 block mb-3">Daftar Sebagai:</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="cursor-pointer relative">
+                            <input type="radio" x-model="student_type" value="mahasiswa" class="peer sr-only">
+                            <div class="p-4 rounded-xl border-2 border-gray-200 bg-white peer-checked:border-red-600 peer-checked:bg-red-50 hover:bg-gray-50 transition-all flex flex-col items-center">
+                                <span class="font-bold text-gray-800 peer-checked:text-red-700">Mahasiswa</span>
+                                <span class="text-xs text-gray-500 mt-1">D3 / D4 / S1</span>
+                            </div>
+                            <div class="absolute top-4 right-4 text-red-600 opacity-0 peer-checked:opacity-100 transition-opacity">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer relative">
+                            <input type="radio" x-model="student_type" value="siswa" class="peer sr-only">
+                            <div class="p-4 rounded-xl border-2 border-gray-200 bg-white peer-checked:border-red-600 peer-checked:bg-red-50 hover:bg-gray-50 transition-all flex flex-col items-center">
+                                <span class="font-bold text-gray-800 peer-checked:text-red-700">Siswa SMK / SMA</span>
+                                <span class="text-xs text-gray-500 mt-1">Magang / PKL</span>
+                            </div>
+                            <div class="absolute top-4 right-4 text-red-600 opacity-0 peer-checked:opacity-100 transition-opacity">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            </div>
+                        </label>
+                    </div>
+                    <input type="hidden" name="student_type" :value="student_type">
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -225,15 +175,20 @@
                                 <option value="6 Bulan">6 Bulan</option>
                              </select>
                        </div>
-                       <div>
-                            <x-input-label for="semester" :value="__('Semester Saat Ini')" />
-                             <select name="semester" class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-red-500 focus:ring-red-500" required>
+                        <div x-show="student_type === 'mahasiswa'">
+                             <x-input-label for="semester" :value="__('Semester Saat Ini')" />
+                              <select name="semester" class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-red-500 focus:ring-red-500" x-bind:required="student_type === 'mahasiswa'" x-bind:disabled="student_type !== 'mahasiswa'">
                                 <option value="">Pilih...</option>
                                 <option value="5">Semester 5</option>
                                 <option value="6">Semester 6</option>
                                 <option value="7">Semester 7</option>
-                             </select>
-                       </div>
+                                <option value="8">Semester 8</option>
+                              </select>
+                        </div>
+                        <div x-show="student_type === 'siswa'">
+                             <x-input-label for="class" :value="__('Kelas')" />
+                             <x-text-input type="text" name="semester" class="w-full mt-1" placeholder="Contoh: XI RPL 1" x-bind:required="student_type === 'siswa'" x-bind:disabled="student_type !== 'siswa'" />
+                        </div>
                        <div>
                              <x-input-label for="reason" :value="__('Alasan Memilih Telkom Witel Semarang Jateng Utara sebagai Tempat Magang/Kerja Praktik')" />
                              <textarea name="reason" rows="4" class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-red-500 focus:ring-red-500" placeholder="Jelaskan mengapa Anda ingin magang di sini..." required></textarea>
@@ -245,15 +200,27 @@
                         <h3 class="font-bold text-gray-800 border-b pb-2">Data Mahasiswa</h3>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="col-span-2">
-                                <x-input-label for="university" :value="__('Universitas')" />
-                                <x-text-input type="text" name="university" class="w-full mt-1" placeholder="Nama Universitas" required />
+                                <x-input-label for="university">
+                                    <span x-text="student_type === 'mahasiswa' ? 'Universitas' : 'Asal Sekolah'"></span>
+                                </x-input-label>
+                                <x-text-input type="text" name="university" class="w-full mt-1" x-bind:placeholder="student_type === 'mahasiswa' ? 'Nama Universitas' : 'Nama Sekolah'" required />
                             </div>
                             <div>
                                 <x-input-label for="major" :value="__('Jurusan')" />
-                                <x-text-input type="text" name="major" class="w-full mt-1" required />
+                                <div x-show="student_type === 'mahasiswa'" class="mb-2">
+                                     <select name="education_level" class="w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-red-500 focus:ring-red-500">
+                                        <option value="">Jenjang (Opsional)</option>
+                                        <option value="D3">D3</option>
+                                        <option value="D4">D4</option>
+                                        <option value="S1">S1</option>
+                                     </select>
+                                </div>
+                                <x-text-input type="text" name="major" class="w-full mt-1" placeholder="Contoh: Informatika" required />
                             </div>
                             <div>
-                                <x-input-label for="nim" :value="__('NIM')" />
+                                <x-input-label for="nim">
+                                    <span x-text="student_type === 'mahasiswa' ? 'NIM' : 'NISN/NIK'"></span>
+                                </x-input-label>
                                 <x-text-input type="text" name="nim" class="w-full mt-1" required />
                             </div>
                             <div class="col-span-2">
@@ -272,11 +239,15 @@
                                 <input type="file" name="cv" accept=".pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer" required>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Surat Rekomendasi dari Dosen (PDF)</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <span x-text="student_type === 'mahasiswa' ? 'Surat Rekomendasi dari Dosen (PDF)' : 'Surat Pengantar Sekolah (PDF)'"></span>
+                                </label>
                                 <input type="file" name="surat_rekomendasi" accept=".pdf" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer" required>
                             </div>
                             <div class="col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Kartu Tanda Mahasiswa (Image/PDF)</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">
+                                    <span x-text="student_type === 'mahasiswa' ? 'Kartu Tanda Mahasiswa (Image/PDF)' : 'Kartu Pelajar (Image/PDF)'"></span>
+                                </label>
                                 <input type="file" name="ktm" accept=".pdf,.jpg,.jpeg,.png" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 cursor-pointer" required>
                             </div>
                         </div>
@@ -284,8 +255,8 @@
                 </div>
             </div>
 
-            <!-- Step 4: Konfirmasi -->
-            <div x-show="step === 4" style="display: none;" class="flex-1 flex flex-col items-center justify-center text-center py-12">
+            <!-- Step 3: Konfirmasi (Was Step 4) -->
+            <div x-show="step === 3" style="display: none;" class="flex-1 flex flex-col items-center justify-center text-center py-12">
                 
                 <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-6 animate-bounce">
                     <svg class="w-12 h-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -295,7 +266,8 @@
                 
                 <h2 class="text-3xl font-bold text-gray-900 mb-4">Semua Siap!</h2>
                 <div class="max-w-md mx-auto text-gray-600 mb-10">
-                    <p class="mb-2">Anda akan mendaftar sebagai <strong>Intern</strong> pada posisi <strong class="text-gray-900" x-text="selectedDivision?.name"></strong>.</p>
+                    <p class="mb-2">Anda akan mendaftar sebagai <strong>Intern</strong>.</p>
+                    <p class="text-sm text-gray-500 mb-2">(Posisi akan ditentukan oleh Admin/HC)</p>
                     <p>Pastikan seluruh data sudah benar. Klik tombol di bawah untuk mengirim permohonan Anda.</p>
                 </div>
 
@@ -309,8 +281,8 @@
                 </div>
             </div>
 
-            <!-- Navigation Buttons (Global for Step 1-3) -->
-            <div class="mt-8 pt-6 border-t border-gray-100 flex-shrink-0 flex justify-between" x-show="step < 4">
+            <!-- Navigation Buttons (Global for Step 1-2) -->
+            <div class="mt-8 pt-6 border-t border-gray-100 flex-shrink-0 flex justify-between" x-show="step < 3">
                 <button type="button" 
                         @click="prevStep()" 
                         x-show="step > 1"
@@ -327,7 +299,6 @@
                     <svg class="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                 </button>
             </div>
-
         </form>
     </div>
 </x-guest-layout>

@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
+use App\Models\Attendance;
+
 class LogbookController extends Controller
 {
     /**
@@ -25,7 +27,19 @@ class LogbookController extends Controller
             ->latest()
             ->paginate(10); // Pagination for activity page
 
-        return view('logbooks.index', compact('logbooks'));
+        // Fetch Permission History
+        $permissions = Attendance::where('internship_id', $internship->id)
+            ->where('status', 'permit')
+            ->latest()
+            ->get();
+
+        // Fetch Attendance History (Present)
+        $attendances = Attendance::where('internship_id', $internship->id)
+            ->where('status', 'present')
+            ->latest()
+            ->get();
+
+        return view('logbooks.index', compact('logbooks', 'permissions', 'attendances'));
     }
 
     /**
@@ -43,6 +57,15 @@ class LogbookController extends Controller
         // Cek status aktif
         if ($internship->status !== 'active') {
             return redirect()->route('dashboard')->with('error', 'Akun magang Anda belum aktif atau masih dalam proses verifikasi.');
+        }
+
+        // Cek apakah sudah isi logbook HARI INI
+        $todayLogbook = DailyLogbook::where('internship_id', $internship->id)
+            ->whereDate('date', now())
+            ->exists();
+
+        if ($todayLogbook) {
+            return redirect()->route('dashboard')->with('error', 'Anda sudah mengisi logbook hari ini. Logbook hanya dapat diisi satu kali per hari.');
         }
 
         return view('logbooks.create');
@@ -69,6 +92,15 @@ class LogbookController extends Controller
         }
 
         // 3. Handle Upload File Bukti (Jika ada)
+        // Check duplicate date
+        $exists = DailyLogbook::where('internship_id', $internship->id)
+            ->whereDate('date', $request->date)
+            ->exists();
+
+        if ($exists) {
+            return back()->with('error', 'Anda sudah mengisi logbook untuk tanggal tersebut.');
+        }
+
         $evidencePath = null;
         if ($request->hasFile('evidence')) {
             // Simpan ke folder: storage/app/public/evidence

@@ -23,7 +23,7 @@
 
             <div class="flex gap-4 mt-1">
                 <!-- Location Icon -->
-                <a href="https://www.google.com/maps/place/TELKOM+WITEL+SEMARANG/@-7.014223,110.4328813,17z/data=!3m1!4b1!4m6!3m5!1s0x2e708c879bc849f1:0x6c1566e0b320bd25!8m2!3d-7.014223!4d110.4354562!16s%2Fg%2F11cm0cwy3t?entry=ttu&g_ep=EgoyMDI2MDExMy4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="w-9 h-9 border border-gray-400 rounded-full flex justify-center items-center text-gray-600 transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white hover:-translate-y-0.5 hover:shadow-lg" title="Location">
+                <a href="https://www.google.com/maps/place/PT+TELKOM+REGIONAL+4/@-6.994588,110.4204151,18.18z/data=!4m14!1m7!3m6!1s0x2e708c879bc849f1:0x6c1566e0b320bd25!2sTELKOM+WITEL+SEMARANG!8m2!3d-7.014223!4d110.4354562!16s%2Fg%2F11cm0cwy3t!3m5!1s0x2e708b5de1082fa5:0x1b5c931fc0391697!8m2!3d-6.9941902!4d110.4216824!16s%2Fg%2F1pty9vtsf?entry=ttu&g_ep=EgoyMDI2MDEyOC4wIKXMDSoASAFQAw%3D%3D" target="_blank" class="w-9 h-9 border border-gray-400 rounded-full flex justify-center items-center text-gray-600 transition-all duration-300 hover:border-red-600 hover:bg-red-600 hover:text-white hover:-translate-y-0.5 hover:shadow-lg" title="Location">
                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-[18px] h-[18px]">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                       <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />

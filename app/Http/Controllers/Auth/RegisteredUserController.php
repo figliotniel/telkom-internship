@@ -38,8 +38,10 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'term' => ['required', 'accepted'], // Terms & Conditions
 
+            'student_type' => ['required', 'in:mahasiswa,siswa'],
+
             // Internship Details
-            'division_id' => ['required', 'exists:divisions,id'],
+            // 'division_id' => ['required', 'exists:divisions,id'], // Removed as per user request
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after:start_date'],
             'semester' => ['required', 'string'],
@@ -47,6 +49,11 @@ class RegisteredUserController extends Controller
             'reason' => ['required', 'string'],
 
             // Profile Info (needed for StudentProfile)
+            'university' => ['required', 'string'],
+            'major' => ['required', 'string'],
+            'nim' => ['required', 'string'],
+            'education_level' => ['nullable', 'string'], // D3/S1/etc or null
+
             // Files
             'cv' => ['required', 'file', 'mimes:pdf', 'max:10240'], // 10MB
             'surat_rekomendasi' => ['required', 'file', 'mimes:pdf', 'max:10240'],
@@ -64,7 +71,6 @@ class RegisteredUserController extends Controller
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 // 'role' => 'student', // Default might be null or handled by model.
-                // Looking at database, role is on users table?
             ]);
             
             // Update role if user table has role column
@@ -84,6 +90,8 @@ class RegisteredUserController extends Controller
                 'nim' => $request->nim ?? 'NIM-'.time(), // Fallback if not in form
                 'university' => $request->university ?? 'Unknown University',
                 'major' => $request->major ?? 'Unknown Major',
+                'student_type' => $request->student_type,
+                'education_level' => $request->student_type === 'siswa' ? 'SMK' : $request->education_level,
                 'phone_number' => $request->phone ?? null,
                 'address' => $request->address ?? null,
                 'photo' => $photoPath, // Save photo path
@@ -92,7 +100,7 @@ class RegisteredUserController extends Controller
             // 4. Create Internship Record
             $internship = \App\Models\Internship::create([
                 'student_id' => $user->id,
-                'division_id' => $request->division_id,
+                // 'division_id' => $request->division_id, // Removed as per user request (assigned by admin)
                 'start_date' => $request->start_date,
                 'end_date' => $request->end_date,
                 'semester' => $request->semester,

@@ -30,6 +30,29 @@ class AuthenticatedSessionController extends Controller
 
         $user = $request->user();
 
+        // Check if student has active internship
+        if ($user->hasrole('student')) {
+            $internship = \App\Models\Internship::where('student_id', $user->id)->first();
+
+            // If internship exists and status is finished or dropped, block login
+            if ($internship && in_array($internship->status, ['finished', 'dropped'])) {
+                Auth::guard('web')->logout();
+
+                $request->session()->invalidate();
+
+                $request->session()->regenerateToken();
+
+                return back()->withErrors([
+                    'email' => 'Masa magang Anda telah selesai. Silakan buat akun baru untuk mendaftar kembali.',
+                ]);
+            }
+            
+            // Allow if:
+            // 1. No internship (New User)
+            // 2. Status is 'active'
+            // 3. Status is 'onboarding'
+        }
+
         //cek role dan redirect ke dashboard sesuai role
         if ($user->hasrole('mentor')) {
             return redirect()->intended(route('mentor.dashboard', absolute: false));

@@ -1,26 +1,192 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-2xl text-slate-800 leading-tight">
-            {{ __('Dokumen') }}
-        </h2>
-        <p class="text-slate-500 text-sm">Arsip dokumen dan laporan magang</p>
+        <div class="flex flex-col gap-1">
+            <h2 class="font-bold text-2xl text-slate-800 leading-tight">
+                {{ __('Dokumen & Laporan') }}
+            </h2>
+            <p class="text-slate-500 text-sm">Kelola arsip dokumen dan laporan magangmu</p>
+        </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-slate-100 text-center py-16">
-                <div class="flex flex-col items-center justify-center space-y-4">
-                    <div class="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-slate-400">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+    <div class="py-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+
+            {{-- Pesan Sukses --}}
+            @if(session('success'))
+                <div class="rounded-xl bg-emerald-50 border border-emerald-100 p-4 mb-4 flex items-start gap-3 shadow-sm" role="alert">
+                    <div class="shrink-0 text-emerald-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
                         </svg>
                     </div>
                     <div>
-                        <h3 class="text-lg font-bold text-slate-800">Belum Ada Dokumen</h3>
-                        <p class="text-slate-500 max-w-sm mx-auto">Fitur dokumen akan segera tersedia. Kamu akan bisa mengunduh laporan dan sertifikat di sini.</p>
+                        <strong class="block text-sm font-bold text-emerald-800">Berhasil!</strong>
+                        <span class="text-sm text-emerald-700">{{ session('success') }}</span>
                     </div>
                 </div>
+            @endif
+
+            {{-- Pesan Error --}}
+            @if(session('error') || $errors->any())
+                <div class="rounded-xl bg-red-50 border border-red-100 p-4 mb-4 flex items-start gap-3 shadow-sm" role="alert">
+                    <div class="shrink-0 text-red-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                            <path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div>
+                        <strong class="block text-sm font-bold text-red-800">Perhatian!</strong>
+                        <span class="text-sm text-red-700">{{ session('error') ?? $errors->first() }}</span>
+                    </div>
+                </div>
+            @endif
+            
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-slate-100 p-8 space-y-6">
+                
+                {{-- Monthly Report --}}
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-blue-100 text-blue-600 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0h18M5 10.5h14" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800">Laporan Bulanan</h4>
+                            <p class="text-sm text-slate-500">Cetak rekap kehadiran & logbook bulanan</p>
+                        </div>
+                    </div>
+                    <button onclick="openMonthlyReportModal()" class="text-sm font-semibold text-blue-600 border border-blue-200 px-5 py-2.5 rounded-xl hover:bg-blue-50 transition-colors">
+                        Unduh Laporan
+                    </button>
+                </div>
+
+                {{-- Extension Request --}}
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-amber-100 text-amber-600 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800">Perpanjangan Magang</h4>
+                            <p class="text-sm text-slate-500">Ajukan surat perpanjangan masa magang</p>
+                        </div>
+                    </div>
+                    <button onclick="openExtensionModal()" class="text-sm font-semibold text-amber-600 border border-amber-200 px-5 py-2.5 rounded-xl hover:bg-amber-50 transition-colors">
+                        Upload Surat
+                    </button>
+                </div>
+
+                {{-- Final Report --}}
+                <div class="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-purple-100 text-purple-600 p-3 rounded-xl">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-lg text-slate-800">Laporan Akhir</h4>
+                            <p class="text-sm text-slate-500">Upload laporan final setelah selesai magang</p>
+                        </div>
+                    </div>
+                    <button onclick="openFinalReportModal()" 
+                            @if(!$isFinished) disabled title="Dapat diakses setelah magang selesai" class="opacity-50 cursor-not-allowed text-sm font-semibold text-slate-400 border border-slate-200 px-5 py-2.5 rounded-xl" @else class="text-sm font-semibold text-purple-600 border border-purple-200 px-5 py-2.5 rounded-xl hover:bg-purple-50 transition-colors" @endif>
+                        Upload Laporan
+                    </button>
+                </div>
+
             </div>
         </div>
     </div>
+
+    {{-- MODALS --}}
+
+    {{-- 1. Extension Modal --}}
+    <div id="extensionModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('extensionModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+                <form action="{{ route('documents.storeExtension') }}" method="POST" enctype="multipart/form-data" class="p-6">
+                    @csrf
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Upload Surat Perpanjangan</h3>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">File Surat (PDF)</label>
+                        <input type="file" name="file" accept=".pdf" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100" required>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="closeModal('extensionModal')" class="py-2 px-4 border rounded-md text-gray-700 hover:bg-gray-50">Batal</button>
+                        <button type="submit" class="py-2 px-4 bg-amber-600 text-white rounded-md hover:bg-amber-700">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- 2. Final Report Modal --}}
+    <div id="finalReportModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('finalReportModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+                <form action="{{ route('documents.storeFinalReport') }}" method="POST" enctype="multipart/form-data" class="p-6">
+                    @csrf
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Upload Laporan Akhir</h3>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">File Laporan (PDF)</label>
+                        <input type="file" name="file" accept=".pdf" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100" required>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="closeModal('finalReportModal')" class="py-2 px-4 border rounded-md text-gray-700 hover:bg-gray-50">Batal</button>
+                        <button type="submit" class="py-2 px-4 bg-purple-600 text-white rounded-md hover:bg-purple-700">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- 3. Monthly Report Modal --}}
+    <div id="monthlyReportModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('monthlyReportModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full">
+                <form action="{{ route('attendance.report') }}" method="GET" target="_blank" class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Laporan Bulanan</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Bulan</label>
+                            <select name="month" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                @for($i = 1; $i <= 12; $i++)
+                                    <option value="{{ $i }}" {{ date('n') == $i ? 'selected' : '' }}>{{ date('F', mktime(0, 0, 0, $i, 10)) }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700">Tahun</label>
+                            <select name="year" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <option value="{{ date('Y') }}" selected>{{ date('Y') }}</option>
+                                <option value="{{ date('Y') - 1 }}">{{ date('Y') - 1 }}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="closeModal('monthlyReportModal')" class="py-2 px-4 border rounded-md text-gray-700 hover:bg-gray-50">Batal</button>
+                        <button type="submit" class="py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700">Cetak</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openExtensionModal() { document.getElementById('extensionModal').classList.remove('hidden'); }
+        function openFinalReportModal() { document.getElementById('finalReportModal').classList.remove('hidden'); }
+        function openMonthlyReportModal() { document.getElementById('monthlyReportModal').classList.remove('hidden'); }
+        
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    </script>
 </x-app-layout>
