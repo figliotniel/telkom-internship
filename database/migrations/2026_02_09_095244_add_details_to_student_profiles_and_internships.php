@@ -13,7 +13,7 @@ return new class extends Migration
     {
         // Add details to student_profiles
         Schema::table('student_profiles', function (Blueprint $table) {
-            $table->enum('education_level', ['D3', 'D4', 'S1'])->nullable()->after('major');
+            $table->enum('education_level', ['SMK', 'D3', 'D4', 'S1'])->nullable()->after('major');
             $table->date('date_of_birth')->nullable()->after('education_level');
         });
 

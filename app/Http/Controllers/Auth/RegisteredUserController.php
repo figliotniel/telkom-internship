@@ -52,14 +52,14 @@ class RegisteredUserController extends Controller
             'university' => ['required', 'string'],
             'major' => ['required', 'string'],
             'nim' => ['required', 'string'],
-            'education_level' => ['nullable', 'string'], // D3/S1/etc or null
+            'education_level' => ['required', 'string'], // D3/S1/SMK
 
             // Files
             'cv' => ['required', 'file', 'mimes:pdf', 'max:10240'], // 10MB
             'surat_rekomendasi' => ['required', 'file', 'mimes:pdf', 'max:10240'],
             'ktm' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'], // KTM can be image or pdf
             'proposal' => ['nullable', 'file', 'mimes:pdf', 'max:10240'], // New: Optional Proposal
-            'photo' => ['nullable', 'file', 'mimes:jpg,jpeg,png', 'max:10240'], // Changed to nullable per user UI change
+            'photo' => ['required', 'file', 'mimes:jpg,jpeg,png', 'max:10240'], // Required per user request
         ]);
 
         try {
