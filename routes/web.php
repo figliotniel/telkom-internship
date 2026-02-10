@@ -167,6 +167,12 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
         ->name('admin.internships.edit');
     Route::put('/internships/{id}', [AdminController::class, 'updateInternship'])
         ->name('admin.internships.update');
+    
+    // Workflow Actions
+    Route::patch('/internships/{id}/approve', [AdminController::class, 'approveInternship'])
+        ->name('admin.internships.approve');
+    Route::patch('/internships/{id}/activate', [AdminController::class, 'activateInternship'])
+        ->name('admin.internships.activate');
 
 });
 

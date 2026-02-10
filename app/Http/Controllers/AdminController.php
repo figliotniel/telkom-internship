@@ -167,31 +167,91 @@ class AdminController extends Controller
     /**
      * Monitoring Magang: List semua magang aktif.
      */
-    public function internships()
+    /**
+     * Monitoring Magang: List semua magang aktif.
+     */
+    public function internships(Request $request)
     {
-        $internships = Internship::with(['student', 'mentor', 'division'])
-                        ->latest()
-                        ->paginate(10);
+        $status = $request->query('status', 'pending'); // Default to 'pending' (Applicants)
 
-        return view('admin.internships.index', compact('internships'));
+        $internships = Internship::with(['student', 'mentor', 'division'])
+                        ->where('status', $status)
+                        ->latest()
+                        ->paginate(10)
+                        ->appends(['status' => $status]);
+
+        // Counts for Tabs
+        $pendingCount = Internship::where('status', 'pending')->count();
+        $onboardingCount = Internship::where('status', 'onboarding')->count();
+        $activeCount = Internship::where('status', 'active')->count();
+
+        return view('admin.internships.index', compact('internships', 'status', 'pendingCount', 'onboardingCount', 'activeCount'));
     }
 
     /**
-     * Form Edit Monitoring Magang
+     * Approve Internship (Pending -> Onboarding)
      */
+    public function approveInternship($id)
+    {
+        $internship = Internship::findOrFail($id);
+        
+        if ($internship->status !== 'pending') {
+            return back()->with('error', 'Status magang tidak valid untuk disetujui.');
+        }
+
+        $internship->update(['status' => 'onboarding']);
+
+        // Optional: Send Notification to Student "Selamat Anda Lolos Tahap Administrasi, Silakan lengkapi Pakta Integritas"
+        
+        return redirect()->route('admin.internships.index', ['status' => 'pending'])
+            ->with('success', 'Mahasiswa disetujui! Status berubah menjadi Onboarding.');
+    }
+
+    /**
+     * Activate Internship (Onboarding -> Active)
+     */
+    public function activateInternship($id)
+    {
+        $internship = Internship::findOrFail($id);
+
+        if ($internship->status !== 'onboarding') {
+            return back()->with('error', 'Status magang tidak valid untuk diaktivasi.');
+        }
+
+        $internship->update(['status' => 'active']);
+
+        $message = 'Magang diaktivasi! Mahasiswa sekarang Active.';
+
+        // Trigger Email Notification (Account Active, Silakan Ambil ID Card)
+        if ($internship->student && $internship->student->email) {
+            try {
+                \Illuminate\Support\Facades\Mail::to($internship->student->email)->send(new \App\Mail\InternshipActive($internship));
+                $message .= ' Email notifikasi telah dikirim.';
+            } catch (\Exception $e) {
+                // Log error but don't stop the process
+                \Illuminate\Support\Facades\Log::error('Gagal mengirim email aktivasi magang: ' . $e->getMessage());
+                $message .= ' Namun, email notifikasi gagal dikirim (Cek Log).';
+            }
+        }
+
+        return redirect()->route('admin.internships.index', ['status' => 'onboarding'])
+            ->with('success', $message);
+    }
+
+
     /**
      * Form Edit Monitoring Magang
      */
     public function editInternship($id)
     {
-        $internship = Internship::with(['student', 'division', 'documents'])->findOrFail($id);
+        $internship = Internship::with(['student', 'division', 'documents', 'mentor'])->findOrFail($id);
         $mentors = User::where('role', 'mentor')->get();
         $divisions = Division::all();
         return view('admin.internships.edit', compact('internship', 'mentors', 'divisions'));
     }
 
     /**
-     * Update Data Monitoring Magang
+     * Update Data Monitoring Magang (Assign Division & Mentor)
      */
     public function updateInternship(Request $request, $id)
     {
@@ -201,35 +261,20 @@ class AdminController extends Controller
             'end_date' => 'required|date|after_or_equal:start_date',
             'mentor_id' => 'nullable|exists:users,id',
             'division_id' => 'nullable|exists:divisions,id',
-            'response_letter' => 'nullable|file|mimes:pdf|max:2048', // Validation for letter
         ]);
 
         $internship = Internship::findOrFail($id);
         $previousStatus = $internship->status;
-        $dataToUpdate = [
+        
+        $internship->update([
             'status' => $request->status,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'mentor_id' => $request->mentor_id,
             'division_id' => $request->division_id,
-        ];
+        ]);
 
-        // Handle Response Letter Upload
-        if ($request->hasFile('response_letter')) {
-            $path = $request->file('response_letter')->store('response_letters', 'public');
-            $dataToUpdate['response_letter'] = $path;
-        }
-
-        $internship->update($dataToUpdate);
-
-        // Trigger Email Notification if status changes to 'active'
-        if ($previousStatus !== 'active' && $request->status === 'active') {
-            // Ensure student has email
-            if ($internship->student && $internship->student->email) {
-                \Illuminate\Support\Facades\Mail::to($internship->student->email)->send(new \App\Mail\InternshipApproved($internship));
-            }
-        }
-
-        return redirect()->route('admin.internships.index')->with('success', 'Data magang berhasil diperbarui! ' . ($request->status === 'active' ? 'Notifikasi email telah dikirim.' : ''));
+        return redirect()->route('admin.internships.index', ['status' => 'active'])
+            ->with('success', 'Data magang berhasil diperbarui!');
     }
 }

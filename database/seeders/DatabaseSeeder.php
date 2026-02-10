@@ -19,12 +19,15 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 0. Buat Akun ADMIN (Gunakan akun ini untuk Login nanti)
-        User::create([
-        'name' => 'Super Admin',
-        'email' => 'admin@telkom.co.id',
-        'password' => Hash::make('password'),
-        'role' => 'admin', // Pastikan role ini ada
-    ]);
+        if (!User::where('email', 'admin@telkom.co.id')->exists()) {
+            User::create([
+                'name' => 'Super Admin',
+                'email' => 'admin@telkom.co.id',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]);
+        }
+
         // 1. Buat Data Divisi
         $divisions = [
             [
@@ -54,7 +57,7 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($divisions as $divData) {
-            Division::create($divData);
+            Division::firstOrCreate(['name' => $divData['name']], $divData);
         }
 
         // Ambil instance divisi untuk keperluan seeder internship di bawah
@@ -63,12 +66,15 @@ class DatabaseSeeder extends Seeder
         $divADM = Division::where('name', 'Human Capital')->first(); // Using Human Capital as a substitute example
 
         // 2. Buat Akun MENTOR (Gunakan akun ini untuk Login nanti)
-        $mentor = User::create([
-            'name' => 'Bapak Mentor Telkom',
-            'email' => 'mentor@telkom.co.id',
-            'password' => Hash::make('password'),
-            'role' => 'mentor', // Pastikan kolom ini sesuai dengan databases(role/type)
-        ]);
+        $mentor = User::where('email', 'mentor@telkom.co.id')->first();
+        if (!$mentor) {
+            $mentor = User::create([
+                'name' => 'Bapak Mentor Telkom',
+                'email' => 'mentor@telkom.co.id',
+                'password' => Hash::make('password'),
+                'role' => 'mentor',
+            ]);
+        }
 
         // Buat Profil Mentor
         MentorProfile::create([
@@ -113,9 +119,7 @@ class DatabaseSeeder extends Seeder
             'address' => 'Yogyakarta',
         ]);
 
-        // =========================================================
         // 5. HUBUNGKAN MENTOR & MAHASISWA DI TABEL INTERNSHIPS
-        // =========================================================
         
         // Magang Mahasiswa 1 (Dibimbing oleh Mentor di atas)
         Internship::create([
