@@ -75,7 +75,7 @@
             <tr>
                 <td>{{ $index + 1 }}</td>
                 <td>{{ \Carbon\Carbon::parse($log->date)->format('d/m/Y') }}</td>
-                <td>{{ $log->activity }}</td>
+                <td>{!! $log->activity !!}</td>
                 <td>{{ ucfirst($log->status) }}</td>
             </tr>
             @empty
