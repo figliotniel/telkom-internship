@@ -328,6 +328,46 @@
     <!-- Footer -->
     @include('partials.footer')
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+            // Use a center line intersection strategy for better accuracy with variable section heights
+            const observerOptions = {
+                root: null,
+                rootMargin: '-50% 0px -50% 0px', // Trigger when content crosses the middle of the screen
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        
+                        // Remove active class from all links
+                        navLinks.forEach(link => {
+                            link.classList.remove('text-red-600', 'bg-gray-50');
+                            link.classList.add('text-gray-500');
+                        });
+
+                        // Add active class to the corresponding link
+                        // We use a specific selector to avoid matching unexpected links
+                        const activeLink = document.querySelector(`nav a[href="#${id}"]`);
+                        if (activeLink) {
+                            activeLink.classList.remove('text-gray-500');
+                            activeLink.classList.add('text-red-600', 'bg-gray-50');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+
 
 </body>
 </html>
