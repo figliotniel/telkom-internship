@@ -6,7 +6,6 @@ use App\Http\Controllers\LogbookController;
 use App\Models\Internship;
 use App\Models\DailyLogbook;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\InternshipController;
 use App\Http\Controllers\AttendanceController;
 use App\Models\Attendance;
 use Carbon\Carbon;
@@ -14,9 +13,6 @@ use App\Http\Controllers\MentorController;
 use App\Http\Controllers\AdminController;
 
 use App\Http\Controllers\EvaluationController;
-
-use App\Models\User;
-use App\Models\Division;
 
 /* |-------------------------------------------------------------------------- | Web Routes |-------------------------------------------------------------------------- */
 
@@ -184,17 +180,6 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::patch('/internships/{id}/reject', [AdminController::class, 'rejectInternship'])->name('admin.internships.reject'); // Rejection Route
     Route::post('/internships/{id}/complete', [AdminController::class, 'completeInternship'])->name('admin.internships.complete'); // Completion Route
 
-});
-
-// --- DEBUG ROUTE ---
-Route::get('/debug-db', function () {
-    $user = \App\Models\User::with('studentProfile')->first();
-    $divisions = \App\Models\Division::all();
-    return response()->json([
-    'message' => 'Cek Data Database',
-    'user_data' => $user,
-    'divisions' => $divisions
-    ]);
 });
 
 require __DIR__ . '/auth.php';
