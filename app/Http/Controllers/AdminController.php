@@ -17,14 +17,14 @@ class AdminController extends Controller
     {
         // Hitung statistik sederhana
         $totalStudents = User::where('role', 'student')->count();
-        $totalMentors  = User::where('role', 'mentor')->count();
+        $totalMentors = User::where('role', 'mentor')->count();
         $activeInternships = Internship::where('status', 'active')->count();
 
         // Ambil 5 data magang terbaru untuk ditampilkan di tabel
         $recentInternships = Internship::with(['student.studentProfile', 'mentor', 'division'])
-                            ->latest()
-                            ->take(5)
-                            ->get();
+            ->latest()
+            ->take(5)
+            ->get();
 
         return view('admin.dashboard', compact('totalStudents', 'totalMentors', 'activeInternships', 'recentInternships'));
     }
@@ -36,10 +36,10 @@ class AdminController extends Controller
     {
         // Ambil user student yang BELUM punya magang (opsional logic-nya, disini kita ambil semua student dulu)
         $students = User::where('role', 'student')->get();
-        
+
         // Ambil semua mentor
         $mentors = User::where('role', 'mentor')->get();
-        
+
         // Ambil semua divisi
         $divisions = Division::all();
 
@@ -52,17 +52,17 @@ class AdminController extends Controller
     public function storeInternship(Request $request)
     {
         $request->validate([
-            'student_id'  => 'required|exists:users,id',
-            'mentor_id'   => 'required|exists:users,id',
+            'student_id' => 'required|exists:users,id',
+            'mentor_id' => 'required|exists:users,id',
             'division_id' => 'required|exists:divisions,id',
-            'start_date'  => 'required|date',
-            'end_date'    => 'required|date|after:start_date',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
         ]);
 
         // Cek apakah mahasiswa ini sudah punya magang aktif? (Validasi tambahan)
         $exists = Internship::where('student_id', $request->student_id)
-                    ->whereIn('status', ['active', 'onboarding'])
-                    ->exists();
+            ->whereIn('status', ['active', 'onboarding'])
+            ->exists();
 
         if ($exists) {
             return back()->with('error', 'Mahasiswa ini sudah memiliki program magang aktif!');
@@ -70,12 +70,12 @@ class AdminController extends Controller
 
         // Simpan
         Internship::create([
-            'student_id'  => $request->student_id,
-            'mentor_id'   => $request->mentor_id,
+            'student_id' => $request->student_id,
+            'mentor_id' => $request->mentor_id,
             'division_id' => $request->division_id,
-            'start_date'  => $request->start_date,
-            'end_date'    => $request->end_date,
-            'status'      => 'active', // Langsung aktif
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'status' => 'active', // Langsung aktif
         ]);
 
         return redirect()->route('admin.dashboard')->with('success', 'Mahasiswa berhasil didaftarkan magang!');
@@ -86,12 +86,12 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $role = $request->query('role');
-        
+
         $users = User::when($role, function ($query, $role) {
-                    return $query->where('role', $role);
-                })
-                ->latest()
-                ->paginate(10); // Pagination
+            return $query->where('role', $role);
+        })
+            ->latest()
+            ->paginate(10); // Pagination
 
         return view('admin.users.index', compact('users', 'role'));
     }
@@ -175,17 +175,21 @@ class AdminController extends Controller
         $status = $request->query('status', 'pending'); // Default to 'pending' (Applicants)
 
         $internships = Internship::with(['student.studentProfile', 'mentor', 'division'])
-                        ->where('status', $status)
-                        ->latest()
-                        ->paginate(10)
-                        ->appends(['status' => $status]);
+            ->where('status', $status)
+            ->latest()
+            ->paginate(10)
+            ->appends(['status' => $status]);
 
         // Counts for Tabs
         $pendingCount = Internship::where('status', 'pending')->count();
         $onboardingCount = Internship::where('status', 'onboarding')->count();
         $activeCount = Internship::where('status', 'active')->count();
 
-        return view('admin.internships.index', compact('internships', 'status', 'pendingCount', 'onboardingCount', 'activeCount'));
+        // Pass Divisions and Mentors for Dropdowns in Review Modal
+        $divisions = Division::all();
+        $mentors = User::where('role', 'mentor')->get();
+
+        return view('admin.internships.index', compact('internships', 'status', 'pendingCount', 'onboardingCount', 'activeCount', 'divisions', 'mentors'));
     }
 
     /**
@@ -198,41 +202,35 @@ class AdminController extends Controller
     public function approveInternship(Request $request, $id)
     {
         $internship = Internship::findOrFail($id);
-        
+
         if ($internship->status !== 'pending') {
             return back()->with('error', 'Status magang tidak valid untuk disetujui.');
         }
 
         $request->validate([
-            'surat_jawaban' => 'required|file|mimes:pdf,doc,docx|max:2048',
-            'pakta_integritas_link' => 'required|url',
+            'division_id' => 'required|exists:divisions,id',
+            'mentor_id' => 'required|exists:users,id',
         ]);
 
-        // Upload Surat Jawaban
-        if ($request->hasFile('surat_jawaban')) {
-            $path = $request->file('surat_jawaban')->store('documents/admin', 'public');
-            $internship->documents()->create([
-                'name' => 'Surat Jawaban Magang',
-                'type' => 'surat_jawaban',
-                'file_path' => $path,
-                'is_verified' => true
-            ]);
-        }
+        // Hardcoded Link (per user request)
+        $paktaLink = 'https://docs.google.com/document/d/1MYswMj78AfqPH9yBIeH8U9VBA5jDaRguTzwQX-9ARe8/edit?tab=t.0';
 
         // Store Google Docs Link
-        if ($request->filled('pakta_integritas_link')) {
-            $internship->documents()->create([
-                'name' => 'Link Template Pakta Integritas',
-                'type' => 'pakta_integritas',
-                'file_path' => $request->pakta_integritas_link, // Storing URL directly
-                'is_verified' => true
-            ]);
-        }
+        $internship->documents()->create([
+            'name' => 'Link Template Pakta Integritas',
+            'type' => 'pakta_integritas',
+            'file_path' => $paktaLink, // Storing URL directly
+            'is_verified' => true
+        ]);
 
-        $internship->update(['status' => 'onboarding']);
+        $internship->update([
+            'status' => 'onboarding',
+            'division_id' => $request->division_id,
+            'mentor_id' => $request->mentor_id,
+        ]);
 
-        // Optional: Send Notification to Student "Selamat Anda Lolos Tahap Administrasi, Silakan lengkapi Pakta Integritas"
-        
+        // Optional: Send Notification to Student
+
         return redirect()->route('admin.internships.index', ['status' => 'pending'])
             ->with('success', 'Mahasiswa disetujui! Status berubah menjadi Onboarding.');
     }
@@ -255,7 +253,8 @@ class AdminController extends Controller
         if ($internship->student && $internship->student->email) {
             try {
                 \Illuminate\Support\Facades\Mail::to($internship->student->email)->send(new \App\Mail\InternshipRejected($internship));
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e) {
                 \Illuminate\Support\Facades\Log::error('Gagal mengirim email penolakan magang: ' . $e->getMessage());
             }
         }
@@ -267,7 +266,7 @@ class AdminController extends Controller
     /**
      * Activate Internship (Onboarding -> Active)
      */
-    public function activateInternship($id)
+    public function activateInternship(Request $request, $id)
     {
         $internship = Internship::with('documents')->findOrFail($id);
 
@@ -283,19 +282,24 @@ class AdminController extends Controller
         // Based on user request "jika aktor mahasiswa... sudah isi pakta integritas ... lalu admin approve", it implies admin makes the call.
         // But the system should probably check.
         if (!$hasSignedPact) {
-             return back()->with('error', 'Mahasiswa belum mengupload Pakta Integritas yang sudah ditandatangani.');
+            return back()->with('error', 'Mahasiswa belum mengupload Pakta Integritas yang sudah ditandatangani.');
         }
 
-        $internship->update(['status' => 'active']);
+        $internship->update([
+            'status' => 'active',
+            // 'mentor_id' => $request->mentor_id, // Already set during approval
+            // 'division_id' => $request->division_id, // Already set during approval
+        ]);
 
-        $message = 'Magang diaktivasi! Mahasiswa sekarang Active.';
+        $message = 'Magang diaktivasi! Mahasiswa sekarang Active dengan Mentor & Divisi terpilih.';
 
         // Trigger Email Notification (Account Active, Silakan Ambil ID Card)
         if ($internship->student && $internship->student->email) {
             try {
                 \Illuminate\Support\Facades\Mail::to($internship->student->email)->send(new \App\Mail\InternshipActive($internship));
                 $message .= ' Email notifikasi telah dikirim.';
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e) {
                 // Log error but don't stop the process
                 \Illuminate\Support\Facades\Log::error('Gagal mengirim email aktivasi magang: ' . $e->getMessage());
                 $message .= ' Namun, email notifikasi gagal dikirim (Cek Log).';
@@ -314,7 +318,7 @@ class AdminController extends Controller
         $internship = Internship::with('student.studentProfile')->findOrFail($id);
 
         if ($internship->status !== 'finished') {
-             // ...
+        // ...
         }
 
         $isSmk = optional($internship->student->studentProfile)->education_level === 'SMK';
@@ -324,9 +328,10 @@ class AdminController extends Controller
         ];
 
         if ($isSmk) {
-             $rules['laporan_penilaian_pkl'] = 'required|file|mimes:pdf|max:2048';
-        } else {
-             $rules['laporan_penilaian_pkl'] = 'nullable|file|mimes:pdf|max:2048';
+            $rules['laporan_penilaian_pkl'] = 'required|file|mimes:pdf|max:2048';
+        }
+        else {
+            $rules['laporan_penilaian_pkl'] = 'nullable|file|mimes:pdf|max:2048';
         }
 
         $request->validate($rules);
@@ -334,29 +339,29 @@ class AdminController extends Controller
         // Upload Certificate
         if ($request->hasFile('sertifikat_kelulusan')) {
             $path = $request->file('sertifikat_kelulusan')->store('documents/admin', 'public');
-            
+
             // Delete old if exists (optional cleanup) or just add new
             $internship->documents()->updateOrCreate(
-                ['type' => 'sertifikat_kelulusan'],
-                [
-                    'name' => 'Sertifikat Kelulusan Magang',
-                    'file_path' => $path,
-                    'is_verified' => true
-                ]
+            ['type' => 'sertifikat_kelulusan'],
+            [
+                'name' => 'Sertifikat Kelulusan Magang',
+                'file_path' => $path,
+                'is_verified' => true
+            ]
             );
         }
 
         // Upload PKL Assessment (Required for SMK, Optional for others)
         if ($request->hasFile('laporan_penilaian_pkl')) {
             $path = $request->file('laporan_penilaian_pkl')->store('documents/admin', 'public');
-            
+
             $internship->documents()->updateOrCreate(
-                ['type' => 'laporan_penilaian_pkl'],
-                [
-                    'name' => 'Laporan Penilaian PKL',
-                    'file_path' => $path,
-                    'is_verified' => true
-                ]
+            ['type' => 'laporan_penilaian_pkl'],
+            [
+                'name' => 'Laporan Penilaian PKL',
+                'file_path' => $path,
+                'is_verified' => true
+            ]
             );
         }
 
@@ -392,7 +397,7 @@ class AdminController extends Controller
 
         $internship = Internship::findOrFail($id);
         $previousStatus = $internship->status;
-        
+
         $internship->update([
             'status' => $request->status,
             'start_date' => $request->start_date,

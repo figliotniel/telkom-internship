@@ -1,17 +1,17 @@
 <nav x-data="{ open: false }" class="sticky top-0 inset-x-0 z-[999] bg-white/95 backdrop-blur-xl border-b border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
     {{-- Full Width Navbar Container --}}
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-28 transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+        <div class="flex justify-between items-center h-20 transition-all duration-300">
             
             {{-- Left: Logo --}}
             <div class="shrink-0 flex items-center gap-4">
                 <a href="{{ Auth::user()->role === 'mentor' ? route('mentor.dashboard') : route('dashboard') }}" class="flex items-center gap-3 group">
-                   <img src="{{ asset('images/logo-telkom.png') }}" class="h-24 w-auto" alt="Telkom Indonesia">
+                   <img src="{{ asset('images/logo-telkom.png') }}" class="h-16 w-auto" alt="Telkom Indonesia">
                 </a>
             </div>
 
             {{-- Center: Modern Navigation Links --}}
-            <div class="hidden md:flex items-center gap-1">
+            <div class="hidden md:flex items-center gap-1 absolute left-1/2 -translate-x-1/2">
                  @php
                     $roleFn = fn($r) => Auth::user()->role === $r;
                     $links = [];
@@ -28,11 +28,18 @@
                             ['name' => 'Monitoring', 'route' => 'admin.internships.index', 'active' => request()->routeIs('admin.internships*')],
                         ];
                     } else {
+                        // Student Menu
+                        $internship = Auth::user()->internship;
+                        $isActive = $internship && in_array($internship->status, ['active', 'finished']);
+
                         $links = [
                             ['name' => 'My Dashboard', 'route' => 'dashboard', 'active' => request()->routeIs('dashboard')],
-                            ['name' => 'Activity', 'route' => 'logbooks.index', 'active' => request()->routeIs('logbooks.index')],
-                            ['name' => 'Document', 'route' => 'documents.index', 'active' => request()->routeIs('documents.index')],
                         ];
+
+                        if ($isActive) {
+                            $links[] = ['name' => 'Activity', 'route' => 'logbooks.index', 'active' => request()->routeIs('logbooks.index')];
+                            $links[] = ['name' => 'Document', 'route' => 'documents.index', 'active' => request()->routeIs('documents.index')];
+                        }
                     }
                 @endphp
 

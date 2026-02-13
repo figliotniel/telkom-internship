@@ -14,9 +14,10 @@
                     {{-- Admin Quick Stats / Tasks (Center Aligned) --}}
                     {{-- Refined Widget: Matches Telkomsel App "Menu Grid" Style --}}
                     <div class="bg-transparent w-full relative z-10 flex justify-center">
-                        <div class="grid grid-cols-3 gap-12">
+                        <div class="grid grid-cols-2 gap-12">
                             
-                            {{-- Menu Item 1: Setup Magang --}}
+                            {{-- Menu Item 1: Setup Magang (HIDDEN PER USER REQUEST) --}}
+                            {{-- 
                             <a href="{{ route('admin.internship.create') }}" class="flex flex-col items-center group">
                                 <div class="w-16 h-16 bg-white rounded-[24px] shadow-sm border border-gray-100 flex items-center justify-center mb-3 group-hover:shadow-md group-hover:scale-105 transition-all duration-300">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -25,6 +26,7 @@
                                 </div>
                                 <span class="text-xs font-bold text-gray-700 text-center leading-tight">Setup<br>Magang</span>
                             </a>
+                            --}}
 
                             {{-- Menu Item 2: Data User --}}
                             <a href="{{ route('admin.users.index') }}" class="flex flex-col items-center group">

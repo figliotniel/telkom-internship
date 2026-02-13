@@ -54,7 +54,12 @@ class User extends Authenticatable
     public function studentProfile(): HasOne
     {
         return $this->hasOne(StudentProfile::class);
-    }   
+    }
+    public function internship(): HasOne
+    {
+        return $this->hasOne(Internship::class , 'student_id');
+    }
+
     public function hasrole($role)
     {
         return $this->role === $role;

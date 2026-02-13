@@ -17,7 +17,7 @@
                             <a href="{{ route('admin.internships.index', ['status' => 'pending']) }}" 
                                class="{{ $status === 'pending' ? 'border-red-500 text-red-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300' }} 
                                       whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center">
-                                Applicants
+                                Pending
                                 <span class="{{ $status === 'pending' ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-900' }} hidden ml-3 py-0.5 px-2.5 rounded-full text-xs font-medium md:inline-block">
                                     {{ $pendingCount }}
                                 </span>
@@ -59,14 +59,11 @@
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Education</th>
                                     
-                                    @if($status === 'active')
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Division</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mentor</th>
-                                    @endif
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Division</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mentor</th>
 
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                 </tr>
                             </thead>
@@ -92,14 +89,12 @@
                                             </span>
                                         </td>
                                         
-                                        @if($status === 'active')
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">{{ $internship->division?->name ?? 'Unassigned' }}</div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">{{ $internship->mentor?->name ?? 'Unassigned' }}</div>
-                                            </td>
-                                        @endif
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">{{ $internship->division?->name ?? '-' }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">{{ $internship->mentor?->name ?? '-' }}</div>
+                                        </td>
 
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ \Carbon\Carbon::parse($internship->start_date)->format('d M Y') }}
@@ -107,40 +102,37 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {{ \Carbon\Carbon::parse($internship->end_date)->format('d M Y') }}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                {{ $internship->status == 'active' ? 'bg-green-100 text-green-800' : 
-                                                  ($internship->status == 'finished' ? 'bg-blue-100 text-blue-800' : 
-                                                  ($internship->status == 'onboarding' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800')) }}">
-                                                {{ ucfirst($internship->status) }}
-                                            </span>
-                                        </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             @if($status === 'pending')
-                                                <button @click="$dispatch('open-review-modal', { id: {{ $internship->id }}, name: '{{ $internship->student->name }}', docs: {{ json_encode($internship->documents) }} })" 
-                                                    class="text-indigo-600 hover:text-indigo-900 font-bold">
-                                                    Review
+                                                <button @click="$dispatch('open-review-modal', { 
+                                                    id: {{ $internship->id }}, 
+                                                    name: '{{ $internship->student->name }}', 
+                                                    docs: {{ json_encode($internship->documents) }},
+                                                    photo: '{{ $internship->student->studentProfile && $internship->student->studentProfile->photo ? $internship->student->studentProfile->photo : null }}'
+                                                })" 
+                                                    class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-sm">
+                                                    Review Application
                                                 </button>
                                             @elseif($status === 'onboarding')
-                                                <div class="flex flex-col gap-2">
+                                                <div class="flex flex-col space-y-2">
                                                     @php
                                                         $signedPact = $internship->documents->where('type', 'pakta_integritas_signed')->first();
                                                     @endphp
                                                     
                                                     @if($signedPact)
-                                                        <a href="{{ Storage::url($signedPact->file_path) }}" target="_blank" class="text-blue-600 hover:text-blue-900 font-bold text-xs flex items-center">
-                                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                                        <a href="{{ Storage::url($signedPact->file_path) }}" target="_blank" 
+                                                           class="inline-flex items-center justify-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                            <svg class="-ml-0.5 mr-2 h-4 w-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                                             Lihat Pakta
                                                         </a>
-                                                        <form action="{{ route('admin.internships.activate', $internship->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Verifikasi Pakta Integritas & Aktifkan Magang?')">
-                                                            @csrf
-                                                            @method('PATCH')
-                                                            <button type="submit" class="text-green-600 hover:text-green-900 font-bold text-xs uppercase bg-green-50 px-3 py-1 rounded-full border border-green-200">
-                                                                Verifikasi & Activate
-                                                            </button>
-                                                        </form>
+                                                        <button @click="$dispatch('open-activation-modal', { id: {{ $internship->id }}, name: '{{ $internship->student->name }}' })" 
+                                                            class="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 shadow-sm transition-colors duration-150">
+                                                            Verifikasi & Activate
+                                                        </button>
                                                     @else
-                                                        <span class="text-xs text-gray-500 italic bg-gray-50 px-2 py-1 rounded border border-gray-200">Menunggu Upload Pakta</span>
+                                                        <span class="inline-flex items-center justify-center px-2.5 py-1.5 rounded-md text-xs font-medium bg-gray-100 text-gray-500 border border-gray-200 cursor-not-allowed">
+                                                            Menunggu Upload Pakta
+                                                        </span>
                                                     @endif
                                                 </div>
                                             @elseif($status === 'finished')
@@ -150,11 +142,14 @@
                                                 @endphp
                                                 
                                                 <button @click="$dispatch('open-completion-modal', { id: {{ $internship->id }}, name: '{{ $internship->student->name }}', isSmk: {{ $isSmk ? 'true' : 'false' }} })" 
-                                                    class="text-blue-600 hover:text-blue-900 font-bold text-xs uppercase bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+                                                    class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                                     {{ $hasCertificate ? 'Update Dokumen' : 'Kirim Sertifikat' }}
                                                 </button>
                                             @else
-                                                <a href="{{ route('admin.internships.edit', $internship->id) }}" class="text-blue-600 hover:text-blue-900 font-bold">Assign</a>
+                                                <a href="{{ route('admin.internships.edit', $internship->id) }}" 
+                                                   class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 shadow-sm">
+                                                    Edit / Assign
+                                                </a>
                                             @endif
                                         </td>
                                     </tr>
@@ -175,6 +170,7 @@
         
         @include('admin.internships.partials.review-modal')
         @include('admin.internships.partials.completion-modal')
+        @include('admin.internships.partials.activation-modal')
 
     </div>
 </x-app-layout>

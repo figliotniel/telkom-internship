@@ -17,6 +17,9 @@
         <!-- Trix Editor CSS -->
         <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
 
+        <!-- SweetAlert2 -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <style>

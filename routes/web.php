@@ -43,7 +43,7 @@ Route::get('/dashboard', function () {
     }
 
     // 3. Jika MAHASISWA (Student)
-    $internship = Internship::with('documents')->where('student_id', $user->id)->latest()->first();
+    $internship = Internship::with(['documents', 'division', 'mentor'])->where('student_id', $user->id)->latest()->first();
 
     // Jika belum ada data magang ATAU status belum active/finished
     if (!$internship || !in_array($internship->status, ['active', 'finished'])) {
