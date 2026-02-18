@@ -6,7 +6,7 @@
         <p class="text-slate-500 text-sm">Riwayat lengkap aktivitas magang kamu</p>
     </x-slot>
 
-    <div class="py-12" x-data="{ activeTab: 'logbook' }">
+    <div class="py-12" x-data="{ activeTab: 'logbook', showModal: false, modalContent: '', modalDate: '' }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             {{-- Tabs Navigation --}}
@@ -67,8 +67,15 @@
                                             <td class="px-6 py-4 font-medium text-slate-900">
                                                 {{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}
                                             </td>
-                                            <td class="px-6 py-4 text-slate-600 max-w-lg" title="{{ strip_tags($logbook->activity) }}">
-                                                {{ Str::limit(strip_tags($logbook->activity), 100) }}
+                                            <td class="px-6 py-4 text-slate-600 max-w-lg">
+                                                <div class="line-clamp-2" title="{{ strip_tags($logbook->activity) }}">
+                                                    {{ Str::limit(strip_tags($logbook->activity), 100) }}
+                                                </div>
+                                                <button 
+                                                    @click="showModal = true; modalContent = {{ json_encode($logbook->activity) }}; modalDate = '{{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}'"
+                                                    class="text-red-600 hover:text-red-700 text-xs font-medium mt-1 inline-flex items-center gap-1 transition-colors">
+                                                    Lihat Selengkapnya
+                                                </button>
                                             </td>
                                             <td class="px-6 py-4">
                                                 @if($logbook->evidence)
@@ -255,5 +262,72 @@
                 </div>
             </div>
         </div>
+            <!-- Activity Detail Modal -->
+            <div x-show="showModal" 
+                class="fixed inset-0 z-50 overflow-y-auto" 
+                aria-labelledby="modal-title" 
+                role="dialog" 
+                aria-modal="true"
+                style="display: none;">
+                
+                <!-- Backdrop -->
+                <div x-show="showModal"
+                    x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" 
+                    @click="showModal = false"></div>
+
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div x-show="showModal"
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                        x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl w-full">
+                        
+                        <!-- Header -->
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-slate-100">
+                            <div class="sm:flex sm:items-start justify-between">
+                                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <h3 class="text-lg font-bold leading-6 text-slate-900" id="modal-title">
+                                                Detail Aktivitas
+                                            </h3>
+                                            <div class="mt-1 text-sm text-slate-500" x-text="modalDate"></div>
+                                        </div>
+                                        <button @click="showModal = false" type="button" class="text-slate-400 hover:text-slate-500 focus:outline-none transition-colors">
+                                            <span class="sr-only">Close</span>
+                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="bg-white px-4 py-6 sm:p-6 max-h-[60vh] overflow-y-auto">
+                            <div class="prose prose-sm max-w-none text-slate-700" x-html="modalContent"></div>
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                            <button type="button" 
+                                class="inline-flex w-full justify-center rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 sm:ml-3 sm:w-auto transition-colors"
+                                @click="showModal = false">
+                                Tutup
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </div>
 </x-app-layout>

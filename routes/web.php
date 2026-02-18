@@ -57,7 +57,7 @@ Route::get('/dashboard', function () {
         ->whereDate('date', Carbon::today())
         ->exists();
 
-    return view('dashboard', compact('logbooks', 'todayAttendance', 'todayLogbook'));
+    return view('dashboard', compact('internship', 'logbooks', 'todayAttendance', 'todayLogbook'));
 
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -186,8 +186,5 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
 
 });
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 4a203f27dcf05ba3003e4355925065c91be510ba
 require __DIR__ . '/auth.php';

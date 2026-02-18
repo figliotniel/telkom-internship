@@ -1,10 +1,46 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-1">
-            <h2 class="font-bold text-2xl text-slate-800 leading-tight">
-                {{ __('Hello, ') }} <span class="text-red-600">{{ Auth::user()->name }}!</span> 👋
-            </h2>
-            <p class="text-slate-500 text-sm">Selamat datang di Dashboard Kegiatan Internship Telkom</p>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="flex flex-col gap-1">
+                <h2 class="font-bold text-2xl text-slate-800 leading-tight">
+                    {{ __('Hello, ') }} <span class="text-red-600">{{ Auth::user()->name }}!</span> 👋
+                </h2>
+                <p class="text-slate-500 text-sm">Selamat datang di Dashboard Kegiatan Internship Telkom</p>
+            </div>
+            
+            @if(isset($internship) && $internship->end_date)
+                @php
+                    $endDate = \Carbon\Carbon::parse($internship->end_date);
+                    $now = \Carbon\Carbon::now();
+                    $diff = $now->diff($endDate);
+                    $isExpired = $now->gt($endDate);
+                @endphp
+                
+                <div class="flex flex-col items-start md:items-end">
+                    <p class="text-slate-900 font-semibold text-sm mb-1">Sisa Waktu Magang Anda</p>
+                    <div class="flex items-center gap-2">
+                         @if(!$isExpired)
+                            @if($diff->y > 0)
+                                <div class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-xl font-bold text-xl shadow-sm border border-emerald-200">
+                                    {{ $diff->y }} <span class="text-sm font-medium">th</span>
+                                </div>
+                            @endif
+                            @if($diff->m > 0 || $diff->y > 0)
+                                <div class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-xl font-bold text-xl shadow-sm border border-emerald-200">
+                                    {{ $diff->m }} <span class="text-sm font-medium">bl</span>
+                                </div>
+                            @endif
+                            <div class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-xl font-bold text-xl shadow-sm border border-emerald-200">
+                                {{ $diff->d }} <span class="text-sm font-medium">hr</span>
+                            </div>
+                        @else
+                             <div class="bg-red-100 text-red-800 px-4 py-1 rounded-xl font-bold text-lg shadow-sm border border-red-200">
+                                Masa Magang Berakhir
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endif
         </div>
     </x-slot>
 
