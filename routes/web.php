@@ -186,8 +186,5 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
 
 });
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 4a203f27dcf05ba3003e4355925065c91be510ba
 require __DIR__ . '/auth.php';
