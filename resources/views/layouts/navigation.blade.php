@@ -69,7 +69,9 @@
 
                 {{-- Profile Dropdown Trigger --}}
                 <div class="relative" x-data="{ dropdownOpen: false }">
-                    <button @click="dropdownOpen = !dropdownOpen" class="flex items-center gap-3 pl-2 pr-1 py-1 rounded-full hover:bg-gray-50 transition-colors border border-transparent">
+                    <button 
+                        @if(Auth::user()->role !== 'admin') @click="dropdownOpen = !dropdownOpen" @endif
+                        class="flex items-center gap-3 pl-2 pr-1 py-1 rounded-full {{ Auth::user()->role !== 'admin' ? 'hover:bg-gray-50 cursor-pointer' : 'cursor-default' }} transition-colors border border-transparent">
                         <div class="text-right hidden lg:block">
                             <div class="text-sm font-bold text-gray-800 leading-none">{{ Auth::user()->name }}</div>
                             <div class="text-[10px] font-medium text-gray-400 uppercase tracking-wider mt-0.5">{{ Auth::user()->role }}</div>
@@ -80,23 +82,25 @@
                     </button>
 
                      {{-- Dropdown Menu --}}
-                    <div x-show="dropdownOpen" 
-                         @click.away="dropdownOpen = false"
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="transform opacity-0 scale-95"
-                         x-transition:enter-end="transform opacity-100 scale-100"
-                         x-transition:leave="transition ease-in duration-75"
-                         x-transition:leave-start="transform opacity-100 scale-100"
-                         x-transition:leave-end="transform opacity-0 scale-95"
-                         class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden py-1 z-50 origin-top-right">
-                        
-                        <div class="px-4 py-3 border-b border-gray-50 bg-gray-50/50">
-                            <p class="text-xs text-gray-500 uppercase font-semibold tracking-wider">Account</p>
+                    @if(Auth::user()->role !== 'admin')
+                        <div x-show="dropdownOpen" 
+                             @click.away="dropdownOpen = false"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden py-1 z-50 origin-top-right">
+                            
+                            <div class="px-4 py-3 border-b border-gray-50 bg-gray-50/50">
+                                <p class="text-xs text-gray-500 uppercase font-semibold tracking-wider">Account</p>
+                            </div>
+                            
+                            <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">Profile Settings</a>
+                            <a href="{{ route('help.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">Help Center</a>
                         </div>
-                        
-                        <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">Profile Settings</a>
-                        <a href="{{ route('help.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors">Help Center</a>
-                    </div>
+                    @endif
                 </div>
             </div>
 

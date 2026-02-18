@@ -62,8 +62,12 @@
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Division</th>
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mentor</th>
 
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
+                                    @if($status === 'active')
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sisa Durasi</th>
+                                    @else
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">End Date</th>
+                                    @endif
                                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                 </tr>
                             </thead>
@@ -96,12 +100,57 @@
                                             <div class="text-sm text-gray-900">{{ $internship->mentor?->name ?? '-' }}</div>
                                         </td>
 
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ \Carbon\Carbon::parse($internship->start_date)->format('d M Y') }}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {{ \Carbon\Carbon::parse($internship->end_date)->format('d M Y') }}
-                                        </td>
+                                        @if($status === 'active')
+                                            <td class="px-6 py-4 whitespace-nowrap">
+                                                @php
+                                                    $endDate = \Carbon\Carbon::parse($internship->end_date);
+                                                    $now = \Carbon\Carbon::now()->startOfDay();
+                                                    $end = $endDate->copy()->startOfDay();
+                                                    $days = $now->diffInDays($end, false);
+                                                @endphp
+
+                                                <div class="flex items-center gap-3">
+                                                    <div class="flex-shrink-0">
+                                                        <div class="p-2 rounded-lg {{ $days > 10 ? 'bg-blue-50 text-blue-600' : ($days > 0 ? 'bg-orange-50 text-orange-600' : 'bg-gray-100 text-gray-500') }}">
+                                                            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        @if($days > 0)
+                                                            <div class="text-sm font-bold {{ $days > 10 ? 'text-gray-900' : 'text-orange-600' }}">
+                                                                {{ $days }} Hari Lagi
+                                                            </div>
+                                                            <div class="text-xs text-gray-500 font-medium">
+                                                                Selesai {{ $endDate->format('d M Y') }}
+                                                            </div>
+                                                        @elseif($days == 0)
+                                                            <div class="text-sm font-bold text-orange-600">
+                                                                Hari Terakhir
+                                                            </div>
+                                                            <div class="text-xs text-gray-500 font-medium">
+                                                                Selesai Hari Ini
+                                                            </div>
+                                                        @else
+                                                            <div class="text-sm font-bold text-gray-500">
+                                                                Selesai
+                                                            </div>
+                                                            <div class="text-xs text-gray-400 font-medium">
+                                                                Lewat {{ abs($days) }} Hari
+                                                            </div>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        @else
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ \Carbon\Carbon::parse($internship->start_date)->format('d M Y') }}
+                                            </td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                {{ \Carbon\Carbon::parse($internship->end_date)->format('d M Y') }}
+                                            </td>
+                                        @endif
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             @if($status === 'pending')
                                                 <button @click="$dispatch('open-review-modal', { 
