@@ -24,7 +24,7 @@
                     } elseif ($roleFn('admin')) {
                          $links = [
                             ['name' => 'Overview', 'route' => 'admin.dashboard', 'active' => request()->routeIs('admin.dashboard')],
-                            ['name' => 'Database', 'route' => 'admin.users.index', 'active' => request()->routeIs('admin.users*') || request()->routeIs('admin.divisions*')],
+                            ['name' => 'Database', 'route' => 'admin.users.index', 'active' => request()->routeIs('admin.users*')],
                             ['name' => 'Monitoring', 'route' => 'admin.internships.index', 'active' => request()->routeIs('admin.internships*')],
                         ];
                     } else {

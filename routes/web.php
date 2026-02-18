@@ -159,19 +159,7 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     Route::get('/users', [AdminController::class , 'users'])
         ->name('admin.users.index');
 
-    // Fitur Kelola Divisi
-    Route::get('/divisions', [AdminController::class , 'divisions'])
-        ->name('admin.divisions.index');
-    Route::get('/divisions/create', [AdminController::class , 'createDivision'])
-        ->name('admin.divisions.create');
-    Route::post('/divisions', [AdminController::class , 'storeDivision'])
-        ->name('admin.divisions.store');
-    Route::get('/divisions/{id}/edit', [AdminController::class , 'editDivision'])
-        ->name('admin.divisions.edit');
-    Route::put('/divisions/{id}', [AdminController::class , 'updateDivision'])
-        ->name('admin.divisions.update');
-    Route::delete('/divisions/{id}', [AdminController::class , 'destroyDivision'])
-        ->name('admin.divisions.destroy');
+
 
     // Fitur Monitoring Magang
     Route::get('/internships', [AdminController::class , 'internships'])
