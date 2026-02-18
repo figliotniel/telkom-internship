@@ -261,13 +261,24 @@
                             <input type="hidden" name="duration" x-bind:value="durationText">
                             
                             <!-- Display Text for Duration -->
-                            <div class="mt-3 flex items-center bg-blue-50/50 px-4 py-3 rounded-xl border border-blue-100 transition-all duration-300" x-show="durationText && durationText !== 'Tanggal selesai tidak valid' && durationText !== 'Kurang dari 1 hari'" x-transition>
-                                <div class="bg-blue-100 p-1.5 rounded-full text-blue-600 mr-3">
-                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <div class="mt-3 flex items-center px-4 py-3 rounded-xl border transition-all duration-300"
+                                x-bind:class="durationText.includes('tidak direkomendasikan') ? 'bg-orange-50/50 border-orange-100' : 'bg-blue-50/50 border-blue-100'"
+                                x-show="durationText && durationText !== 'Tanggal selesai tidak valid' && durationText !== 'Kurang dari 1 hari'" x-transition>
+                                
+                                <div class="p-1.5 rounded-full mr-3"
+                                    x-bind:class="durationText.includes('tidak direkomendasikan') ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'">
+                                    <svg x-show="!durationText.includes('tidak direkomendasikan')" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    <svg x-show="durationText.includes('tidak direkomendasikan')" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-blue-500 font-medium uppercase tracking-wide">Estimasi Durasi</p>
-                                    <p class="text-sm font-bold text-blue-800" x-text="durationText"></p>
+                                    <p class="text-xs font-medium uppercase tracking-wide"
+                                       x-bind:class="durationText.includes('tidak direkomendasikan') ? 'text-orange-500' : 'text-blue-500'">
+                                       Estimasi Durasi
+                                    </p>
+                                    <p class="text-sm font-bold"
+                                       x-bind:class="durationText.includes('tidak direkomendasikan') ? 'text-orange-800' : 'text-blue-800'" 
+                                       x-text="durationText">
+                                    </p>
                                 </div>
                             </div>
                             <div class="mt-2 text-red-500 text-xs font-semibold flex items-center animate-pulse" x-show="durationText === 'Tanggal selesai tidak valid'">
@@ -446,6 +457,7 @@
                     
                     // Calculate difference in milliseconds
                     const diffTime = Math.abs(end - start);
+                    const diffDaysTotal = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
                     
                     // Approximate months calculation
                     let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
@@ -464,6 +476,11 @@
                     if (days > 0) result += `${days} Hari`;
                     
                     if (!result) return 'Kurang dari 1 hari';
+
+                    // Check for warning condition (< 2 months or < 60 days)
+                    if (diffDaysTotal < 60) {
+                        return result.trim() + ' (Kurang dari 2 bulan tidak direkomendasikan)';
+                    }
                     
                     return result.trim();
                 },
@@ -540,9 +557,29 @@
                          // Validate Dates and Reason
                          if (!this.startDate) this.errors.start_date = true;
                          if (!this.endDate) this.errors.end_date = true;
-                         // We need to check if duration is valid
-                         if (this.durationText === 'Tanggal selesai tidak valid') {
-                             this.errors.end_date = true;
+                         
+                         // Check duration validity
+                         if (this.startDate && this.endDate) {
+                             const start = new Date(this.startDate);
+                             const end = new Date(this.endDate);
+                             const diffTime = Math.abs(end - start);
+                             const diffDaysTotal = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                             if (end < start) {
+                                 this.errors.end_date = true;
+                                 this.showError('Tanggal selesai harus setelah tanggal mulai.');
+                                 return;
+                             }
+                             
+                             if (diffDaysTotal < 60) {
+                                 this.errors.end_date = true;
+                                 this.showError('Durasi magang minimal 2 bulan (60 hari).');
+                                 return;
+                             }
+                         } else {
+                             // If dates are missing
+                             if (!this.startDate) this.errors.start_date = true;
+                             if (!this.endDate) this.errors.end_date = true;
                          }
                          
                          const reason = document.querySelector('textarea[name="reason"]').value;
