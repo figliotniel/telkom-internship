@@ -378,39 +378,14 @@ class AdminController extends Controller
     /**
      * Form Edit Monitoring Magang
      */
-    public function editInternship($id)
+    /**
+     * Detail Monitoring Magang (Read Only)
+     */
+    public function showInternship($id)
     {
         $internship = Internship::with(['student', 'division', 'documents', 'mentor'])->findOrFail($id);
         $mentors = User::where('role', 'mentor')->get();
         $divisions = Division::all();
-        return view('admin.internships.edit', compact('internship', 'mentors', 'divisions'));
-    }
-
-    /**
-     * Update Data Monitoring Magang (Assign Division & Mentor)
-     */
-    public function updateInternship(Request $request, $id)
-    {
-        $request->validate([
-            'status' => 'required',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
-            'mentor_id' => 'nullable|exists:users,id',
-            'division_id' => 'nullable|exists:divisions,id',
-        ]);
-
-        $internship = Internship::findOrFail($id);
-        $previousStatus = $internship->status;
-
-        $internship->update([
-            'status' => $request->status,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-            'mentor_id' => $request->mentor_id,
-            'division_id' => $request->division_id,
-        ]);
-
-        return redirect()->route('admin.internships.index', ['status' => 'active'])
-            ->with('success', 'Data magang berhasil diperbarui!');
+        return view('admin.internships.show', compact('internship', 'mentors', 'divisions'));
     }
 }

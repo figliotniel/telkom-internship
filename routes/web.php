@@ -171,10 +171,8 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
     // Fitur Monitoring Magang
     Route::get('/internships', [AdminController::class , 'internships'])
         ->name('admin.internships.index');
-    Route::get('/internships/{id}/edit', [AdminController::class , 'editInternship'])
-        ->name('admin.internships.edit');
-    Route::put('/internships/{id}', [AdminController::class , 'updateInternship'])
-        ->name('admin.internships.update');
+    Route::get('/internships/{id}', [AdminController::class , 'showInternship'])
+        ->name('admin.internships.show');
 
     // Workflow Actions
     Route::patch('/internships/{id}/approve', [AdminController::class , 'approveInternship'])
