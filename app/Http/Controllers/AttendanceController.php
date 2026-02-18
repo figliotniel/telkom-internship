@@ -21,7 +21,7 @@ class AttendanceController extends Controller
         $internship = Internship::where('student_id', Auth::id())->first();
 
         if (!$internship || $internship->status !== 'active') {
-             return back()->with('error', 'Status magang belum aktif.');
+            return back()->with('error', 'Status magang belum aktif.');
         }
 
         // Cek apakah hari ini sudah absen?
@@ -30,6 +30,25 @@ class AttendanceController extends Controller
             ->first();
 
         if ($existingAttendance) {
+            // Logic Izin Sementara: Boleh check-in jika jam izin sudah lewat
+            if ($existingAttendance->status === 'permit' && $existingAttendance->permit_type === 'temporary') {
+                $permitEndTime = Carbon::parse($existingAttendance->date . ' ' . $existingAttendance->permit_end_time);
+
+                if (Carbon::now()->lt($permitEndTime)) {
+                    return back()->with('error', 'Anda masih dalam jam izin sementara. Check-in baru bisa dilakukan setelah ' . $permitEndTime->format('H:i'));
+                }
+
+                // Update record yang sudah ada, jangan buat baru
+                $existingAttendance->update([
+                    'check_in_time' => Carbon::now()->format('H:i:s'),
+                    'check_in_lat' => $request->latitude,
+                    'check_in_long' => $request->longitude,
+                    'status' => 'present', // Ubah status jadi hadir (atau bisa tetap permit dengan catatan)
+                ]);
+
+                return back()->with('success', 'Berhasil Check-in setelah izin sementara!');
+            }
+
             return back()->with('error', 'Kamu sudah check-in hari ini!');
         }
 
@@ -59,6 +78,11 @@ class AttendanceController extends Controller
             return back()->with('error', 'Kamu belum check-in hari ini!');
         }
 
+        // Silent Block: Jika izin full day, jangan lakukan apa-apa
+        if ($attendance->status === 'permit' && $attendance->permit_type === 'full') {
+            return back();
+        }
+
         $attendance->update([
             'check_out_time' => Carbon::now()->format('H:i:s'),
         ]);
@@ -86,7 +110,7 @@ class AttendanceController extends Controller
         $internship = Internship::where('student_id', Auth::id())->first();
 
         if (!$internship || $internship->status !== 'active') {
-             return back()->with('error', 'Status magang tidak aktif.');
+            return back()->with('error', 'Status magang tidak aktif.');
         }
 
         // Check if attendance exists for date
@@ -123,7 +147,7 @@ class AttendanceController extends Controller
         $internship = Internship::where('student_id', Auth::id())->first();
 
         if (!$internship) {
-             return redirect()->route('dashboard');
+            return redirect()->route('dashboard');
         }
 
         $month = $request->month ?? Carbon::now()->month;
@@ -135,7 +159,7 @@ class AttendanceController extends Controller
             ->whereYear('date', $year)
             ->orderBy('date')
             ->get();
-            
+
         // Get logbooks
         $logbooks = \App\Models\DailyLogbook::where('internship_id', $internship->id)
             ->whereMonth('date', $month)

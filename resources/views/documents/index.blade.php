@@ -175,29 +175,88 @@
                             @endif
                         </div>
 
-                        {{-- Timeline Visual --}}
+                        {{-- Modern Timeline Visual --}}
                         @if($extension && $extension->status !== 'rejected')
-                            <div class="relative pt-6 pb-2 px-2">
-                                <div class="flex items-center justify-between text-xs text-slate-500 mb-2 font-medium">
-                                    <span>Skema Perpanjangan</span>
-                                    <span class="text-amber-600">+ {{ \Carbon\Carbon::parse($extension->new_start_date)->diffInDays(\Carbon\Carbon::parse($extension->new_end_date)->addDay()) }} Hari Tambahan</span>
-                                </div>
-                                <div class="relative h-2 bg-slate-100 rounded-full flex overflow-hidden">
-                                    {{-- Current Phase --}}
-                                    <div class="w-2/3 bg-blue-500 rounded-l-full relative group cursor-help">
-                                        <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="mt-6 bg-slate-50 rounded-2xl p-5 border border-slate-100 relative overflow-hidden">
+                                {{-- Background Decoration --}}
+                                <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-gradient-to-br from-amber-400/20 to-red-500/20 rounded-full blur-2xl"></div>
+
+                                <div class="flex items-center justify-between mb-6 relative">
+                                    <div class="flex items-center gap-2">
+                                        <div class="p-1.5 bg-white rounded-lg shadow-sm border border-slate-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                        <h3 class="font-bold text-slate-700 text-sm">Skema Perpanjangan</h3>
                                     </div>
-                                    {{-- Extension Phase --}}
-                                    <div class="w-1/3 bg-amber-500 rounded-r-full relative group cursor-help animate-pulse">
-                                        <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                    </div>
+                                    <span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-200 shadow-sm">
+                                        +{{ \Carbon\Carbon::parse($extension->new_start_date)->diffInDays(\Carbon\Carbon::parse($extension->new_end_date)->addDay()) }} Hari
+                                    </span>
                                 </div>
-                                <div class="flex justify-between mt-2 text-[10px] text-slate-400 font-medium font-mono">
-                                    <span>Mulai: {{ \Carbon\Carbon::parse($internship->start_date)->format('d M Y') }}</span>
-                                    <span class="text-blue-600">Selesai Normal: {{ \Carbon\Carbon::parse($internship->end_date)->format('d M Y') }}</span>
-                                    <span class="text-amber-600 text-right">Baru: {{ \Carbon\Carbon::parse($extension->new_end_date)->format('d M Y') }}</span>
+
+                                {{-- Timeline Container --}}
+                                <div class="relative pt-2">
+                                    <div class="h-3 bg-slate-200 rounded-full w-full flex overflow-hidden relative shadow-inner">
+                                        {{-- Phase 1: Normal --}}
+                                        <div class="w-2/3 bg-blue-500 h-full relative group cursor-help transition-all duration-300 hover:brightness-110">
+                                            {{-- Tooltip Start --}}
+                                            <div class="absolute -top-8 left-0 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-800 text-white text-[10px] px-2 py-1 rounded shadow-lg pointer-events-none whitespace-nowrap">
+                                                Masa Magang Awal
+                                            </div>
+                                        </div>
+                                        
+                                        {{-- Phase 2: Extension --}}
+                                        <div class="w-1/3 bg-gradient-to-r from-amber-500 to-red-500 h-full relative group cursor-help animate-pulse">
+                                            <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            {{-- Striped Texture --}}
+                                            <div class="absolute inset-0 opacity-30" style="background-image: linear-gradient(45deg,rgba(255,255,255,.15) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.15) 50%,rgba(255,255,255,.15) 75%,transparent 75%,transparent); background-size: 10px 10px;"></div>
+                                             {{-- Tooltip Extra --}}
+                                             <div class="absolute -top-8 right-0 opacity-0 group-hover:opacity-100 transition-opacity bg-red-600 text-white text-[10px] px-2 py-1 rounded shadow-lg pointer-events-none whitespace-nowrap">
+                                                Durasi Tambahan
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {{-- Markers & Dates --}}
+                                    <div class="flex justify-between items-end mt-4 relative w-full text-xs">
+                                        {{-- Start --}}
+                                        <div class="flex flex-col items-start w-1/3">
+                                            <div class="flex items-center gap-1.5 mb-1 text-slate-400">
+                                                <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                                                <span class="text-[10px] font-bold uppercase tracking-wider">Mulai</span>
+                                            </div>
+                                            <div class="font-bold text-slate-800 font-mono">
+                                                {{ \Carbon\Carbon::parse($internship->start_date)->format('d M y') }}
+                                            </div>
+                                        </div>
+
+                                        {{-- Original End (Middle) --}}
+                                        <div class="absolute left-2/3 -translate-x-1/2 -top-1 flex flex-col items-center group cursor-default w-auto whitespace-nowrap text-center">
+                                            <div class="w-px h-4 bg-slate-300 group-hover:bg-blue-500 transition-colors mb-1"></div>
+                                            <span class="text-[9px] text-slate-400 font-medium uppercase tracking-wide group-hover:text-blue-600 transition-colors">Selesai Normal</span>
+                                            <div class="text-[10px] font-bold text-slate-500 font-mono group-hover:text-blue-700 transition-colors">
+                                                {{ \Carbon\Carbon::parse($internship->end_date)->format('d M y') }}
+                                            </div>
+                                        </div>
+
+                                        {{-- New End --}}
+                                        <div class="flex flex-col items-end w-1/3">
+                                            <div class="flex items-center gap-1.5 mb-1">
+                                                <span class="text-[10px] font-bold text-red-600 uppercase tracking-wider">Target Baru</span>
+                                                <span class="relative flex h-2 w-2">
+                                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                                                </span>
+                                            </div>
+                                            <div class="font-bold text-red-600 font-mono bg-red-50 px-2 py-0.5 rounded border border-red-100 shadow-sm">
+                                                {{ \Carbon\Carbon::parse($extension->new_end_date)->format('d M y') }}
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
                             
                             <div class="mt-4 flex justify-end">
                                 <a href="{{ Storage::url($extension->file_path) }}" target="_blank" class="text-sm font-medium text-amber-600 hover:text-amber-700 flex items-center gap-1 transition-colors">

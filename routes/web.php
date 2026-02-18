@@ -87,7 +87,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/documents', function () {
             $internship = \App\Models\Internship::with('evaluation')->where('student_id', Auth::id())->latest()->first();
-            $isFinished = $internship && \Carbon\Carbon::now()->gte($internship->end_date);
+            $isFinished = $internship && ($internship->status === 'finished' || \Carbon\Carbon::now()->gte($internship->end_date));
             return view('documents.index', compact('internship', 'isFinished'));
         }
         )->name('documents.index');

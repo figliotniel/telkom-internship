@@ -7,6 +7,7 @@ use App\Models\Division;
 use App\Models\Internship;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
@@ -31,7 +32,27 @@ class AdminController extends Controller
             ->where('status', 'pending')
             ->get();
 
-        return view('admin.dashboard', compact('totalStudents', 'totalMentors', 'activeInternships', 'recentInternships', 'pendingExtensions'));
+        // Hitung growth (data baru bulan ini)
+        $studentGrowth = User::where('role', 'student')
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+
+        $mentorGrowth = User::where('role', 'mentor')
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+
+        $internshipGrowth = Internship::where('status', 'active')
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->count();
+
+        return view('admin.dashboard', compact(
+            'totalStudents', 'totalMentors', 'activeInternships',
+            'recentInternships', 'pendingExtensions',
+            'studentGrowth', 'mentorGrowth', 'internshipGrowth'
+        ));
     }
 
     /**

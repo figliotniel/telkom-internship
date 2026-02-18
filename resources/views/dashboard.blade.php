@@ -221,9 +221,57 @@
                                         </form>
                                         
                                         <div class="pt-2">
-                                            <button onclick="openPermissionModal()" class="text-xs text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
+                                            <button onclick="openPermissionModal()" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
                                                 Tidak masuk kerja? Ajukan Izin
                                             </button>
+                                        </div>
+                                    </div>
+
+                                @elseif($todayAttendance->permit_type === 'temporary' && !$todayAttendance->check_in_time)
+                                    @php
+                                        $permitEndTime = \Carbon\Carbon::parse($todayAttendance->date . ' ' . $todayAttendance->permit_end_time);
+                                        $isLocked = \Carbon\Carbon::now()->lt($permitEndTime);
+                                    @endphp
+
+                                    <div class="text-center space-y-4 w-full">
+                                        @if($isLocked)
+                                            <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 border border-amber-200">
+                                                <span class="text-3xl">⏳</span>
+                                            </div>
+                                            <div>
+                                                <p class="text-indigo-100 text-sm mb-1">Status Kehadiran</p>
+                                                <p class="text-white font-bold text-lg">Sedang Izin Sementara</p>
+                                                <p class="text-indigo-200 text-xs mt-1">Check-in akan terbuka pukul {{ $permitEndTime->format('H:i') }}</p>
+                                            </div>
+                                        @else
+                                            <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-2 animate-pulse">
+                                                <span class="text-3xl">📍</span>
+                                            </div>
+                                            <div>
+                                                <p class="text-indigo-100 text-sm mb-1">Status Kehadiran</p>
+                                                <p class="text-white font-bold text-lg">Waktu Izin Habis</p>
+                                                <p class="text-emerald-300 text-xs mt-1">Silakan Check-in untuk melanjutkan magang.</p>
+                                            </div>
+                                            
+                                            <form action="{{ route('attendance.checkIn') }}" method="POST" id="checkInForm" class="w-full">
+                                                @csrf
+                                                <input type="hidden" name="latitude" id="lat_in">
+                                                <input type="hidden" name="longitude" id="long_in">
+                                                <button type="button" onclick="confirmCheckIn()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-300 transform hover:-translate-y-1">
+                                                   CHECK IN KEMBALI
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+
+                                @elseif($todayAttendance->permit_type === 'full')
+                                     <div class="text-center space-y-4 w-full">
+                                        <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 border border-amber-200">
+                                            <span class="text-3xl">📝</span>
+                                        </div>
+                                        <div>
+                                            <p class="text-indigo-100 text-sm mb-1">Status Kehadiran</p>
+                                            <p class="text-white font-bold text-lg">Sedang Izin Full Day</p>
                                         </div>
                                     </div>
 
