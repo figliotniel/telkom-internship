@@ -87,8 +87,12 @@ class AdminController extends Controller
     {
         $role = $request->query('role');
 
-        $users = User::when($role, function ($query, $role) {
+        $users = User::with('studentProfile')
+            ->when($role, function ($query, $role) {
             return $query->where('role', $role);
+        })
+            ->whereDoesntHave('internship', function ($query) {
+            $query->where('status', 'rejected');
         })
             ->latest()
             ->paginate(10); // Pagination
@@ -249,7 +253,7 @@ class AdminController extends Controller
         // Update status to rejected
         $internship->update(['status' => 'rejected']);
 
-        // Send Rejection Email
+        // Send Rejection Email (Synchronous)
         if ($internship->student && $internship->student->email) {
             try {
                 \Illuminate\Support\Facades\Mail::to($internship->student->email)->send(new \App\Mail\InternshipRejected($internship));
@@ -260,7 +264,7 @@ class AdminController extends Controller
         }
 
         return redirect()->route('admin.internships.index', ['status' => 'pending'])
-            ->with('success', 'Pengajuan magang ditolak.');
+            ->with('success', 'Pengajuan magang ditolak. Data akan dihapus otomatis dalam 3 hari.');
     }
 
     /**

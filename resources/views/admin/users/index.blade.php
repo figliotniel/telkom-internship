@@ -14,7 +14,7 @@
                         <h3 class="text-lg font-bold text-gray-800">List of Users</h3>
                         <div class="flex gap-2">
                              <a href="{{ route('admin.users.index') }}" class="px-3 py-1 text-sm rounded-full border {{ !request('role') ? 'bg-red-600 text-white border-red-600' : 'bg-white text-gray-600 border-gray-300' }}">All</a>
-                             <a href="{{ route('admin.users.index', ['role' => 'student']) }}" class="px-3 py-1 text-sm rounded-full border {{ request('role') == 'student' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-gray-600 border-gray-300' }}">Students</a>
+                             <a href="{{ route('admin.users.index', ['role' => 'student']) }}" class="px-3 py-1 text-sm rounded-full border {{ request('role') == 'student' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-gray-600 border-gray-300' }}">Mahasiswa/SMK</a>
                              <a href="{{ route('admin.users.index', ['role' => 'mentor']) }}" class="px-3 py-1 text-sm rounded-full border {{ request('role') == 'mentor' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-gray-600 border-gray-300' }}">Mentors</a>
                              <a href="{{ route('admin.users.index', ['role' => 'admin']) }}" class="px-3 py-1 text-sm rounded-full border {{ request('role') == 'admin' ? 'bg-red-600 text-white border-red-600' : 'bg-white text-gray-600 border-gray-300' }}">Admins</a>
                         </div>
@@ -52,7 +52,7 @@
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                                 {{ $user->role == 'admin' ? 'bg-purple-100 text-purple-800' : 
                                                   ($user->role == 'mentor' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800') }}">
-                                                {{ ucfirst($user->role) }}
+                                                {{ $user->role === 'student' ? (optional($user->studentProfile)->student_type === 'siswa' ? 'SMK' : 'Mahasiswa') : ucfirst($user->role) }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
