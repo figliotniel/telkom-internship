@@ -353,7 +353,7 @@
                     </button>
                 </div>
 
-                <form action="{{ route('attendance.permission') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
+                <form action="{{ route('attendance.permission') }}" method="POST" enctype="multipart/form-data" class="p-6">
                     @csrf
                     
                     {{-- Date Section --}}
@@ -366,7 +366,7 @@
                         @endphp
 
                         {{-- 1. Badge Display (For Checked-in Users) --}}
-                        <div id="date_badge_container" class="hidden flex items-center justify-start gap-2">
+                        <div id="date_badge_container" class="hidden flex items-center justify-center gap-2">
                             <div class="bg-red-50 text-red-600 px-4 py-2 rounded-xl font-bold text-xl border border-red-100 shadow-sm">
                                 {{ $displayDate->format('d') }}
                             </div>
