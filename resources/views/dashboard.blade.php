@@ -353,12 +353,12 @@
                     </button>
                 </div>
 
-                <form action="{{ route('attendance.permission') }}" method="POST" enctype="multipart/form-data" class="p-6">
+                <form action="{{ route('attendance.permission') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-5">
                     @csrf
                     
                     {{-- Date Section --}}
-                    <div class="text-center">
-                        <p class="text-slate-500 text-sm font-medium mb-3">Tanggal Pengajuan</p>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Tanggal Pengajuan</label>
                         
                         @php
                             // Logic Reset 7 Pagi untuk Display Tanggal
@@ -366,7 +366,7 @@
                         @endphp
 
                         {{-- 1. Badge Display (For Checked-in Users) --}}
-                        <div id="date_badge_container" class="hidden flex items-center justify-center gap-2">
+                        <div id="date_badge_container" class="hidden flex items-center justify-start gap-2">
                             <div class="bg-red-50 text-red-600 px-4 py-2 rounded-xl font-bold text-xl border border-red-100 shadow-sm">
                                 {{ $displayDate->format('d') }}
                             </div>
@@ -382,9 +382,9 @@
                         <input type="hidden" name="date" value="{{ $displayDate->format('Y-m-d') }}" id="hidden_date_input">
 
                         {{-- 2. Date Input (For Non-Checked-in Users) --}}
-                        <div id="date_input_container" class="relative group max-w-xs mx-auto">
+                        <div id="date_input_container" class="relative group w-full">
                             <input type="text" name="date" id="permission_date"
-                                class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm bg-white py-3 pl-10 transition-all text-center font-semibold text-slate-700" 
+                                class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm bg-white py-3 pl-10 transition-all text-left font-semibold text-slate-700" 
                                 placeholder="Pilih tanggal..." required>
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-red-500 transition-colors">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
@@ -477,7 +477,6 @@
 
                     {{-- Reason --}}
                     <div>
-                        <br>
                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Alasan Izin</label>
                         <textarea name="note" rows="3" 
                             class="block w-full rounded-xl border-slate-200 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm py-3 px-3 transition-all" 
