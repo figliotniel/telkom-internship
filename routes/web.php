@@ -16,100 +16,19 @@ use App\Http\Controllers\EvaluationController;
 
 /* |-------------------------------------------------------------------------- | Web Routes |-------------------------------------------------------------------------- */
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DocumentController;
+
+/* |-------------------------------------------------------------------------- | Web Routes |-------------------------------------------------------------------------- */
+
 Route::get('/', function () {
     return view('welcome');
 });
 
 Route::view('/help', 'help.index')->name('help.index');
 
-
-
 // --- ROUTE DASHBOARD PINTAR (SOTIR ROLE) ---
-Route::get('/dashboard', function () {
-    $user = Auth::user();
-
-    // 1. Cek jika User adalah ADMIN -> Lempar ke Dashboard Admin
-    if ($user->role === 'admin') {
-        return redirect()->route('admin.dashboard');
-    }
-
-    // 2. Cek jika User adalah MENTOR -> Lempar ke Dashboard Mentor
-    if ($user->role === 'mentor') {
-        return redirect()->route('mentor.dashboard');
-    }
-
-    // 3. Jika MAHASISWA (Student)
-    $internship = Internship::with(['documents', 'division', 'mentor'])->where('student_id', $user->id)->latest()->first();
-
-    // Jika belum ada data magang ATAU status belum active/finished
-    if (!$internship || !in_array($internship->status, ['active', 'finished'])) {
-        return view('pending', ['internship' => $internship]);
-    }
-
-    // Jika FINISHED -> Redirect ke Activity (Logbook), jangan tampilkan Dashboard
-    if ($internship->status === 'finished') {
-        return redirect()->route('logbooks.index');
-    }
-
-    // Jika sudah ada data magang dan status active/finished, tampilkan dashboard mahasiswa normal
-    $logbooks = DailyLogbook::where('internship_id', $internship->id)->latest()->get();
-
-    // Logic Reset per Jam 7 Pagi (Day starts at 07:00)
-    $now = Carbon::now();
-    // Jika sebelum jam 7 pagi, anggap masih hari kemarin (untuk display status)
-    $dateQuery = $now->hour < 7 ?Carbon::yesterday() : Carbon::today();
-
-    $todayAttendance = Attendance::where('internship_id', $internship->id)
-        ->whereDate('date', $dateQuery)
-        ->first();
-
-    $todayLogbook = DailyLogbook::where('internship_id', $internship->id)
-        ->whereDate('date', $dateQuery)
-        ->exists();
-
-    // Ambil Logbook
-    $logbooks = DailyLogbook::where('internship_id', $internship->id)
-        ->latest('date')
-        ->take(5) // Ambil 5 terakhir
-        ->get();
-
-    // Hitung Statistik Kehadiran
-    $totalWorkingDays = $internship->start_date && $internship->end_date
-        ?\Carbon\Carbon::parse($internship->start_date)->diffInDaysFiltered(function (Carbon $date) {
-            return !$date->isWeekend();
-        }
-            , \Carbon\Carbon::now())
-            : 0;
-
-        // Prevent division by zero if internship just started today
-        $totalWorkingDays = max($totalWorkingDays, 1);
-
-        $totalPresent = Attendance::where('internship_id', $internship->id)
-            ->where('status', 'present')
-            ->count();
-
-        $totalPermit = Attendance::where('internship_id', $internship->id)
-            ->where('status', 'permit')
-            ->count();
-
-        $totalSick = Attendance::where('internship_id', $internship->id)
-            ->where('status', 'sick')
-            ->count();
-
-        $attendancePercentage = $totalWorkingDays > 0 ? round(($totalPresent / $totalWorkingDays) * 100) : 0;
-
-        return view('dashboard', [
-        'internship' => $internship,
-        'logbooks' => $logbooks,
-        'todayAttendance' => $todayAttendance, // Keep this for daily status
-        'todayLogbook' => $todayLogbook, // Keep this for daily status
-        'totalPresent' => $totalPresent,
-        'totalPermit' => $totalPermit,
-        'totalSick' => $totalSick,
-        'attendancePercentage' => $attendancePercentage
-        ]);
-    })->middleware(['auth', 'verified'])->name('dashboard');
-
+Route::get('/dashboard', [DashboardController::class , 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 // Group Route untuk Mahasiswa (Logbook, Profile, dll)
 Route::middleware('auth')->group(function () {
@@ -119,73 +38,52 @@ Route::middleware('auth')->group(function () {
     Route::post('/logbooks', [LogbookController::class , 'store'])->name('logbooks.store');
     Route::post('/logbooks/upload-image', [LogbookController::class , 'uploadImage'])->name('logbooks.uploadImage');
 
-    // route documents (placeholder)
-    Route::get('/documents/transcript', function () {
-            $internship = \App\Models\Internship::with(['evaluation', 'student.studentProfile', 'division'])->where('student_id', Auth::id())->latest()->first();
-            if (!$internship || !$internship->evaluation) {
-                abort(404);
-            }
-            return view('documents.transcript', compact('internship'));
-        }
-        )->name('documents.transcript');
+    // route documents
+    Route::get('/documents/transcript', [DocumentController::class , 'transcript'])->name('documents.transcript');
+    Route::get('/documents', [DocumentController::class , 'index'])->name('documents.index');
 
-        Route::get('/documents', function () {
-            $internship = \App\Models\Internship::with('evaluation')->where('student_id', Auth::id())->latest()->first();
-            $isFinished = $internship && ($internship->status === 'finished' || \Carbon\Carbon::now()->gte($internship->end_date));
-            return view('documents.index', compact('internship', 'isFinished'));
-        }
-        )->name('documents.index');
+    // route profile
+    Route::get('/profile', [ProfileController::class , 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class , 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class , 'destroy'])->name('profile.destroy');
 
-        // route profile
-        Route::get('/profile', [ProfileController::class , 'edit'])->name('profile.edit');
-        Route::patch('/profile', [ProfileController::class , 'update'])->name('profile.update');
-        Route::delete('/profile', [ProfileController::class , 'destroy'])->name('profile.destroy');
+    // route attendance atau absen
+    Route::post('/attendance/check-in', [AttendanceController::class , 'checkIn'])->name('attendance.checkIn');
+    Route::post('/attendance/check-out', [AttendanceController::class , 'checkOut'])->name('attendance.checkOut');
+    Route::post('/attendance/permission', [AttendanceController::class , 'permission'])->name('attendance.permission');
+    Route::get('/attendance/report', [AttendanceController::class , 'downloadReport'])->name('attendance.report');
 
-        // route attendance atau absen
-        Route::post('/attendance/check-in', [AttendanceController::class , 'checkIn'])->name('attendance.checkIn');
-        Route::post('/attendance/check-out', [AttendanceController::class , 'checkOut'])->name('attendance.checkOut');
-        Route::post('/attendance/permission', [AttendanceController::class , 'permission'])->name('attendance.permission');
-        Route::get('/attendance/report', [AttendanceController::class , 'downloadReport'])->name('attendance.report');
-
-        // route documents
-        Route::post('/documents/extension', [App\Http\Controllers\DocumentController::class , 'storeExtension'])->name('documents.storeExtension');
-        Route::post('/documents/final-report', [App\Http\Controllers\DocumentController::class , 'storeFinalReport'])->name('documents.storeFinalReport');
-        Route::post('/documents/pakta-integritas', [App\Http\Controllers\DocumentController::class , 'storePaktaIntegritas'])->name('documents.storePaktaIntegritas');
-    });
+    // route documents actions
+    Route::post('/documents/extension', [DocumentController::class , 'storeExtension'])->name('documents.storeExtension');
+    Route::post('/documents/final-report', [DocumentController::class , 'storeFinalReport'])->name('documents.storeFinalReport');
+    Route::post('/documents/pakta-integritas', [DocumentController::class , 'storePaktaIntegritas'])->name('documents.storePaktaIntegritas');
+});
 
 
 // Group Route Khusus Mentor (Dashboard Mentor)
 Route::prefix('mentor')->middleware(['auth', 'verified'])->group(function () {
     // Dashboard Mentor
-    Route::get('/dashboard', function () {
-            $pendingLogbooks = \App\Models\DailyLogbook::where('status', 'pending')->count();
+    Route::get('/dashboard', [MentorController::class , 'dashboard'])->name('mentor.dashboard');
 
-            $internships = \App\Models\Internship::with('student')
-                ->where('mentor_id', \Illuminate\Support\Facades\Auth::id())
-                ->get();
 
-            return view('mentor.dashboard', compact('pendingLogbooks', 'internships'));
-        }
-        )->name('mentor.dashboard');
+    // List Mahasiswa
+    Route::get('/my-students', [MentorController::class , 'myStudents'])->name('mentor.students.index');
 
-        // List Mahasiswa
-        Route::get('/my-students', [MentorController::class , 'myStudents'])->name('mentor.students.index');
+    // Detail Mahasiswa
+    Route::get('/student/{id}', [MentorController::class , 'showStudent'])->name('mentor.students.show');
+    Route::get('/student/{id}/transcript', [MentorController::class , 'transcript'])->name('mentor.students.transcript');
+    Route::get('/student/{id}/monthly-report', [MentorController::class , 'monthlyReport'])->name('mentor.students.monthlyReport');
 
-        // Detail Mahasiswa
-        Route::get('/student/{id}', [MentorController::class , 'showStudent'])->name('mentor.students.show');
-        Route::get('/student/{id}/transcript', [MentorController::class , 'transcript'])->name('mentor.students.transcript');
-        Route::get('/student/{id}/monthly-report', [MentorController::class , 'monthlyReport'])->name('mentor.students.monthlyReport');
+    // Action Approve/Reject Logbook
+    Route::patch('/logbook/{id}/update', [MentorController::class , 'updateLogbook'])->name('mentor.logbook.update');
 
-        // Action Approve/Reject Logbook
-        Route::patch('/logbook/{id}/update', [MentorController::class , 'updateLogbook'])->name('mentor.logbook.update');
+    // Halaman Approval (List Pending Logbook)
+    Route::get('/approvals', [MentorController::class , 'approvals'])->name('mentor.approvals.index');
 
-        // Halaman Approval (List Pending Logbook)
-        Route::get('/approvals', [MentorController::class , 'approvals'])->name('mentor.approvals.index');
-
-        // Fitur penilaian mahasiswa
-        Route::get('/evaluation/{internship}/create', [EvaluationController::class , 'create'])->name('mentor.evaluations.create');
-        Route::post('/evaluation/{internship}', [EvaluationController::class , 'store'])->name('mentor.evaluations.store');
-    });
+    // Fitur penilaian mahasiswa
+    Route::get('/evaluation/{internship}/create', [EvaluationController::class , 'create'])->name('mentor.evaluations.create');
+    Route::post('/evaluation/{internship}', [EvaluationController::class , 'store'])->name('mentor.evaluations.store');
+});
 
 // Group Route Khusus ADMIN (Dengan Perbaikan Syntax)
 Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {

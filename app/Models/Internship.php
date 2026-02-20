@@ -55,4 +55,27 @@ class Internship extends Model
     {
         return $this->hasMany(InternshipExtension::class);
     }
+
+    /**
+     * Local Scopes for Status
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
+    }
+
+    public function scopeFinished($query)
+    {
+        return $query->where('status', 'finished');
+    }
+
+    public function scopeRejected($query)
+    {
+        return $query->where('status', 'rejected');
+    }
 }

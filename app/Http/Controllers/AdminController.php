@@ -272,7 +272,10 @@ class AdminController extends Controller
             'mentor_id' => $request->mentor_id,
         ]);
 
-        // Optional: Send Notification to Student
+        // Optional: Send Notification to Student (Queued)
+        if ($internship->student && $internship->student->email) {
+            \Illuminate\Support\Facades\Mail::to($internship->student->email)->queue(new \App\Mail\InternshipApproved($internship));
+        }
 
         return redirect()->route('admin.internships.index', ['status' => 'pending'])
             ->with('success', 'Pengajuan diterima! Mahasiswa kini statusnya Onboarding.');
@@ -292,14 +295,9 @@ class AdminController extends Controller
         // Update status to rejected
         $internship->update(['status' => 'rejected']);
 
-        // Send Rejection Email (Synchronous)
+        // Send Rejection Email (Queued)
         if ($internship->student && $internship->student->email) {
-            try {
-                \Illuminate\Support\Facades\Mail::to($internship->student->email)->send(new \App\Mail\InternshipRejected($internship));
-            }
-            catch (\Exception $e) {
-                \Illuminate\Support\Facades\Log::error('Gagal mengirim email penolakan magang: ' . $e->getMessage());
-            }
+            \Illuminate\Support\Facades\Mail::to($internship->student->email)->queue(new \App\Mail\InternshipRejected($internship));
         }
 
         return redirect()->route('admin.internships.index', ['status' => 'pending'])
@@ -336,17 +334,10 @@ class AdminController extends Controller
 
         $message = 'Program magang berhasil diaktifkan. Mahasiswa kini berstatus Aktif dengan Mentor & Divisi terpilih.';
 
-        // Trigger Email Notification (Account Active, Silakan Ambil ID Card)
+        // Trigger Email Notification (Queued)
         if ($internship->student && $internship->student->email) {
-            try {
-                \Illuminate\Support\Facades\Mail::to($internship->student->email)->send(new \App\Mail\InternshipActive($internship));
-                $message .= ' Email notifikasi telah dikirim.';
-            }
-            catch (\Exception $e) {
-                // Log error but don't stop the process
-                \Illuminate\Support\Facades\Log::error('Gagal mengirim email aktivasi magang: ' . $e->getMessage());
-                $message .= ' Namun, email notifikasi gagal dikirim (Cek Log).';
-            }
+            \Illuminate\Support\Facades\Mail::to($internship->student->email)->queue(new \App\Mail\InternshipActive($internship));
+            $message .= ' Email notifikasi telah dimasukkan ke antrean.';
         }
 
         return redirect()->route('admin.internships.index', ['status' => 'onboarding'])

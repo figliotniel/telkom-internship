@@ -5,23 +5,20 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\Internship;
+use App\Http\Requests\CheckInRequest;
+use App\Http\Requests\PermissionRequest;
 use carbon\carbon;
 use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
     // Fungsi CHECK-IN (Datang)
-    public function checkIn(Request $request)
+    public function checkIn(CheckInRequest $request)
     {
-        $request->validate([
-            'latitude' => 'nullable|numeric',
-            'longitude' => 'nullable|numeric',
-        ]);
+        $internship = Internship::where('student_id', Auth::id())->active()->first();
 
-        $internship = Internship::where('student_id', Auth::id())->first();
-
-        if (!$internship || $internship->status !== 'active') {
-            return back()->with('error', 'Status magang belum aktif.');
+        if (!$internship) {
+            return back()->with('error', 'Status magang belum aktif atau tidak ditemukan.');
         }
 
         // Time Validation: 07:00 - 09:00
@@ -113,26 +110,12 @@ class AttendanceController extends Controller
     }
 
     // Fungsi IZIN (Permission)
-    public function permission(Request $request)
+    public function permission(PermissionRequest $request)
     {
-        $request->validate([
-            'date' => 'required|date',
-            'permit_type' => 'required|in:full,temporary',
-            'note' => 'required|string',
-            'attachment' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
-            'start_time' => 'nullable|required_if:permit_type,temporary|date_format:H:i',
-            'end_time' => 'nullable|required_if:permit_type,temporary|date_format:H:i|after:start_time',
-        ]);
+        $internship = Internship::where('student_id', Auth::id())->active()->first();
 
-        // Validation: No attachment required for any permit type
-        // if ($request->permit_type === 'full' && !$request->hasFile('attachment')) {
-        //    return back()->with('error', 'Izin Penuh (Full Day) wajib melampirkan bukti/surat keterangan.');
-        // }
-
-        $internship = Internship::where('student_id', Auth::id())->first();
-
-        if (!$internship || $internship->status !== 'active') {
-            return back()->with('error', 'Status magang tidak aktif.');
+        if (!$internship) {
+            return back()->with('error', 'Status magang tidak aktif atau tidak ditemukan.');
         }
 
         // Check if attendance exists for date

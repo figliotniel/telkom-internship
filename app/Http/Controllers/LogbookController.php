@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DailyLogbook;
 use App\Models\Internship;
+use App\Http\Requests\StoreLogbookRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -47,16 +48,11 @@ class LogbookController extends Controller
      */
     public function create()
     {
-        $internship = Internship::where('student_id', Auth::id())->first();
+        $internship = Internship::where('student_id', Auth::id())->active()->first();
 
-        // Cek apakah mahasiswa punya magang
+        // Cek apakah mahasiswa punya magang aktif
         if (!$internship) {
-            return redirect()->route('dashboard')->with('error', 'Anda belum terdaftar dalam program magang.');
-        }
-
-        // Cek status aktif
-        if ($internship->status !== 'active') {
-            return redirect()->route('dashboard')->with('error', 'Akun magang Anda belum aktif atau masih dalam proses verifikasi.');
+            return redirect()->route('dashboard')->with('error', 'Anda belum terdaftar dalam program magang atau akun magang Anda belum aktif.');
         }
 
         // Cek apakah sudah isi logbook HARI INI
@@ -74,21 +70,14 @@ class LogbookController extends Controller
     /**
      * Menyimpan data logbook ke database.
      */
-    public function store(Request $request)
+    public function store(StoreLogbookRequest $request)
     {
-        // 1. Validasi Input
-        $request->validate([
-            'date' => 'required|date',
-            'activity' => 'required|string',
-            'evidence' => 'nullable|file|mimes:jpg,png,pdf,jpeg|max:5120', // Maksimal 5MB
-        ]);
-
         // 2. Cari Data Internship milik User yang sedang login
         // Asumsinya 1 user mahasiswa punya 1 data internship
-        $internship = Internship::where('student_id', Auth::id())->first();
+        $internship = Internship::where('student_id', Auth::id())->active()->first();
 
         if (!$internship) {
-            return back()->withErrors(['msg' => 'Data magang tidak ditemukan. Hubungi admin.']);
+            return back()->withErrors(['msg' => 'Data magang aktif tidak ditemukan. Hubungi admin.']);
         }
 
         // 3. Handle Upload File Bukti (Jika ada)

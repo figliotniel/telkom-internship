@@ -18,11 +18,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 0. Buat Akun ADMIN (Gunakan akun ini untuk Login nanti)
-        if (!User::where('email', 'admin@telkom.co.id')->exists()) {
+        // 0. Buat Akun ADMIN
+        $adminEmail = 'admin@telkom.co.id';
+        if (!User::where('email', $adminEmail)->exists()) {
             User::create([
                 'name' => 'Super Admin',
-                'email' => 'admin@telkom.co.id',
+                'email' => $adminEmail,
                 'password' => Hash::make('password'),
                 'role' => 'admin',
             ]);
@@ -30,50 +31,93 @@ class DatabaseSeeder extends Seeder
 
         // 1. Buat Data Divisi
         $divisions = [
-            [
-                'name' => 'Business Service',
-                'description' => 'Pengelolaan layanan bisnis dan kemitraan strategis.'
-            ],
-            [
-                'name' => 'Enterprise Service',
-                'description' => 'Solusi dan layanan untuk pelanggan korporat skala besar.'
-            ],
-            [
-                'name' => 'Government Service',
-                'description' => 'Layanan teknis & aplikasi untuk pelanggan pemerintahan.'
-            ],
-            [
-                'name' => 'Human Capital',
-                'description' => 'Pengelolaan sumber daya manusia dan pengembangan talenta.'
-            ],
-            [
-                'name' => 'Payment Collection',
-                'description' => 'Manajemen penagihan dan pembayaran.'
-            ],
-            [
-                'name' => 'Warroom',
-                'description' => 'Pusat pemantauan dan pengendalian operasional jaringan.'
-            ],
+            ['name' => 'Business Service', 'description' => 'Pengelolaan layanan bisnis.'],
+            ['name' => 'Enterprise Service', 'description' => 'Solusi untuk korporat.'],
+            ['name' => 'Government Service', 'description' => 'Layanan untuk pemerintah.'],
+            ['name' => 'Human Capital', 'description' => 'Pengelolaan SDM.'],
+            ['name' => 'Payment Collection', 'description' => 'Manajemen penagihan.'],
+            ['name' => 'Warroom', 'description' => 'Pusat pemantauan jaringan.'],
         ];
 
         foreach ($divisions as $divData) {
             Division::firstOrCreate(['name' => $divData['name']], $divData);
         }
 
-    // Ambil instance divisi untuk keperluan seeder internship di bawah
-    // $divGS = Division::where('name', 'Government Service')->first();
-    // $divADM = Division::where('name', 'Human Capital')->first(); 
+        $allDivisions = Division::all();
 
-    // 2. Buat Akun MENTOR (Gunakan akun ini untuk Login nanti)
-    // CODE REMOVED AS REQUESTED (Bapak Mentor Telkom)
+        // 2. Buat Akun MENTOR
+        $mentors = [
+            ['name' => 'Bapak Mentor Telkom', 'email' => 'mentor1@telkom.co.id'],
+            ['name' => 'Ibu Mentor Digital', 'email' => 'mentor2@telkom.co.id'],
+        ];
 
-    // 3. Buat Akun MAHASISWA 1
-    // CODE REMOVED AS REQUESTED (Dzaky Hamid)
+        foreach ($mentors as $mentorData) {
+            $user = User::firstOrCreate(['email' => $mentorData['email']], [
+                'name' => $mentorData['name'],
+                'password' => Hash::make('password'),
+                'role' => 'mentor',
+            ]);
 
-    // 4. Buat Akun MAHASISWA 2
-    // CODE REMOVED AS REQUESTED (Budi Santoso)
+            MentorProfile::firstOrCreate(['user_id' => $user->id], [
+                'nik' => fake()->numerify('##########'),
+                'position' => 'Senior Engineer',
+                'quota' => 5,
+            ]);
+        }
 
-    // 5. HUBUNGKAN MENTOR & MAHASISWA DI TABEL INTERNSHIPS
-    // CODE REMOVED AS REQUESTED
+        $allMentors = User::where('role', 'mentor')->get();
+
+        // 3. Buat Akun MAHASISWA & Internship
+        $students = [
+            ['name' => 'Dzaky Hamid', 'email' => 'dzaky@student.com'],
+            ['name' => 'Budi Santoso', 'email' => 'budi@student.com'],
+            ['name' => 'Ani Wijaya', 'email' => 'ani@student.com'],
+        ];
+
+        foreach ($students as $studentData) {
+            $student = User::firstOrCreate(['email' => $studentData['email']], [
+                'name' => $studentData['name'],
+                'password' => Hash::make('password'),
+                'role' => 'student',
+            ]);
+
+            StudentProfile::firstOrCreate(['user_id' => $student->id], [
+                'university' => fake()->company(),
+                'major' => 'Teknik Informatika',
+                'education_level' => 'S1',
+                'phone' => fake()->phoneNumber(),
+            ]);
+
+            // Create Internship for each student
+            $internship = Internship::create([
+                'student_id' => $student->id,
+                'mentor_id' => $allMentors->random()->id,
+                'division_id' => $allDivisions->random()->id,
+                'status' => 'active',
+                'start_date' => now()->subMonths(1)->format('Y-m-d'),
+                'end_date' => now()->addMonths(2)->format('Y-m-d'),
+            ]);
+
+            // Create some random Attendance and Logbook for each internship
+            for ($i = 0; $i < 10; $i++) {
+                $date = now()->subDays($i);
+                if (!$date->isWeekend()) {
+                    \App\Models\Attendance::create([
+                        'internship_id' => $internship->id,
+                        'date' => $date->format('Y-m-d'),
+                        'status' => 'present',
+                        'check_in' => '08:00:00',
+                        'check_out' => '17:00:00',
+                    ]);
+
+                    \App\Models\DailyLogbook::create([
+                        'internship_id' => $internship->id,
+                        'date' => $date->format('Y-m-d'),
+                        'activity' => fake()->sentence(10),
+                        'status' => 'approved',
+                    ]);
+                }
+            }
+        }
     }
 }

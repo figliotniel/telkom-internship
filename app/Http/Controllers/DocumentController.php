@@ -10,9 +10,47 @@ use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon;
 
 use App\Models\InternshipExtension;
+use App\Models\DailyLogbook; // Added this use statement for DailyLogbook
+
+class MentorController extends Controller
+{
+    public function dashboard()
+    {
+        $pendingLogbooks = DailyLogbook::where('status', 'pending')->count();
+
+        $internships = Internship::with('student')
+            ->where('mentor_id', Auth::id())
+            ->get();
+
+        return view('mentor.dashboard', compact('pendingLogbooks', 'internships'));
+    }
+
+    public function index()
+    {
+        $internship = Internship::with('evaluation')->where('student_id', Auth::id())->latest()->first();
+        $isFinished = $internship && ($internship->status === 'finished' || Carbon::now()->gte($internship->end_date));
+        return view('documents.index', compact('internship', 'isFinished'));
+    }
+}
 
 class DocumentController extends Controller
 {
+    public function index()
+    {
+        $internship = Internship::with('evaluation')->where('student_id', Auth::id())->latest()->first();
+        $isFinished = $internship && ($internship->status === 'finished' || Carbon::now()->gte($internship->end_date));
+        return view('documents.index', compact('internship', 'isFinished'));
+    }
+
+    public function transcript()
+    {
+        $internship = Internship::with(['evaluation', 'student.studentProfile', 'division'])->where('student_id', Auth::id())->latest()->first();
+        if (!$internship || !$internship->evaluation) {
+            abort(404);
+        }
+        return view('documents.transcript', compact('internship'));
+    }
+
     // Upload Extension Letter (Surat Perpanjangan)
     public function storeExtension(Request $request)
     {
