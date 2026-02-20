@@ -286,7 +286,7 @@
                                 <div class="text-sm text-slate-600">
                                     Masa magang berakhir pada <span class="font-bold text-slate-800">{{ \Carbon\Carbon::parse($internship->end_date)->format('d M Y') }}</span>.
                                 </div>
-                                <button onclick="openExtensionModal()" class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-700 active:bg-amber-900 focus:outline-none focus:border-amber-900 focus:ring ring-amber-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm hover:shadow">
+                                <button x-data="" x-on:click.prevent="$dispatch('open-modal', 'extension-modal')" class="inline-flex items-center px-4 py-2 bg-amber-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-amber-700 active:bg-amber-900 focus:outline-none focus:border-amber-900 focus:ring ring-amber-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-sm hover:shadow">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                                     </svg>
@@ -358,111 +358,183 @@
     {{-- MODALS --}}
 
     {{-- 1. Extension Modal --}}
-    <div id="extensionModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('extensionModal')"></div>
-            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-xl sm:w-full">
-                <form action="{{ route('documents.storeExtension') }}" method="POST" enctype="multipart/form-data" class="p-8"
-                      x-data="{ 
-                        originalEndDate: '{{ $internship->end_date }}',
-                        endDate: '',
-                        get duration() {
-                            if (!this.endDate) return '';
-                            const start = new Date(this.originalEndDate);
-                            start.setDate(start.getDate() + 1); // Extension starts day after
-                            const end = new Date(this.endDate);
-                            if (end < start) return 'Tanggal tidak valid';
-                            
-                            const diffTime = Math.abs(end - (new Date(this.originalEndDate)));
-                            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Diff from original end
-                            
-                            const months = Math.floor(diffDays / 30);
-                            const days = diffDays % 30;
-                            
-                            let text = '';
-                            if (months > 0) text += months + ' Bulan ';
-                            if (days > 0) text += days + ' Hari';
-                            
-                            return text + ' (' + diffDays + ' Hari Tambahan)';
-                        }
-                      }">
-                    @csrf
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-xl font-bold text-slate-800">Pengajuan Perpanjangan Magang</h3>
-                        <button type="button" onclick="closeModal('extensionModal')" class="text-slate-400 hover:text-slate-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
+    <x-modal name="extension-modal" :show="$errors->has('end_date') || $errors->has('file')" focusable>
+        <form action="{{ route('documents.storeExtension') }}" method="POST" enctype="multipart/form-data" class="p-8"
+              x-data="{ 
+                originalEndDate: '{{ $internship->end_date }}',
+                endDate: '{{ old('end_date') }}',
+                fileName: '',
+                get duration() {
+                    if (!this.endDate) return '';
+                    const start = new Date(this.originalEndDate);
+                    start.setDate(start.getDate() + 1); // Extension starts day after
+                    const end = new Date(this.endDate);
+                    if (end < start) return 'Tanggal tidak valid';
                     
-                    <div class="mb-6 p-5 bg-slate-50 rounded-xl border border-slate-200">
-                        <div class="flex justify-between items-center text-base mb-3">
-                            <span class="text-slate-500 font-medium">Selesai Magang Saat Ini:</span>
-                            <span class="font-bold text-slate-800">{{ \Carbon\Carbon::parse($internship->end_date)->format('d M Y') }}</span>
-                        </div>
-                        <div class="flex justify-between items-center text-base">
-                            <span class="text-slate-500 font-medium">Mulai Perpanjangan:</span>
-                            <span class="font-bold text-amber-600">{{ \Carbon\Carbon::parse($internship->end_date)->addDay()->format('d M Y') }}</span>
-                        </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <label class="block text-base font-semibold text-slate-700 mb-2">Perpanjang Hingga Tanggal:</label>
-                        <div class="relative">
-                            <input type="date" name="end_date" x-model="endDate" 
-                                   min="{{ \Carbon\Carbon::parse($internship->end_date)->addDays(2)->toDateString() }}"
-                                   class="block w-full rounded-xl border-slate-300 shadow-sm focus:border-amber-500 focus:ring-amber-500 text-base py-3 px-4" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-6 bg-amber-50 p-4 rounded-xl border border-amber-100 flex items-start gap-3" x-show="duration && endDate">
-                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 text-amber-600 mt-0.5">
+                    const diffTime = Math.abs(end - (new Date(this.originalEndDate)));
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Diff from original end
+                    
+                    const months = Math.floor(diffDays / 30);
+                    const days = diffDays % 30;
+                    
+                    let text = '';
+                    if (months > 0) text += months + ' Bulan ';
+                    if (days > 0) text += days + ' Hari';
+                    
+                    return text + ' (' + diffDays + ' Hari Tambahan)';
+                }
+              }">
+            @csrf
+            
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="bg-amber-100 p-2 rounded-lg text-amber-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <div>
-                            <p class="text-xs text-amber-700 font-bold uppercase tracking-wider mb-1">Estimasi Tambahan Waktu</p>
-                            <p class="text-lg font-bold text-amber-900" x-text="duration"></p>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-800">
+                        {{ __('Pengajuan Perpanjangan') }}
+                    </h2>
+                </div>
+                <button type="button" x-on:click="$dispatch('close-modal', 'extension-modal')" class="text-slate-400 hover:text-slate-500 transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            {{-- Timeline Visual --}}
+            <div class="mb-8 relative">
+                <div class="absolute inset-0 top-1/2 -translate-y-1/2 flex items-center px-4">
+                    <div class="w-full h-1 bg-slate-100 rounded-full"></div>
+                </div>
+                <div class="relative flex justify-between">
+                    {{-- Start --}}
+                    <div class="flex flex-col items-center gap-2">
+                        <div class="w-8 h-8 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center text-slate-400 z-10">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75l4 4a.75.75 0 101.06-1.06l-3.25-3.25V5.75z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xs text-slate-500 font-medium">Selesai Saat Ini</p>
+                            <p class="text-sm font-bold text-slate-800">{{ \Carbon\Carbon::parse($internship->end_date)->format('d M Y') }}</p>
                         </div>
                     </div>
 
-                    <div class="mb-8">
-                        <label class="block text-base font-semibold text-slate-700 mb-2">File Surat Hasil Disposisi (PDF)</label>
-                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-xl hover:bg-slate-50 transition-colors">
-                            <div class="space-y-1 text-center">
-                                <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
-                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                <div class="flex text-sm text-slate-600 justify-center">
-                                    <label for="file-upload" class="relative cursor-pointer bg-white rounded-md font-medium text-amber-600 hover:text-amber-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-amber-500">
-                                        <span>Upload a file</span>
-                                        <input id="file-upload" name="file" type="file" accept=".pdf" class="sr-only" required>
-                                    </label>
-                                    <p class="pl-1">or drag and drop</p>
-                                </div>
-                                <p class="text-xs text-slate-500">PDF up to 5MB</p>
-                            </div>
-                        </div>
-                        <p class="mt-3 text-xs text-red-500 font-medium flex items-center gap-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
-                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    {{-- Arrow --}}
+                    <div class="flex items-center text-slate-300">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                    </div>
+
+                    {{-- Target --}}
+                    <div class="flex flex-col items-center gap-2">
+                         <div class="w-8 h-8 rounded-full bg-amber-100 border-2 border-amber-50 shadow-sm flex items-center justify-center text-amber-600 z-10 ring-2 ring-amber-500/20">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
                             </svg>
-                            Pengajuan harus dilakukan maksimal H-7 sebelum masa magang berakhir.
-                        </p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-xs text-amber-600 font-medium">Target Baru</p>
+                            <p class="text-sm font-bold text-amber-600" x-text="endDate ? new Date(endDate).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'">-</p>
+                        </div>
                     </div>
-                    
-                    <div class="flex justify-end gap-4">
-                        <button type="button" onclick="closeModal('extensionModal')" class="py-3 px-6 border border-slate-300 rounded-xl text-slate-700 hover:bg-slate-50 text-base font-medium transition-colors">Batal</button>
-                        <button type="submit" class="py-3 px-6 bg-amber-600 text-white rounded-xl hover:bg-amber-700 text-base font-bold shadow-lg shadow-amber-200 transition-all transform hover:-translate-y-0.5">Ajukan Perpanjangan</button>
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
-    </div>
+
+            <div class="space-y-6">
+                {{-- Date Input --}}
+                <div>
+                    <x-input-label for="end_date" :value="__('Perpanjang Hingga Tanggal')" />
+                     <div class="relative mt-1">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <input type="date" 
+                               id="end_date" 
+                               name="end_date" 
+                               x-model="endDate"
+                               min="{{ \Carbon\Carbon::parse($internship->end_date)->addDays(2)->toDateString() }}"
+                               class="block w-full pl-10 pr-3 py-2.5 border-slate-300 focus:border-amber-500 focus:ring-amber-500 rounded-lg shadow-sm sm:text-sm" 
+                               required>
+                    </div>
+                    <x-input-error :messages="$errors->get('end_date')" class="mt-2" />
+                </div>
+
+                {{-- Duration Card --}}
+                <div x-show="duration && endDate" 
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 translate-y-2"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl border border-amber-100 p-4 flex items-center gap-4">
+                    <div class="bg-white/50 p-2.5 rounded-lg text-amber-600 shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-amber-600 uppercase tracking-wider mb-0.5">Estimasi Durasi Tambahan</p>
+                        <p class="text-lg font-bold text-slate-800" x-text="duration"></p>
+                    </div>
+                </div>
+
+                {{-- File Upload --}}
+                <div>
+                    <x-input-label for="file" :value="__('File Surat Disposisi (PDF)')" />
+                    <div class="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-xl transition-colors hover:border-amber-400 hover:bg-amber-50/30 group relative cursor-pointer">
+                        <input id="file" name="file" type="file" accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" required @change="fileName = $event.target.files[0].name">
+                        <div class="space-y-1 text-center">
+                            <svg class="mx-auto h-12 w-12 text-slate-400 group-hover:text-amber-500 transition-colors" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <div class="flex text-sm text-slate-600 justify-center">
+                                <span class="relative font-medium text-amber-600 hover:text-amber-500">
+                                    <span x-show="!fileName">Upload a file</span>
+                                    <span x-show="fileName" x-text="fileName" class="font-bold text-slate-800"></span>
+                                </span>
+                                <p class="pl-1" x-show="!fileName">or drag and drop</p>
+                            </div>
+                            <p class="text-xs text-slate-500" x-show="!fileName">PDF up to 5MB</p>
+                        </div>
+                    </div>
+                    <x-input-error :messages="$errors->get('file')" class="mt-2" />
+                </div>
+
+                {{-- Warning Alert --}}
+                <div class="rounded-lg bg-red-50 p-4 border border-red-100 flex gap-3">
+                    <div class="shrink-0">
+                        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 00-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 00-1.06-1.06L10 8.94 8.28 7.22z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Perhatian</h3>
+                        <div class="mt-1 text-sm text-red-700">
+                            <p>Pengajuan harus dilakukan maksimal H-7 sebelum masa magang berakhir. Pastikan data yang Anda masukkan sudah benar.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8 flex justify-end gap-3">
+                <x-secondary-button x-on:click="$dispatch('close-modal', 'extension-modal')" type="button">
+                    {{ __('Batal') }}
+                </x-secondary-button>
+
+                <x-primary-button class="bg-amber-600 hover:bg-amber-700 focus:ring-amber-500">
+                    {{ __('Ajukan Perpanjangan') }}
+                </x-primary-button>
+            </div>
+        </form>
+    </x-modal>
 
     {{-- 2. Final Report Modal --}}
-    <div id="finalReportModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="finalReportModal" class="hidden fixed inset-0 z-[1000] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('finalReportModal')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
@@ -484,7 +556,7 @@
     </div>
 
     {{-- 3. Monthly Report Modal --}}
-    <div id="monthlyReportModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="monthlyReportModal" class="hidden fixed inset-0 z-[1000] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('monthlyReportModal')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
@@ -518,7 +590,6 @@
     </div>
 
     <script>
-        function openExtensionModal() { document.getElementById('extensionModal').classList.remove('hidden'); }
         function openFinalReportModal() { document.getElementById('finalReportModal').classList.remove('hidden'); }
         function openMonthlyReportModal() { document.getElementById('monthlyReportModal').classList.remove('hidden'); }
         

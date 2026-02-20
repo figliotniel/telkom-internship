@@ -24,6 +24,15 @@ class AttendanceController extends Controller
             return back()->with('error', 'Status magang belum aktif.');
         }
 
+        // Time Validation: 07:00 - 09:00
+        $now = Carbon::now();
+        $startCheckIn = $now->copy()->hour(7)->minute(0)->second(0);
+        $endCheckIn = $now->copy()->hour(9)->minute(0)->second(0);
+
+        if (!$now->between($startCheckIn, $endCheckIn)) {
+            return back()->with('error', 'Check-in hanya dapat dilakukan antara pukul 07:00 - 09:00 WIB.');
+        }
+
         // Cek apakah hari ini sudah absen? (Logic Reset jam 7 pagi)
         $dateCheck = Carbon::now()->hour < 7 ?Carbon::yesterday() : Carbon::today();
 
@@ -80,6 +89,15 @@ class AttendanceController extends Controller
 
         if (!$attendance) {
             return back()->with('error', 'Kamu belum check-in hari ini!');
+        }
+
+        // Time Validation: 17:00 - 19:00
+        $now = Carbon::now();
+        $startCheckOut = $now->copy()->hour(17)->minute(0)->second(0);
+        $endCheckOut = $now->copy()->hour(19)->minute(0)->second(0);
+
+        if (!$now->between($startCheckOut, $endCheckOut)) {
+            return back()->with('error', 'Check-out hanya dapat dilakukan antara pukul 17:00 - 19:00 WIB.');
         }
 
         // Silent Block: Jika izin full day, jangan lakukan apa-apa

@@ -20,6 +20,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::view('/help', 'help.index')->name('help.index');
+
 
 
 // --- ROUTE DASHBOARD PINTAR (SOTIR ROLE) ---

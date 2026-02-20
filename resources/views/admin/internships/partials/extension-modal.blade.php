@@ -1,7 +1,7 @@
 {{-- Extension Review Modal --}}
 <div x-data="{ open: false, id: null, name: '', university: '', major: '', current_end_date: '', doc_url: '#' }"
      @open-extension-modal.window="open = true; id = $event.detail.id; name = $event.detail.name; university = $event.detail.university; major = $event.detail.major; current_end_date = $event.detail.current_end_date; doc_url = $event.detail.doc_url"
-     class="relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+     class="relative z-[1000]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
 
     <div x-show="open" 
          x-transition:enter="ease-out duration-300"

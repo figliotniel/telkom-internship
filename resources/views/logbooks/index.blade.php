@@ -260,7 +260,7 @@
         </div>
             <!-- Activity Detail Modal -->
             <div x-show="showModal" 
-                class="fixed inset-0 z-50 overflow-y-auto" 
+                class="fixed inset-0 z-[1000] overflow-y-auto" 
                 aria-labelledby="modal-title" 
                 role="dialog" 
                 aria-modal="true"

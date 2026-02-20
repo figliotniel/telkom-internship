@@ -1,7 +1,7 @@
 <div x-data="{ show: false, id: null, name: '' }" 
     @open-activation-modal.window="show = true; id = $event.detail.id; name = $event.detail.name" 
     x-show="show" 
-    class="fixed inset-0 z-50 overflow-y-auto" 
+    class="fixed inset-0 z-[1000] overflow-y-auto" 
     style="display: none;">
     
     <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">

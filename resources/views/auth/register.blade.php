@@ -23,7 +23,7 @@
              x-transition:leave="transition ease-in duration-200"
              x-transition:leave-start="opacity-100 transform translate-y-0"
              x-transition:leave-end="opacity-0 transform -translate-y-2"
-             class="fixed top-4 right-4 z-50 max-w-sm w-full bg-white border-l-4 border-red-500 shadow-xl rounded-lg overflow-hidden pointer-events-auto"
+             class="fixed top-4 right-4 z-[1000] max-w-sm w-full bg-white border-l-4 border-red-500 shadow-xl rounded-lg overflow-hidden pointer-events-auto"
              style="display: none;">
             <div class="p-4 flex items-start">
                 <div class="flex-shrink-0">

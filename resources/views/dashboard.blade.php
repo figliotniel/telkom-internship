@@ -244,7 +244,7 @@
                                             $endCheckIn = $now->copy()->hour(9)->minute(0)->second(0);
                                             // Developer Mode: Testing Attendance
                                             // $isCheckInTime = $now->between($startCheckIn, $endCheckIn);
-                                            $isCheckInTime = true; // Always allow check-in for testing
+                                            $isCheckInTime = $now->between($startCheckIn, $endCheckIn); 
                                         @endphp
 
                                         @if($isCheckInTime)
@@ -328,9 +328,10 @@
                                         @php
                                             $now = \Carbon\Carbon::now();
                                             $startCheckOut = $now->copy()->hour(17)->minute(0)->second(0);
+                                            $endCheckOut = $now->copy()->hour(19)->minute(0)->second(0);
                                             // Developer Mode: Testing Attendance
                                             // $isCheckOutTime = $now->gte($startCheckOut);
-                                            $isCheckOutTime = true; // Always allow check-out for testing
+                                            $isCheckOutTime = $now->between($startCheckOut, $endCheckOut);
                                         @endphp
 
                                         @if($isCheckOutTime)
@@ -343,7 +344,7 @@
                                         @else
                                             <div class="w-full bg-slate-800/50 border border-slate-700 text-slate-400 font-bold py-3.5 rounded-xl text-center flex flex-col items-center justify-center gap-1 cursor-not-allowed">
                                                 <span>Belum Waktunya Pulang</span>
-                                                <span class="text-xs font-normal text-slate-500">Check Out terbuka pukul 17:00</span>
+                                                <span class="text-xs font-normal text-slate-500">Check Out tersedia pukul 17:00 - 19:00</span>
                                             </div>
                                         @endif
 
@@ -392,7 +393,7 @@
     {{-- 1. Permission Modal --}}
     {{-- 1. Permission Modal --}}
     {{-- 1. Permission Modal --}}
-    <div id="permissionModal" class="hidden fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="permissionModal" class="hidden fixed inset-0 z-[1000] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-center justify-center min-h-screen px-4">
             <div class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm transition-opacity" aria-hidden="true" onclick="closeModal('permissionModal')"></div>
             
