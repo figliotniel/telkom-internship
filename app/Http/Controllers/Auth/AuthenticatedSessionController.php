@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
         $user = $request->user();
 
         // Check if student has active internship
-        if ($user->hasrole('student')) {
+        if ($user->hasRole('student')) {
             $internship = \App\Models\Internship::where('student_id', $user->id)->first();
 
             // If internship exists
@@ -62,25 +62,18 @@ class AuthenticatedSessionController extends Controller
                     // If within 1 month, ALLOW login (proceed to redirect logic below)
                 }
             }
-            
-            // Allow if:
-            // 1. No internship (New User)
-            // 2. Status is 'active'
-            // 3. Status is 'onboarding'
         }
 
-        //cek role dan redirect ke dashboard sesuai role
-        if ($user->hasrole('mentor')) {
+        // Cek role dan redirect ke dashboard sesuai role
+        if ($user->hasRole('mentor')) {
             return redirect()->intended(route('mentor.dashboard', absolute: false));
         }
-        return redirect()->intended(route('dashboard', absolute: false));
 
-        //admin nanti ditambah sendiri
-        if ($user->hasrole('admin')) {
-           // return redirect()->intended(route('admin.dashboard', absolute: false));
+        if ($user->hasRole('admin')) {
+            return redirect()->intended(route('admin.dashboard', absolute: false));
         }
 
-        //default arahkan ke dashboard mahasiswa
+        // Default arahkan ke dashboard mahasiswa (untuk role 'student')
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

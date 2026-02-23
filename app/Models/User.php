@@ -22,7 +22,6 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
     ];
 
     /**
@@ -47,10 +46,6 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    public function studentfunction()
-    {
-        return $this->HasOne(StudentProfile::class);
-    }
     public function studentProfile(): HasOne
     {
         return $this->hasOne(StudentProfile::class);
@@ -60,12 +55,12 @@ class User extends Authenticatable
         return $this->hasOne(Internship::class , 'student_id');
     }
 
-    public function hasrole($role)
+    public function hasRole(string $role): bool
     {
         return $this->role === $role;
     }
 
-    public function isMentor()
+    public function isMentor(): bool
     {
         return $this->role === 'mentor';
     }
@@ -75,10 +70,14 @@ class User extends Authenticatable
         return $this->hasOne(MentorProfile::class);
     }
 
-    public function activeInternsCount()
+    public function activeInternships()
     {
         return $this->hasMany(Internship::class , 'mentor_id')
-            ->whereIn('status', ['active', 'onboarding'])
-            ->count();
+            ->whereIn('status', ['active', 'onboarding']);
+    }
+
+    public function mentoredInternships()
+    {
+        return $this->hasMany(Internship::class , 'mentor_id');
     }
 }

@@ -29,31 +29,37 @@ Route::get('/dashboard', [DashboardController::class , 'index'])->middleware(['a
 // Group Route untuk Mahasiswa (Logbook, Profile, dll)
 Route::middleware('auth')->group(function () {
     // route logbook
-    Route::get('/activity', [LogbookController::class , 'index'])->name('logbooks.index');
-    Route::get('/logbooks/create', [LogbookController::class , 'create'])->name('logbooks.create');
-    Route::post('/logbooks', [LogbookController::class , 'store'])->name('logbooks.store');
-    Route::post('/logbooks/upload-image', [LogbookController::class , 'uploadImage'])->name('logbooks.uploadImage');
+    Route::controller(LogbookController::class)->group(function () {
+            Route::get('/activity', 'index')->name('logbooks.index');
+            Route::get('/logbooks/create', 'create')->name('logbooks.create');
+            Route::post('/logbooks', 'store')->name('logbooks.store');
+            Route::post('/logbooks/upload-image', 'uploadImage')->name('logbooks.uploadImage');
+        }
+        );
 
-    // route documents
-    Route::get('/documents/transcript', [DocumentController::class , 'transcript'])->name('documents.transcript');
-    Route::get('/documents', [DocumentController::class , 'index'])->name('documents.index');
+        // route documents
+        Route::controller(DocumentController::class)->group(function () {
+            Route::get('/documents/transcript', 'transcript')->name('documents.transcript');
+            Route::get('/documents', 'index')->name('documents.index');
+            Route::post('/documents/extension', 'storeExtension')->name('documents.storeExtension');
+            Route::post('/documents/final-report', 'storeFinalReport')->name('documents.storeFinalReport');
+            Route::post('/documents/pakta-integritas', 'storePaktaIntegritas')->name('documents.storePaktaIntegritas');
+        }
+        );
 
-    // route profile
-    Route::get('/profile', [ProfileController::class , 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class , 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class , 'destroy'])->name('profile.destroy');
+        // route profile
+        Route::get('/profile', [ProfileController::class , 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class , 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class , 'destroy'])->name('profile.destroy');
 
-    // route attendance atau absen
-    Route::post('/attendance/check-in', [AttendanceController::class , 'checkIn'])->name('attendance.checkIn');
-    Route::post('/attendance/check-out', [AttendanceController::class , 'checkOut'])->name('attendance.checkOut');
-    Route::post('/attendance/permission', [AttendanceController::class , 'permission'])->name('attendance.permission');
-    Route::get('/attendance/report', [AttendanceController::class , 'downloadReport'])->name('attendance.report');
-
-    // route documents actions
-    Route::post('/documents/extension', [DocumentController::class , 'storeExtension'])->name('documents.storeExtension');
-    Route::post('/documents/final-report', [DocumentController::class , 'storeFinalReport'])->name('documents.storeFinalReport');
-    Route::post('/documents/pakta-integritas', [DocumentController::class , 'storePaktaIntegritas'])->name('documents.storePaktaIntegritas');
-});
+        // route attendance atau absen
+        Route::controller(AttendanceController::class)->group(function () {
+            Route::post('/attendance/check-in', 'checkIn')->name('attendance.checkIn');
+            Route::post('/attendance/check-out', 'checkOut')->name('attendance.checkOut');
+            Route::post('/attendance/permission', 'permission')->name('attendance.permission');
+            Route::get('/attendance/report', 'downloadReport')->name('attendance.report');
+        }
+        );    });
 
 
 // Group Route Khusus Mentor (Dashboard Mentor)
@@ -84,47 +90,36 @@ Route::prefix('mentor')->middleware(['auth', 'verified'])->group(function () {
 // Group Route Khusus ADMIN (Dengan Perbaikan Syntax)
 Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(function () {
 
-    // Dashboard Admin
-    Route::get('/dashboard', [AdminController::class , 'dashboard'])
-        ->name('admin.dashboard');
+    Route::controller(AdminController::class)->group(function () {
+            // Dashboard Admin
+            Route::get('/dashboard', 'dashboard')->name('admin.dashboard');
 
-    // Fitur Setup Magang
-    Route::get('/internship/create', [AdminController::class , 'createInternship'])
-        ->name('admin.internship.create');
+            // Fitur Setup Magang
+            Route::get('/internship/create', 'createInternship')->name('admin.internship.create');
+            Route::post('/internship', 'storeInternship')->name('admin.internship.store');
 
-    Route::post('/internship', [AdminController::class , 'storeInternship'])
-        ->name('admin.internship.store');
+            // Fitur Data User
+            Route::get('/users', 'users')->name('admin.users.index');
 
+            // Fitur Mentor
+            Route::get('/mentors/create', 'createMentor')->name('admin.mentors.create');
+            Route::post('/mentors', 'storeMentor')->name('admin.mentors.store');
 
-    // Fitur Data User
-    Route::get('/users', [AdminController::class , 'users'])
-        ->name('admin.users.index');
+            // Fitur Monitoring Magang
+            Route::get('/internships', 'internships')->name('admin.internships.index');
+            Route::get('/internships/{id}', 'showInternship')->name('admin.internships.show');
 
-    // Fitur Mentor
-    Route::get('/mentors/create', [AdminController::class , 'createMentor'])->name('admin.mentors.create');
-    Route::post('/mentors', [AdminController::class , 'storeMentor'])->name('admin.mentors.store');
+            // Workflow Actions
+            Route::patch('/internships/{id}/approve', 'approveInternship')->name('admin.internships.approve');
+            Route::patch('/internships/{id}/activate', 'activateInternship')->name('admin.internships.activate');
+            Route::patch('/internships/{id}/reject', 'rejectInternship')->name('admin.internships.reject');
+            Route::post('/internships/{id}/complete', 'completeInternship')->name('admin.internships.complete');
 
-
-
-    // Fitur Monitoring Magang
-    Route::get('/internships', [AdminController::class , 'internships'])
-        ->name('admin.internships.index');
-    Route::get('/internships/{id}', [AdminController::class , 'showInternship'])
-        ->name('admin.internships.show');
-
-    // Workflow Actions
-    Route::patch('/internships/{id}/approve', [AdminController::class , 'approveInternship'])
-        ->name('admin.internships.approve');
-    Route::patch('/internships/{id}/activate', [AdminController::class , 'activateInternship'])
-        ->name('admin.internships.activate');
-    Route::patch('/internships/{id}/reject', [AdminController::class , 'rejectInternship'])->name('admin.internships.reject'); // Rejection Route
-    Route::post('/internships/{id}/complete', [AdminController::class , 'completeInternship'])->name('admin.internships.complete'); // Completion Route
-
-    // Extension Workflow
-    Route::patch('/internships/{id}/approve-extension', [AdminController::class , 'approveExtension'])->name('admin.internships.approveExtension');
-    Route::patch('/internships/{id}/reject-extension', [AdminController::class , 'rejectExtension'])->name('admin.internships.rejectExtension');
-
-});
+            // Extension Workflow
+            Route::patch('/internships/{id}/approve-extension', 'approveExtension')->name('admin.internships.approveExtension');
+            Route::patch('/internships/{id}/reject-extension', 'rejectExtension')->name('admin.internships.rejectExtension');
+        }
+        );    });
 
 
 require __DIR__ . '/auth.php';

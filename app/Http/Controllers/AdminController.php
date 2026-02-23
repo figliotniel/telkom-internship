@@ -101,7 +101,7 @@ class AdminController extends Controller
         // Cek Kuota Mentor
         $mentor = User::findOrFail($request->mentor_id);
         $quota = $mentor->mentorProfile->quota ?? 5; // Default 5 jika null
-        if ($mentor->activeInternsCount() >= $quota) {
+        if ($mentor->activeInternships()->count() >= $quota) {
             return back()->with('error', 'Mentor ini sudah mencapai batas kuota (' . $quota . ' mahasiswa). Silakan pilih mentor lain.');
         }
 
@@ -123,18 +123,34 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $role = $request->query('role');
+        $studentType = $request->query('student_type'); // New filter parameter
 
-        $users = User::with('studentProfile')
+        $users = User::with(['studentProfile', 'mentoredInternships' => function ($query) {
+            // Only load active or onboarding internships for display
+            $query->whereIn('status', ['active', 'onboarding'])->with('student');
+        }])
             ->when($role, function ($query, $role) {
             return $query->where('role', $role);
         })
+            // Apply student type filter if role is student and filter is set
+            ->when($role === 'student' && $studentType, function ($query) use ($studentType) {
+            return $query->whereHas('studentProfile', function ($q) use ($studentType) {
+                    if ($studentType === 'smk') {
+                        $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
+                    }
+                    elseif ($studentType === 'mahasiswa') {
+                        $q->where('student_type', 'mahasiswa')->where('education_level', '!=', 'SMK');
+                    }
+                }
+                );
+            })
             ->whereDoesntHave('internship', function ($query) {
             $query->where('status', 'rejected');
         })
             ->latest()
             ->paginate(10); // Pagination
 
-        return view('admin.users.index', compact('users', 'role'));
+        return view('admin.users.index', compact('users', 'role', 'studentType'));
     }
 
     /**
@@ -251,7 +267,7 @@ class AdminController extends Controller
         // Cek Kuota Mentor
         $mentor = User::findOrFail($request->mentor_id);
         $quota = $mentor->mentorProfile->quota ?? 5; // Default 5
-        if ($mentor->activeInternsCount() >= $quota) {
+        if ($mentor->activeInternships()->count() >= $quota) {
             return back()->with('error', 'Mentor ini sudah mencapai batas kuota (' . $quota . ' mahasiswa). Mohon pilih mentor lain.');
         }
 

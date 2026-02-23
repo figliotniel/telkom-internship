@@ -100,7 +100,7 @@
                                         @foreach($mentors as $mentor)
                                             @php
                                                 $quota = $mentor->mentorProfile->quota ?? 5;
-                                                $active = $mentor->activeInternsCount();
+                                                $active = $mentor->activeInternships()->count();
                                                 $isFull = $active >= $quota;
                                             @endphp
                                             <option value="{{ $mentor->id }}" {{ $isFull ? 'disabled' : '' }} class="{{ $isFull ? 'text-gray-400 bg-gray-50' : '' }}">

@@ -11,7 +11,7 @@
                 <div class="p-6 text-gray-900">
                     
                     {{-- Standard Tabs Navigation --}}
-                    <div class="border-b border-gray-200 mb-6">
+                    <div class="border-b border-gray-200 mb-6 flex justify-between items-center">
                         <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                             {{-- All Users --}}
                             <a href="{{ route('admin.users.index') }}" 
@@ -41,6 +41,26 @@
                                 Admins
                             </a>
                         </nav>
+                        
+                        {{-- Sub Filter for Interns --}}
+                        @if(request('role') == 'student')
+                            <div class="inline-flex bg-white rounded-md shadow-sm border border-gray-200" role="group">
+                                <a href="{{ route('admin.users.index', ['role' => 'student', 'student_type' => 'mahasiswa']) }}" 
+                                   class="px-4 py-2 text-xs font-medium rounded-l-md transition-colors 
+                                   {{ !request('student_type') || request('student_type') == 'mahasiswa' 
+                                      ? 'bg-red-50 text-red-700 border-r border-red-200' 
+                                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-r border-gray-200' }}">
+                                    Mahasiswa
+                                </a>
+                                <a href="{{ route('admin.users.index', ['role' => 'student', 'student_type' => 'smk']) }}" 
+                                   class="px-4 py-2 text-xs font-medium rounded-r-md transition-colors 
+                                   {{ request('student_type') == 'smk' 
+                                      ? 'bg-red-50 text-red-700' 
+                                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900' }}">
+                                    SMK
+                                </a>
+                            </div>
+                        @endif
                     </div>
 
                     <div class="overflow-x-auto">
@@ -65,6 +85,21 @@
                                                 <div class="ml-4">
                                                     <div class="text-sm font-bold text-gray-900">{{ $user->name }}</div>
                                                     <div class="text-xs text-gray-500">{{ $user->email }}</div>
+                                                    
+                                                    @if($user->role === 'mentor' && $user->relationLoaded('mentoredInternships') && $user->mentoredInternships->isNotEmpty())
+                                                        <div class="mt-2 flex flex-wrap gap-1">
+                                                            @foreach($user->mentoredInternships as $internship)
+                                                                @if($internship->student)
+                                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-800 border border-gray-200">
+                                                                        <svg class="mr-1 h-3 w-3 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                                                                        </svg>
+                                                                        {{ $internship->student->name }}
+                                                                    </span>
+                                                                @endif
+                                                            @endforeach
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </td>
@@ -78,7 +113,9 @@
                                                 ];
                                                 
                                                 // Check for specific student type (SMK)
-                                                if ($user->role === 'student' && optional($user->studentProfile)->student_type === 'siswa') {
+                                                $isSmk = optional($user->studentProfile)->student_type === 'siswa' || optional($user->studentProfile)->education_level === 'SMK';
+
+                                                if ($user->role === 'student' && $isSmk) {
                                                     $roleClasses['student'] = 'bg-indigo-100 text-indigo-800'; // Different color for SMK
                                                 }
                                                 
@@ -86,7 +123,7 @@
                                                 
                                                 $displayRole = ucfirst($user->role);
                                                 if ($user->role === 'student') {
-                                                    $displayRole = optional($user->studentProfile)->student_type === 'siswa' ? 'SMK' : 'Mahasiswa';
+                                                    $displayRole = $isSmk ? 'SMK' : 'Mahasiswa';
                                                 }
                                             @endphp
                                             <span class="px-2.5 py-0.5 inline-flex text-xs leading-5 font-bold rounded-full {{ $classes }}">

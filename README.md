@@ -22,6 +22,14 @@ Aplikasi ini menggunakan sistem *Role-Based Access Control* (RBAC) dengan tiga p
     * Manajemen data pengguna (*User Management*) dan divisi perusahaan.
     * Melakukan pengaturan (*Setup*) penempatan magang bagi mahasiswa baru.
     * Monitoring seluruh aktivitas magang di dalam sistem.
+    * Manajemen laporan ekspor dan evaluasi.
+
+## 📸 Tangkapan Layar (Screenshots)
+
+<p align="center">
+  <img src="https://via.placeholder.com/800x450?text=Admin+Dashboard" width="400" alt="Admin Dashboard">
+  <img src="https://via.placeholder.com/800x450?text=Mentor+Students+View" width="400" alt="Mentor View">
+</p>
 
 ## 🛠️ Stack Teknologi
 
@@ -29,7 +37,7 @@ Aplikasi ini menggunakan sistem *Role-Based Access Control* (RBAC) dengan tiga p
 * **Bahasa Pemrograman:** PHP ^8.2
 * **Authentication:** Laravel Breeze
 * **Frontend:** Tailwind CSS & Alpine.js
-* **Tooling:** Laravel Sail (Docker), Pint (Linting), dan Pail (Logging)
+* **Tooling:** Laravel Sail, Pint, Pail, dan Concurrently
 
 ## 📋 Persyaratan Sistem
 
@@ -58,6 +66,8 @@ Pastikan perangkat kamu sudah terpasang:
     ```bash
     composer run dev
     ```
+    > [!TIP]
+    > Perintah `composer run dev` di proyek ini menggunakan package `concurrently` untuk menjalankan HTTP server PHP, background queue worker, log viewer (`pail`), dan Vite dev server secara simultan dalam satu jendela terminal.
 
 ## 🗄️ Struktur Database
 
