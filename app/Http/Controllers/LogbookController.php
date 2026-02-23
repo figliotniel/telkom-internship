@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 use App\Models\Attendance;
 
@@ -49,23 +50,24 @@ class LogbookController extends Controller
      */
     public function create()
     {
-        $user = Auth::user();
-        $internship = Internship::where('student_id', $user->id)->first();
+        $internship = Internship::where('student_id', Auth::id())->first();
 
-        if ($internship && $internship->status === 'finished') {
+        if (!$internship) {
+            return redirect()->route('dashboard')->with('error', 'Data magang tidak ditemukan.');
+        }
+
+        if ($internship->status === 'finished') {
             return redirect()->route('dashboard')->with('error', 'Masa magang Anda telah selesai. Anda tidak dapat lagi mengisi logbook.');
         }
 
-        $internship = Internship::where('student_id', Auth::id())->active()->first();
-
-        // Cek apakah mahasiswa punya magang aktif
-        if (!$internship) {
+        if ($internship->status !== 'active') {
             return redirect()->route('dashboard')->with('error', 'Anda belum terdaftar dalam program magang atau akun magang Anda belum aktif.');
         }
 
-        // Cek apakah sudah isi logbook HARI INI
+        // Cek apakah sudah isi logbook HARI INI (Logic Reset 7 Pagi)
+        $dateCheck = Carbon::now()->hour < 7 ?Carbon::yesterday()->toDateString() : Carbon::today()->toDateString();
         $todayLogbook = DailyLogbook::where('internship_id', $internship->id)
-            ->whereDate('date', now()->toDateString())
+            ->whereDate('date', $dateCheck)
             ->exists();
 
         if ($todayLogbook) {
@@ -80,25 +82,29 @@ class LogbookController extends Controller
      */
     public function store(StoreLogbookRequest $request)
     {
-        $user = Auth::user();
-        $internship = Internship::where('student_id', $user->id)->first();
+        $internship = Internship::where('student_id', Auth::id())->first();
 
-        if ($internship && $internship->status === 'finished') {
+        if (!$internship) {
+            return back()->with('error', 'Data magang tidak ditemukan.');
+        }
+
+        if ($internship->status === 'finished') {
             return redirect()->back()->with('error', 'Masa magang Anda telah selesai. Anda tidak dapat lagi mengisi logbook.');
         }
 
-        // 2. Cari Data Internship milik User yang sedang login
-        // Asumsinya 1 user mahasiswa punya 1 data internship
-        $internship = Internship::where('student_id', Auth::id())->active()->first();
-
-        if (!$internship) {
-            return back()->withErrors(['msg' => 'Data magang aktif tidak ditemukan. Hubungi admin.']);
+        if ($internship->status !== 'active') {
+            return back()->with('error', 'Data magang aktif tidak ditemukan. Hubungi admin.');
         }
 
         // 3. Handle Upload File Bukti (Jika ada)
-        // Check duplicate date
+        // Check duplicate date (Logic Reset 7 Pagi)
+        $dateCheck = Carbon::now()->hour < 7 ?Carbon::yesterday()->toDateString() : Carbon::today()->toDateString();
+
+        // Use provided date if it exists, otherwise use dateCheck (7 AM logic)
+        $targetDate = $request->date ?? $dateCheck;
+
         $exists = DailyLogbook::where('internship_id', $internship->id)
-            ->whereDate('date', $request->date)
+            ->whereDate('date', $targetDate)
             ->exists();
 
         if ($exists) {
@@ -114,14 +120,12 @@ class LogbookController extends Controller
         // 4. Simpan ke Database
         DailyLogbook::create([
             'internship_id' => $internship->id,
-            'date' => $request->date,
+            'date' => $targetDate,
             'activity' => $request->activity,
             'evidence' => $evidencePath,
             'status' => 'pending', // Default status menunggu persetujuan mentor
         ]);
 
-        // 5. Redirect kembali dengan pesan sukses
-        // 5. Redirect kembali dengan pesan sukses
         return redirect()->route('dashboard')->with('success', 'Logbook berhasil disimpan!');
     }
 

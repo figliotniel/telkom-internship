@@ -8,7 +8,7 @@
                 <p class="text-slate-500 text-sm">Selamat datang di Dashboard Kegiatan Internship Telkom</p>
             </div>
             
-            @if(isset($internship) && $internship->end_date)
+            @if(isset($internship) && $internship->end_date && $internship->status !== 'finished')
                 @php
                     $endDate = \Carbon\Carbon::parse($internship->end_date);
                     $now = \Carbon\Carbon::now();
@@ -84,7 +84,7 @@
 
             {{-- Graduation Showcase / Banner Kelulusan --}}
             @if($internship->status === 'finished')
-                <div class="bg-gradient-to-br from-red-600 via-red-500 to-rose-500 rounded-3xl shadow-2xl overflow-hidden relative mb-8">
+                <div class="bg-gradient-to-br from-red-600 via-red-500 to-rose-500 rounded-3xl shadow-2xl overflow-hidden relative">
                     <!-- Decorative patterns -->
                     <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
                     <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
@@ -116,39 +116,110 @@
                                     $transcriptDoc = $internship->documents->where('type', 'transcript')->first();
                                 @endphp
                                 @if($transcriptDoc)
-                                    <a href="{{ Storage::url($transcriptDoc->file_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-red-700 text-white px-6 py-3 rounded-2xl font-bold hover:bg-red-800 transition-all shadow-lg">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
-                                        </svg>
-                                        Transkrip Nilai
+                                    <a href="{{ Storage::url($transcriptDoc->file_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-red-700/30 backdrop-blur-md text-white border border-white/20 px-6 py-3 rounded-2xl font-bold hover:bg-red-700/50 transition-all shadow-lg">
+                                        📄 Transkrip Nilai
                                     </a>
                                 @else
-                                    <div class="inline-flex items-center gap-2 bg-red-400/30 text-white/70 px-6 py-3 rounded-2xl font-bold cursor-not-allowed border border-white/20 italic text-sm">
-                                        Transkrip sedang diproses...
+                                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white/70 border border-white/10 px-6 py-3 rounded-2xl font-medium italic text-sm">
+                                        ⌛ Transkrip sedang diproses...
                                     </div>
                                 @endif
 
-                                {{-- 3. Sertifikat --}}
+                                {{-- 3. Sertifikat & Penilaian (Dokumen Kelulusan) --}}
                                 @php
-                                    $certificateDoc = $internship->documents->where('type', 'certificate')->first();
+                                    $certDoc = $internship->documents->where('type', 'sertifikat_kelulusan')->first();
+                                    $pklDoc = $internship->documents->where('type', 'laporan_penilaian_pkl')->first();
                                 @endphp
-                                @if($certificateDoc)
-                                    <a href="{{ Storage::url($certificateDoc->file_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-amber-400 text-slate-900 px-6 py-3 rounded-2xl font-bold hover:bg-amber-500 transition-all shadow-lg">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 0 0-.491 6.347A48.627 48.627 0 0 1 12 20.904a48.627 48.627 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.57 50.57 0 0 0-2.658-.813A59.905 59.905 0 0 1 12 3.493a59.902 59.902 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A57.419 57.419 0 0 0 12 15.75a57.415 57.415 0 0 0 5.25-4.425V15" />
-                                        </svg>
-                                        Sertifikat Magang
+                                
+                                @if($certDoc)
+                                    <a href="{{ Storage::url($certDoc->file_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-red-700/30 backdrop-blur-md text-white border border-white/20 px-6 py-3 rounded-2xl font-bold hover:bg-red-700/50 transition-all shadow-lg">
+                                        🎖️ Sertifikat Magang
                                     </a>
-                                @else
-                                    <div class="inline-flex items-center gap-2 bg-red-400/30 text-white/70 px-6 py-3 rounded-2xl font-bold cursor-not-allowed border border-white/20 italic text-sm">
-                                        Sertifikat sedang diproses...
+                                @endif
+
+                                @if($pklDoc)
+                                    <a href="{{ Storage::url($pklDoc->file_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-red-700/30 backdrop-blur-md text-white border border-white/20 px-6 py-3 rounded-2xl font-bold hover:bg-red-700/50 transition-all shadow-lg">
+                                        📋 Penilaian PKL
+                                    </a>
+                                @endif
+
+                                {{-- 4. Laporan Akhir --}}
+                                <button onclick="openFinalReportModal()" class="inline-flex items-center gap-2 bg-purple-700/30 backdrop-blur-md text-white border border-purple-400/30 px-6 py-3 rounded-2xl font-bold hover:bg-purple-700/50 transition-all shadow-lg">
+                                    📁 Laporan Akhir
+                                </button>
+
+                                @if(!$certDoc && !$pklDoc)
+                                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white/70 border border-white/10 px-6 py-3 rounded-2xl font-medium italic text-sm">
+                                        ⌛ Dokumen kelulusan sedang diproses...
                                     </div>
                                 @endif
                             </div>
                         </div>
                     </div>
                 </div>
+
+                {{-- Transcript and Other Alumni Content --}}
+                @if($internship->evaluation)
+                    {{-- 1. Transcript Display --}}
+                    <div x-data="{ show: false }" class="bg-white overflow-hidden shadow-md sm:rounded-2xl border border-slate-200">
+                        <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                            <div>
+                                <h3 class="font-bold text-lg text-slate-800">Transkrip Nilai Internal</h3>
+                                <p class="text-sm text-slate-500">Hasil evaluasi akhir kegiatan magang Anda</p>
+                            </div>
+                            <div class="flex gap-3">
+                                <button @click="show = !show" class="text-sm font-semibold text-slate-600 bg-white border border-slate-300 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors shadow-sm flex items-center gap-2">
+                                    <span x-text="show ? 'Sembunyikan' : 'Lihat Detail'"></span>
+                                    <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    <svg x-show="show" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>
+                                </button>
+                                <a href="{{ route('documents.transcript') }}" target="_blank" class="text-sm font-semibold text-white bg-red-600 border border-red-600 px-4 py-2 rounded-lg hover:bg-red-700 transition-colors shadow-sm flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015-1.837-2.175a48.041 48.041 0 00-1.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" /></svg>
+                                    Cetak PDF
+                                </a>
+                            </div>
+                        </div>
+                        <div x-show="show" x-transition class="border-t border-slate-100">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-50 text-slate-600 font-semibold border-b border-slate-100">
+                                    <tr>
+                                        <th class="px-6 py-4 w-12 text-center">No</th>
+                                        <th class="px-6 py-4">Komponen Penilaian</th>
+                                        <th class="px-6 py-4 w-32 text-center">Nilai Angka</th>
+                                        <th class="px-6 py-4 w-32 text-center">Predikat</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100 text-slate-700">
+                                    <tr>
+                                        <td class="px-6 py-4 text-center">1</td>
+                                        <td class="px-6 py-4">Kedisiplinan & Etika Kerja</td>
+                                        <td class="px-6 py-4 text-center font-medium">{{ $internship->evaluation->discipline_score }}</td>
+                                        <td class="px-6 py-4 text-center">{{ $internship->evaluation->discipline_score >= 85 ? 'A' : ($internship->evaluation->discipline_score >= 70 ? 'B' : 'C') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 text-center">2</td>
+                                        <td class="px-6 py-4">Kemampuan Teknis & Hasil Kerja</td>
+                                        <td class="px-6 py-4 text-center font-medium">{{ $internship->evaluation->technical_score }}</td>
+                                        <td class="px-6 py-4 text-center">{{ $internship->evaluation->technical_score >= 85 ? 'A' : ($internship->evaluation->technical_score >= 70 ? 'B' : 'C') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-6 py-4 text-center">3</td>
+                                        <td class="px-6 py-4">Komunikasi & Kerjasama Tim</td>
+                                        <td class="px-6 py-4 text-center font-medium">{{ $internship->evaluation->soft_skill_score }}</td>
+                                        <td class="px-6 py-4 text-center">{{ $internship->evaluation->soft_skill_score >= 85 ? 'A' : ($internship->evaluation->soft_skill_score >= 70 ? 'B' : 'C') }}</td>
+                                    </tr>
+                                    <tr class="bg-red-50/30">
+                                        <td colspan="2" class="px-6 py-4 text-right font-bold text-slate-800">Nilai Akhir Rata-Rata</td>
+                                        <td class="px-6 py-4 text-center font-bold text-lg text-red-600 border-x border-red-100">{{ $internship->evaluation->final_score }}</td>
+                                        <td class="px-6 py-4 text-center font-bold text-lg text-red-600">{{ $internship->evaluation->final_score >= 85 ? 'A' : ($internship->evaluation->final_score >= 70 ? 'B' : 'C') }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                @endif
             @endif
+
 
             {{-- Main Grid --}}
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -386,12 +457,36 @@
     {{-- 1. Permission Modal --}}
     <x-permission-modal />
 
+    {{-- 2. Final Report Modal --}}
+    <div id="finalReportModal" class="hidden fixed inset-0 z-[1000] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('finalReportModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full">
+                <form action="{{ route('documents.storeFinalReport') }}" method="POST" enctype="multipart/form-data" class="p-6">
+                    @csrf
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Upload Laporan Akhir</h3>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">File Laporan (PDF)</label>
+                        <input type="file" name="file" accept=".pdf" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100" required>
+                    </div>
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="closeModal('finalReportModal')" class="py-2 px-4 border rounded-md text-gray-700 hover:bg-gray-50">Batal</button>
+                        <button type="submit" class="py-2 px-4 bg-purple-600 text-white rounded-md hover:bg-purple-700">Upload</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
     {{-- Scripts --}}
     <script>
     // Modal Functions
     function openPermissionModal(isCheckedIn = false) { 
         document.getElementById('permissionModal').classList.remove('hidden'); 
-        
+
         const typeSelect = document.getElementById('permit_type');
         
         // Elements for Date Toggle
@@ -442,8 +537,12 @@
 
         toggleAttachment(); // Ensure correct initial state
     }
-    
+
+    function openFinalReportModal() { document.getElementById('finalReportModal').classList.remove('hidden'); }
+
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    
+
 
         // Logic for Time Input (Temporary Permit)
         function toggleAttachment() {
@@ -465,7 +564,7 @@
         }
 
     // 1. Fungsi Konfirmasi CHECK-IN
-    // ... existing scripts below ...
+
     function confirmCheckIn() {
         Swal.fire({
             title: 'Siap untuk Check-In?',

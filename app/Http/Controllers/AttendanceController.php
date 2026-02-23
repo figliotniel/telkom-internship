@@ -7,7 +7,7 @@ use App\Models\Attendance;
 use App\Models\Internship;
 use App\Http\Requests\CheckInRequest;
 use App\Http\Requests\PermissionRequest;
-use carbon\carbon;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
@@ -15,14 +15,18 @@ class AttendanceController extends Controller
     // Fungsi CHECK-IN (Datang)
     public function checkIn(CheckInRequest $request)
     {
-        $internship = Internship::where('student_id', Auth::id())->active()->first();
+        $internship = Internship::where('student_id', Auth::id())->first();
 
         if (!$internship) {
-            return back()->with('error', 'Status magang belum aktif atau tidak ditemukan.');
+            return back()->with('error', 'Data magang tidak ditemukan.');
         }
 
         if ($internship->status === 'finished') {
             return redirect()->back()->with('error', 'Masa magang Anda telah selesai. Anda tidak dapat lagi mengisi presensi atau logbook.');
+        }
+
+        if ($internship->status !== 'active') {
+            return back()->with('error', 'Status magang Anda belum aktif.');
         }
 
         // Time Validation: 07:00 - 09:00
@@ -55,7 +59,7 @@ class AttendanceController extends Controller
                     'check_in_time' => Carbon::now()->format('H:i:s'),
                     'check_in_lat' => $request->latitude,
                     'check_in_long' => $request->longitude,
-                    'status' => 'present', // Ubah status jadi hadir (atau bisa tetap permit dengan catatan)
+                    // Status tetap 'permit'
                 ]);
 
                 return back()->with('success', 'Berhasil Check-in setelah izin sementara!');
@@ -120,14 +124,18 @@ class AttendanceController extends Controller
     // Fungsi IZIN (Permission)
     public function permission(PermissionRequest $request)
     {
-        $internship = Internship::where('student_id', Auth::id())->active()->first();
+        $internship = Internship::where('student_id', Auth::id())->first();
 
         if (!$internship) {
-            return back()->with('error', 'Status magang tidak aktif atau tidak ditemukan.');
+            return back()->with('error', 'Data magang tidak ditemukan.');
         }
 
         if ($internship->status === 'finished') {
             return redirect()->back()->with('error', 'Masa magang Anda telah selesai. Anda tidak dapat lagi mengisi presensi atau logbook.');
+        }
+
+        if ($internship->status !== 'active') {
+            return back()->with('error', 'Status magang Anda belum aktif.');
         }
 
         // Check if attendance exists for date

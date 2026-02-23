@@ -45,15 +45,12 @@
 
                         $links = [];
 
-                        // 1. Dashboard (Only for Active / New users)
-                        if (!$isFinished) {
-                            $links[] = ['name' => 'My Dashboard', 'route' => 'dashboard', 'active' => request()->routeIs('dashboard')];
-                        }
+                        // 1. Dashboard (Always visible for Students)
+                        $links[] = ['name' => 'My Dashboard', 'route' => 'dashboard', 'active' => request()->routeIs('dashboard')];
 
-                        // 2. Activity & Document (Active OR Finished)
+                        // 2. Activity (Only if Active or Finished)
                         if ($isActive || $isFinished) {
                             $links[] = ['name' => 'Activity', 'route' => 'logbooks.index', 'active' => request()->routeIs('logbooks.index')];
-                            $links[] = ['name' => 'Document', 'route' => 'documents.index', 'active' => request()->routeIs('documents.index')];
                         }
                     }
                 @endphp
