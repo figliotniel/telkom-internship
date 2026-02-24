@@ -17,12 +17,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_red.css">
 
     <script>
-        // Anti-flash script
-        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+        // Force light mode on guest pages (login/register)
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
     </script>
 
     <style>
@@ -112,11 +109,11 @@
 
     </style>
 </head>
-<body class="bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200 transition-colors duration-300">
+<body class="bg-white text-slate-800 transition-colors duration-300">
 
-    <header class="bg-white dark:bg-slate-900 border-b border-slate-50 dark:border-slate-800">
+    <header class="bg-white border-b border-slate-50">
         <div class="logo">
-            <img src="{{ asset('images/logo-telkom.png') }}" alt="Telkom Indonesia Logo" class="dark:brightness-110">
+            <img src="{{ asset('images/logo-telkom.png') }}" alt="Telkom Indonesia Logo">
         </div>
         <a href="/" class="main-website-btn">Main Website</a>
     </header>

@@ -14,7 +14,7 @@
             {{-- Stats Grid --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Card 1: Pending Validations -->
-                <div class="bg-gradient-to-br from-red-600 to-red-800 rounded-3xl p-8 text-white shadow-xl shadow-red-200 dark:shadow-red-950/20 relative overflow-hidden group transition-all hover:scale-[1.02]">
+                <div class="bg-gradient-to-br from-red-600 to-red-800 dark:from-red-700 dark:to-red-900 rounded-3xl p-8 text-white shadow-xl shadow-red-200 dark:shadow-red-950/40 relative overflow-hidden group transition-all hover:scale-[1.02] border-b-4 border-red-800/50">
                     <div class="absolute top-0 right-0 -mt-6 -mr-6 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
                     <div class="relative z-10">
                         <p class="text-red-100 text-xs font-black uppercase tracking-widest mb-2 opacity-80">Menunggu Validasi</p>
@@ -56,7 +56,7 @@
                 </div>
 
                 <!-- Card 3: Quick Action -->
-                <div class="bg-indigo-600 dark:bg-indigo-900 rounded-3xl p-8 text-white shadow-xl shadow-indigo-200 dark:shadow-none relative overflow-hidden group transition-all hover:scale-[1.02] flex flex-col justify-between">
+                <div class="bg-gradient-to-br from-indigo-600 to-indigo-800 dark:from-indigo-900 dark:to-indigo-950 rounded-3xl p-8 text-white shadow-xl shadow-indigo-200 dark:shadow-indigo-950/30 relative overflow-hidden group transition-all hover:scale-[1.02] flex flex-col justify-between border-b-4 border-indigo-800/50">
                      <div class="absolute bottom-0 right-0 -mb-6 -mr-6 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
                      <div class="relative z-10">
                         <div class="p-3 bg-white/20 rounded-2xl text-white mb-6 backdrop-blur-md shadow-inner inline-block">
@@ -97,20 +97,20 @@
                     @else
                         <div class="overflow-x-auto -mx-8">
                             <table class="w-full text-left text-sm border-collapse">
-                                <thead class="bg-slate-50/50 dark:bg-slate-950/30 border-y border-slate-100 dark:border-slate-800 transition-colors">
+                                <thead class="bg-slate-50/50 dark:bg-slate-950/50 border-y border-slate-100 dark:border-slate-800 transition-colors">
                                     <tr>
-                                        <th class="px-8 py-5 font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest text-[10px]">Intern</th>
-                                        <th class="px-8 py-5 font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest text-[10px]">Divisi</th>
-                                        <th class="px-8 py-5 font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest text-[10px]">Status Program</th>
-                                        <th class="px-8 py-5 font-black text-slate-500 dark:text-slate-500 uppercase tracking-widest text-[10px] text-center">Aksi</th>
+                                        <th class="px-8 py-5 font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-[10px]">Intern</th>
+                                        <th class="px-8 py-5 font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-[10px]">Divisi</th>
+                                        <th class="px-8 py-5 font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-[10px]">Status Program</th>
+                                        <th class="px-8 py-5 font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-[10px] text-center">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                                     @foreach($internships as $internship)
-                                    <tr class="group hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-all duration-300">
+                                    <tr class="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-all duration-300">
                                         <td class="px-8 py-6">
                                             <div class="flex items-center gap-4">
-                                                <div class="h-12 w-12 rounded-2xl bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 font-black text-lg shadow-sm border border-white dark:border-slate-700 transition-all group-hover:scale-110 group-hover:rotate-3">
+                                                <div class="h-12 w-12 rounded-2xl bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 font-black text-lg shadow-sm border border-white dark:border-slate-700 transition-all group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-lg dark:group-hover:shadow-slate-900/40">
                                                     {{ substr($internship->student->name, 0, 1) }}
                                                 </div>
                                                 <div>
@@ -126,10 +126,10 @@
                                         </td>
                                         <td class="px-8 py-6">
                                             @if($internship->status == 'active')
-                                                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-[10px] font-black bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20 uppercase tracking-widest transition-colors shadow-sm">
+                                                <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-[10px] font-black bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20 uppercase tracking-widest transition-colors shadow-sm ring-1 ring-emerald-500/20">
                                                     <span class="flex h-2 w-2 relative">
                                                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
                                                     </span>
                                                     Aktif
                                                 </span>

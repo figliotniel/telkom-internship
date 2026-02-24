@@ -20,33 +20,31 @@
                 </div>
             </div>
 
-            {{-- Stats Grid (Solid Red & Clean) --}}
+            {{-- Stats Grid (Refined & Clean) --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 {{-- Card 1: Total Intern --}}
-                <div class="bg-[#ce0024] rounded-2xl p-6 text-white shadow-lg dark:shadow-red-950/40 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 border-l-4 border-red-800">
-                    <div class="flex justify-between items-start">
+                <div class="bg-gradient-to-br from-[#ce0024] to-[#a0001c] rounded-2xl p-6 text-white shadow-lg dark:shadow-red-900/20 relative overflow-hidden group hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 border-b-4 border-red-800/50">
+                    <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all duration-500"></div>
+                    <div class="flex justify-between items-start relative z-10">
                         <div>
-                            <p class="text-red-100 text-sm font-bold uppercase tracking-wider mb-1">Total Intern</p>
-                            <h3 class="text-5xl font-extrabold">{{ $totalStudents }}</h3>
+                            <p class="text-red-100 text-sm font-bold uppercase tracking-wider mb-1 opacity-80">Total Intern</p>
+                            <h3 class="text-5xl font-black tracking-tight">{{ $totalStudents }}</h3>
                         </div>
-                        <div class="p-2 bg-white/10 rounded-lg">
+                        <div class="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
                         </div>
                     </div>
                     
-                    <div class="mt-6 flex items-center gap-3">
+                    <div class="mt-6 flex items-center gap-2 relative z-10">
                         @if($studentGrowth > 0)
-                            <div class="flex items-center gap-1 bg-white text-[#ce0024] px-3 py-1 rounded-full font-bold shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                </svg>
+                            <div class="flex items-center gap-1 bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full font-bold text-xs border border-white/30">
                                 <span>+{{ $studentGrowth }}</span>
                             </div>
-                            <span class="text-sm font-medium text-red-50">Orang Baru Bulan Ini</span>
+                            <span class="text-xs font-medium text-red-50 opacity-80">Orang Baru</span>
                         @else
-                             <span class="text-sm font-medium text-red-200">Data Stabil Bulan Ini</span>
+                             <span class="text-xs font-medium text-red-100 opacity-60 italic tracking-wide">Data Stabil</span>
                         @endif
                     </div>
 
@@ -54,60 +52,56 @@
                 </div>
 
                 {{-- Card 2: Magang Aktif --}}
-                <div class="bg-[#ce0024] rounded-2xl p-6 text-white shadow-lg dark:shadow-red-950/40 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 border-l-4 border-red-800">
-                    <div class="flex justify-between items-start">
+                <div class="bg-gradient-to-br from-[#ce0024] to-[#a0001c] rounded-2xl p-6 text-white shadow-lg dark:shadow-red-900/20 relative overflow-hidden group hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 border-b-4 border-red-800/50">
+                    <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all duration-500"></div>
+                    <div class="flex justify-between items-start relative z-10">
                         <div>
-                            <p class="text-red-100 text-sm font-bold uppercase tracking-wider mb-1">Active Intern</p>
-                            <h3 class="text-5xl font-extrabold">{{ $activeInternships }}</h3>
+                            <p class="text-red-100 text-sm font-bold uppercase tracking-wider mb-1 opacity-80">Active Intern</p>
+                            <h3 class="text-5xl font-black tracking-tight">{{ $activeInternships }}</h3>
                         </div>
-                        <div class="p-2 bg-white/10 rounded-lg">
+                        <div class="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
                              <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
                         </div>
                     </div>
 
-                    <div class="mt-6 flex items-center gap-3">
+                    <div class="mt-6 flex items-center gap-2 relative z-10">
                         @if($internshipGrowth > 0)
-                            <div class="flex items-center gap-1 bg-white text-[#ce0024] px-3 py-1 rounded-full font-bold shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                </svg>
+                            <div class="flex items-center gap-1 bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full font-bold text-xs border border-white/30">
                                 <span>+{{ $internshipGrowth }}</span>
                             </div>
-                            <span class="text-sm font-medium text-red-50">Posisi Terisi Bulan Ini</span>
+                            <span class="text-xs font-medium text-red-50 opacity-80">Posisi Terisi</span>
                         @else
-                            <span class="text-sm font-medium text-red-200">Tidak ada penambahan</span>
+                            <span class="text-xs font-medium text-red-100 opacity-60 italic tracking-wide">Tidak Ada Penambahan</span>
                         @endif
                     </div>
                      <a href="#" class="absolute inset-0 z-10"></a>
                 </div>
 
                 {{-- Card 3: Mentor --}}
-                <div class="bg-[#ce0024] rounded-2xl p-6 text-white shadow-lg dark:shadow-red-950/40 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 border-l-4 border-red-800">
-                    <div class="flex justify-between items-start">
+                <div class="bg-gradient-to-br from-[#ce0024] to-[#a0001c] rounded-2xl p-6 text-white shadow-lg dark:shadow-red-900/20 relative overflow-hidden group hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 border-b-4 border-red-800/50">
+                    <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all duration-500"></div>
+                    <div class="flex justify-between items-start relative z-10">
                          <div>
-                            <p class="text-red-100 text-sm font-bold uppercase tracking-wider mb-1">Total Mentor</p>
-                            <h3 class="text-5xl font-extrabold">{{ $totalMentors }}</h3>
+                            <p class="text-red-100 text-sm font-bold uppercase tracking-wider mb-1 opacity-80">Total Mentor</p>
+                            <h3 class="text-5xl font-black tracking-tight">{{ $totalMentors }}</h3>
                         </div>
-                        <div class="p-2 bg-white/10 rounded-lg">
+                        <div class="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                             </svg>
                         </div>
                     </div>
 
-                    <div class="mt-6 flex items-center gap-3">
+                    <div class="mt-6 flex items-center gap-2 relative z-10">
                          @if($mentorGrowth > 0)
-                            <div class="flex items-center gap-1 bg-white text-[#ce0024] px-3 py-1 rounded-full font-bold shadow-sm">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                                </svg>
+                            <div class="flex items-center gap-1 bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full font-bold text-xs border border-white/30">
                                 <span>+{{ $mentorGrowth }}</span>
                             </div>
-                            <span class="text-sm font-medium text-red-50">Mentor Baru Bulan Ini</span>
+                            <span class="text-xs font-medium text-red-50 opacity-80">Mentor Baru</span>
                         @else
-                            <span class="text-sm font-medium text-red-200">Tim Mentor Stabil</span>
+                            <span class="text-xs font-medium text-red-100 opacity-60 italic tracking-wide">Tim Mentor Stabil</span>
                         @endif
                     </div>
                     <a href="{{ route('admin.mentors.create') }}" class="absolute inset-0 z-10"></a>

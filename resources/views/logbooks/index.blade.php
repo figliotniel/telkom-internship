@@ -1,29 +1,29 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-bold text-2xl text-slate-800 leading-tight">
+        <h2 class="font-bold text-2xl text-slate-800 dark:text-slate-100 leading-tight">
             {{ __('Activity Log') }}
         </h2>
-        <p class="text-slate-500 text-sm">Riwayat lengkap aktivitas magang kamu</p>
+        <p class="text-slate-500 dark:text-slate-400 text-sm">Riwayat lengkap aktivitas magang kamu</p>
     </x-slot>
 
     <div class="py-12" x-data="{ activeTab: 'logbook', showModal: false, modalContent: '', modalDate: '', modalTitle: '' }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             {{-- Tabs Navigation --}}
-            <div class="border-b border-slate-200 mb-6">
+            <div class="border-b border-slate-200 dark:border-slate-800 mb-6">
                 <nav class="-mb-px flex space-x-8" aria-label="Tabs">
                     <button @click="activeTab = 'logbook'" 
-                        :class="{ 'border-red-500 text-red-600': activeTab === 'logbook', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': activeTab !== 'logbook' }"
+                        :class="{ 'border-red-500 text-red-600 dark:text-red-400': activeTab === 'logbook', 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700': activeTab !== 'logbook' }"
                         class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
                         Logbook Aktivitas
                     </button>
                     <button @click="activeTab = 'permission'" 
-                        :class="{ 'border-red-500 text-red-600': activeTab === 'permission', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': activeTab !== 'permission' }"
+                        :class="{ 'border-red-500 text-red-600 dark:text-red-400': activeTab === 'permission', 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700': activeTab !== 'permission' }"
                         class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
                         Riwayat Izin
                     </button>
                     <button @click="activeTab = 'attendance'" 
-                        :class="{ 'border-red-500 text-red-600': activeTab === 'attendance', 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300': activeTab !== 'attendance' }"
+                        :class="{ 'border-red-500 text-red-600 dark:text-red-400': activeTab === 'attendance', 'border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:border-slate-300 dark:hover:border-slate-700': activeTab !== 'attendance' }"
                         class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200">
                         Riwayat Absensi
                     </button>
@@ -32,16 +32,16 @@
 
             {{-- Logbook Section --}}
             <div x-show="activeTab === 'logbook'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-slate-100">
+                <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-2xl border border-slate-100 dark:border-slate-800 transition-colors">
                     <div class="p-6">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                             <div>
-                                <h3 class="text-lg font-bold text-slate-800">Semua Aktivitas</h3>
-                                <p class="text-sm text-slate-500 mt-1">Pantau terus perkembangan magangmu</p>
+                                <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Semua Aktivitas</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Pantau terus perkembangan magangmu</p>
                             </div>
                             @if(Auth::user()->internship && Auth::user()->internship->status === 'active')
                                 <div class="flex flex-wrap items-center gap-2 sm:gap-3">
-                                    <a href="{{ route('logbooks.exportPdf') }}" class="inline-flex items-center gap-2 bg-slate-800 text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold hover:bg-slate-900 transition-all shadow-sm">
+                                    <a href="{{ route('logbooks.exportPdf') }}" class="inline-flex items-center gap-2 bg-slate-800 dark:bg-slate-700 text-white px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold hover:bg-slate-900 dark:hover:bg-slate-600 transition-all shadow-sm">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                                         </svg>
@@ -62,59 +62,60 @@
     
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left">
-                                <thead class="text-xs text-slate-500 uppercase bg-slate-50/50 border-b border-slate-100">
+                                <thead class="text-[10px] text-slate-400 dark:text-slate-400 uppercase tracking-widest bg-slate-50/50 dark:bg-slate-950/50 border-y border-slate-100 dark:border-slate-800 transition-colors">
                                     <tr>
-                                        <th class="px-6 py-4 font-semibold">Tanggal</th>
-                                        <th class="px-6 py-4 font-semibold">Judul</th>
-                                        <th class="px-6 py-4 font-semibold">Aktivitas</th>
-                                        <th class="px-6 py-4 font-semibold">Bukti</th>
-                                        <th class="px-6 py-4 font-semibold">Status</th>
-                                        <th class="px-6 py-4 font-semibold">Catatan Mentor</th>
+                                        <th class="px-6 py-5 font-black">Tanggal</th>
+                                        <th class="px-6 py-5 font-black">Judul</th>
+                                        <th class="px-6 py-5 font-black">Aktivitas</th>
+                                        <th class="px-6 py-5 font-black">Bukti</th>
+                                        <th class="px-6 py-5 font-black">Status</th>
+                                        <th class="px-6 py-5 font-black">Catatan Mentor</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100">
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                                     @forelse($logbooks as $logbook)
-                                        <tr class="hover:bg-slate-50/50 transition-colors">
-                                            <td class="px-6 py-4 font-medium text-slate-900">
+                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">
                                                 {{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}
                                             </td>
-                                            <td class="px-6 py-4 font-bold text-slate-800">
+                                            <td class="px-6 py-4 font-bold text-slate-800 dark:text-slate-100">
                                                 {{ $logbook->title ?? '-' }}
                                             </td>
-                                            <td class="px-6 py-4 text-slate-600 max-w-sm">
+                                            <td class="px-6 py-4 text-slate-600 dark:text-slate-300 max-w-sm">
                                                 <div class="line-clamp-2" title="{{ strip_tags($logbook->activity) }}">
                                                     {{ Str::limit(strip_tags($logbook->activity), 80) }}
                                                 </div>
                                                 <button 
                                                     @click="showModal = true; modalContent = {{ json_encode($logbook->activity) }}; modalDate = '{{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}'; modalTitle = '{{ addslashes($logbook->title) }}'"
-                                                    class="text-red-600 hover:text-red-700 text-xs font-medium mt-1 inline-flex items-center gap-1 transition-colors">
+                                                    class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-xs font-medium mt-1 inline-flex items-center gap-1 transition-colors">
                                                     Lihat Selengkapnya
                                                 </button>
                                             </td>
                                             <td class="px-6 py-4">
                                                 @if($logbook->evidence)
-                                                    <a href="{{ Storage::url($logbook->evidence) }}" target="_blank" class="text-red-600 hover:underline">Lihat</a>
+                                                    <a href="{{ Storage::url($logbook->evidence) }}" target="_blank" class="text-red-600 dark:text-red-400 hover:underline">Lihat</a>
                                                 @else
-                                                    <span class="text-slate-400">-</span>
+                                                    <span class="text-slate-400 dark:text-slate-500">-</span>
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4">
-                                                @if($logbook->status == 'approved')
-                                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">Disetujui</span>
-                                                @elseif($logbook->status == 'rejected')
-                                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800 border border-rose-200">Ditolak</span>
-                                                @else
-                                                    <span class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 border border-amber-200">Menunggu</span>
-                                                @endif
+                                                <x-status-badge :status="$logbook->status" />
                                             </td>
-                                            <td class="px-6 py-4 text-slate-500 italic text-xs">
+                                            <td class="px-6 py-4 text-slate-500 dark:text-slate-400 italic text-xs">
                                                 {{ $logbook->mentor_note ?? '-' }}
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
-                                                Belum ada aktivitas yang tercatat.
+                                            <td colspan="6" class="px-6 py-12 text-center">
+                                                <div class="flex flex-col items-center gap-3">
+                                                    <div class="p-3 bg-slate-50 dark:bg-slate-800 rounded-2xl">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-slate-300 dark:text-slate-600">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                                        </svg>
+                                                    </div>
+                                                    <p class="text-slate-500 dark:text-slate-400 font-medium tracking-wide">Belum ada aktivitas yang dicatat.</p>
+                                                </div>
                                             </td>
                                         </tr>
                                     @endforelse
@@ -131,62 +132,62 @@
 
             {{-- Riwayat Izin Section --}}
             <div x-show="activeTab === 'permission'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-slate-100">
+                <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-2xl border border-slate-100 dark:border-slate-800 transition-colors">
                     <div class="p-6">
                         <div class="mb-6">
-                            <h3 class="text-lg font-bold text-slate-800">Riwayat Pengajuan Izin</h3>
-                            <p class="text-sm text-slate-500 mt-1">Daftar izin yang telah Anda ajukan</p>
+                            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Riwayat Pengajuan Izin</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Daftar izin yang telah Anda ajukan</p>
                         </div>
     
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left">
-                                <thead class="text-xs text-slate-500 uppercase bg-slate-50/50 border-b border-slate-100">
+                                <thead class="text-[10px] text-slate-400 dark:text-slate-400 uppercase tracking-widest bg-slate-50/50 dark:bg-slate-950/50 border-y border-slate-100 dark:border-slate-800 transition-colors">
                                     <tr>
-                                        <th class="px-6 py-4 font-semibold">Tanggal</th>
-                                        <th class="px-6 py-4 font-semibold">Jenis Izin</th>
-                                        <th class="px-6 py-4 font-semibold">Waktu</th>
-                                        <th class="px-6 py-4 font-semibold">Alasan</th>
-                                        <th class="px-6 py-4 font-semibold">Status</th>
+                                        <th class="px-6 py-5 font-black">Tanggal</th>
+                                        <th class="px-6 py-5 font-black">Jenis Izin</th>
+                                        <th class="px-6 py-5 font-black">Waktu</th>
+                                        <th class="px-6 py-5 font-black">Alasan</th>
+                                        <th class="px-6 py-5 font-black">Status</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100">
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                                     @forelse($permissions as $permit)
-                                        <tr class="hover:bg-slate-50/50 transition-colors">
-                                            <td class="px-6 py-4 font-medium text-slate-900">
+                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">
                                                 {{ \Carbon\Carbon::parse($permit->date)->format('d M Y') }}
                                             </td>
                                             <td class="px-6 py-4">
                                                 @if($permit->permit_type == 'full')
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">
                                                         Full Day
                                                     </span>
                                                 @elseif($permit->permit_type == 'temporary')
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 border border-purple-200">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800/50">
                                                         Sementara
                                                     </span>
                                                 @else
-                                                    <span class="text-slate-500">-</span>
+                                                    <span class="text-slate-500 dark:text-slate-400">-</span>
                                                 @endif
                                             </td>
-                                            <td class="px-6 py-4 text-slate-600 font-mono text-xs">
+                                            <td class="px-6 py-4 text-slate-600 dark:text-slate-300 font-mono text-xs">
                                                 @if($permit->permit_type == 'temporary' && $permit->permit_start_time)
                                                     {{ \Carbon\Carbon::parse($permit->permit_start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($permit->permit_end_time)->format('H:i') }}
                                                 @else
                                                     -
                                                 @endif
                                             </td>
-                                            <td class="px-6 py-4 text-slate-600 max-w-xs truncate" title="{{ $permit->note }}">
+                                            <td class="px-6 py-4 text-slate-600 dark:text-slate-300 max-w-xs truncate" title="{{ $permit->note }}">
                                                 {{ Str::limit($permit->note, 50) }}
                                             </td>
                                             <td class="px-6 py-4">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
                                                     Tercatat
                                                 </span>
                                             </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                                            <td colspan="5" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
                                                 Belum ada riwayat izin.
                                             </td>
                                         </tr>
@@ -201,35 +202,35 @@
 
             {{-- Riwayat Absensi Section --}}
             <div x-show="activeTab === 'attendance'" x-cloak x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-2xl border border-slate-100">
+                <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-2xl border border-slate-100 dark:border-slate-800 transition-colors">
                     <div class="p-6">
                         <div class="mb-6">
-                            <h3 class="text-lg font-bold text-slate-800">Riwayat Absensi</h3>
-                            <p class="text-sm text-slate-500 mt-1">Catatan kehadiran check-in dan check-out</p>
+                            <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100">Riwayat Absensi</h3>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Catatan kehadiran check-in dan check-out</p>
                         </div>
     
                         <div class="overflow-x-auto">
                             <table class="w-full text-sm text-left">
-                                <thead class="text-xs text-slate-500 uppercase bg-slate-50/50 border-b border-slate-100">
+                                <thead class="text-[10px] text-slate-400 dark:text-slate-400 uppercase tracking-widest bg-slate-50/50 dark:bg-slate-950/50 border-y border-slate-100 dark:border-slate-800 transition-colors">
                                     <tr>
-                                        <th class="px-6 py-4 font-semibold">Tanggal</th>
-                                        <th class="px-6 py-4 font-semibold">Waktu Masuk</th>
-                                        <th class="px-6 py-4 font-semibold">Waktu Keluar</th>
-                                        <th class="px-6 py-4 font-semibold">Lokasi</th>
-                                        <th class="px-6 py-4 font-semibold">Status</th>
-                                        <th class="px-6 py-4 font-semibold">Durasi</th>
+                                        <th class="px-6 py-5 font-black">Tanggal</th>
+                                        <th class="px-6 py-5 font-black">Waktu Masuk</th>
+                                        <th class="px-6 py-5 font-black">Waktu Keluar</th>
+                                        <th class="px-6 py-5 font-black">Lokasi</th>
+                                        <th class="px-6 py-5 font-black">Status</th>
+                                        <th class="px-6 py-5 font-black">Durasi</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100">
+                                <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
                                     @forelse($attendances as $attendance)
-                                        <tr class="hover:bg-slate-50/50 transition-colors">
-                                            <td class="px-6 py-4 font-medium text-slate-900">
+                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                            <td class="px-6 py-4 font-medium text-slate-900 dark:text-slate-100">
                                                 {{ \Carbon\Carbon::parse($attendance->date)->format('d M Y') }}
                                             </td>
-                                            <td class="px-6 py-4 text-slate-600 font-mono text-xs">
+                                            <td class="px-6 py-4 text-slate-600 dark:text-slate-300 font-mono text-xs">
                                                 {{ $attendance->check_in_time ? \Carbon\Carbon::parse($attendance->check_in_time)->format('H:i:s') : '-' }}
                                             </td>
-                                            <td class="px-6 py-4 text-slate-600 font-mono text-xs">
+                                            <td class="px-6 py-4 text-slate-600 dark:text-slate-300 font-mono text-xs">
                                                 {{ $attendance->check_out_time ? \Carbon\Carbon::parse($attendance->check_out_time)->format('H:i:s') : '-' }}
                                             </td>
                                             <td class="px-6 py-4">
@@ -245,7 +246,7 @@
                                                 @endif
                                             </td>
                                             <td class="px-6 py-4">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
                                                     Hadir
                                                 </span>
                                             </td>
@@ -264,7 +265,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                                            <td colspan="6" class="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
                                                 Belum ada riwayat absensi.
                                             </td>
                                         </tr>
@@ -303,20 +304,20 @@
                         x-transition:leave="ease-in duration-200"
                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl w-full">
+                        class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-900 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl w-full border border-slate-200 dark:border-slate-800">
                         
                         <!-- Header -->
-                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-slate-100">
+                        <div class="bg-white dark:bg-slate-900 px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-slate-100 dark:border-slate-800">
                             <div class="sm:flex sm:items-start justify-between">
                                 <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
                                     <div class="flex justify-between items-center">
                                         <div>
-                                            <h3 class="text-lg font-bold leading-6 text-slate-900" id="modal-title" x-text="modalTitle || 'Detail Aktivitas'">
+                                            <h3 class="text-lg font-bold leading-6 text-slate-900 dark:text-slate-100" id="modal-title" x-text="modalTitle || 'Detail Aktivitas'">
                                                 Detail Aktivitas
                                             </h3>
-                                            <div class="mt-1 text-sm text-slate-500" x-text="modalDate"></div>
+                                            <div class="mt-1 text-sm text-slate-500 dark:text-slate-400" x-text="modalDate"></div>
                                         </div>
-                                        <button @click="showModal = false" type="button" class="text-slate-400 hover:text-slate-500 focus:outline-none transition-colors">
+                                        <button @click="showModal = false" type="button" class="text-slate-400 hover:text-red-500 focus:outline-none transition-colors">
                                             <span class="sr-only">Close</span>
                                             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -328,14 +329,14 @@
                         </div>
 
                         <!-- Content -->
-                        <div class="bg-white px-4 py-6 sm:p-6 max-h-[60vh] overflow-y-auto">
-                            <div class="prose prose-sm max-w-none text-slate-700" x-html="modalContent"></div>
+                        <div class="bg-white dark:bg-slate-900 px-4 py-6 sm:p-6 max-h-[60vh] overflow-y-auto">
+                            <div class="prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300" x-html="modalContent"></div>
                         </div>
                         
                         <!-- Footer -->
-                        <div class="bg-slate-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                        <div class="bg-slate-50 dark:bg-slate-800/50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 border-t border-slate-100 dark:border-slate-800">
                             <button type="button" 
-                                class="inline-flex w-full justify-center rounded-xl bg-slate-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800 sm:ml-3 sm:w-auto transition-colors"
+                                class="inline-flex w-full justify-center rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2.5 text-sm font-bold shadow-sm hover:bg-slate-800 dark:hover:bg-slate-100 sm:ml-3 sm:w-auto transition-all"
                                 @click="showModal = false">
                                 Tutup
                             </button>

@@ -32,20 +32,20 @@
                         <div class="flex items-center gap-2">
                              @if(!$isExpired)
                                 @if($diff->y > 0)
-                                    <div class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-xl font-bold text-xl shadow-sm border border-emerald-200">
+                                    <div class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 px-3 py-1 rounded-xl font-bold text-xl shadow-sm border border-emerald-200 dark:border-emerald-500/30">
                                         {{ $diff->y }} <span class="text-sm font-medium">th</span>
                                     </div>
                                 @endif
                                 @if($diff->m > 0 || $diff->y > 0)
-                                    <div class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-xl font-bold text-xl shadow-sm border border-emerald-200">
+                                    <div class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 px-3 py-1 rounded-xl font-bold text-xl shadow-sm border border-emerald-200 dark:border-emerald-500/30">
                                         {{ $diff->m }} <span class="text-sm font-medium">bl</span>
                                     </div>
                                 @endif
-                                <div class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-xl font-bold text-xl shadow-sm border border-emerald-200">
+                                <div class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 px-3 py-1 rounded-xl font-bold text-xl shadow-sm border border-emerald-200 dark:border-emerald-500/30">
                                     {{ $diff->d }} <span class="text-sm font-medium">hr</span>
                                 </div>
                             @else
-                                 <div class="bg-red-100 text-red-800 px-4 py-1 rounded-xl font-bold text-lg shadow-sm border border-red-200">
+                                 <div class="bg-red-100 dark:bg-red-500/20 text-red-800 dark:text-red-300 px-4 py-1 rounded-xl font-bold text-lg shadow-sm border border-red-200 dark:border-red-500/30">
                                     Masa Magang Berakhir
                                 </div>
                             @endif
@@ -55,7 +55,7 @@
                     <div class="flex flex-col items-start md:items-end">
                         <p class="text-slate-900 dark:text-slate-300 font-semibold text-sm mb-1 uppercase tracking-widest text-[10px]">Periode Magang</p>
                         <div class="flex flex-col items-start md:items-end gap-1">
-                            <p class="text-slate-500 text-xs font-medium pr-1">
+                            <p class="text-slate-500 dark:text-slate-400 text-xs font-medium pr-1">
                                 {{ \Carbon\Carbon::parse($internship->start_date)->translatedFormat('M Y') }} - {{ \Carbon\Carbon::parse($internship->end_date)->translatedFormat('M Y') }}
                             </p>
                         </div>
@@ -105,27 +105,27 @@
 
             {{-- Graduation Showcase / Banner Kelulusan --}}
             @if($internship->status === 'finished')
-                <div class="bg-gradient-to-br from-red-600 via-red-500 to-rose-500 rounded-3xl shadow-2xl overflow-hidden relative">
+                <div class="bg-gradient-to-br from-red-600 via-red-500 to-rose-500 dark:from-red-700 dark:via-red-600 dark:to-rose-600 rounded-3xl shadow-2xl dark:shadow-red-900/40 overflow-hidden relative group">
                     <!-- Decorative patterns -->
-                    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-white/10 rounded-full blur-3xl"></div>
-                    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+                    <div class="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all duration-700"></div>
+                    <div class="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-all duration-700"></div>
                     
                     <div class="px-8 py-10 md:px-12 md:py-16 relative z-10 text-center md:text-left flex flex-col md:flex-row items-center gap-8">
                         <div class="shrink-0">
-                            <div class="w-24 h-24 md:w-32 md:h-32 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center border-4 border-white/30 shadow-xl animate-bounce">
+                            <div class="w-24 h-24 md:w-32 md:h-32 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border-4 border-white/30 shadow-xl animate-bounce">
                                 <span class="text-5xl md:text-6xl text-white">🎓</span>
                             </div>
                         </div>
                         
                         <div class="flex-1 text-white">
-                            <h3 class="text-3xl md:text-5xl font-black mb-4 tracking-tight">Selamat! Magang Selesai.</h3>
-                            <p class="text-lg md:text-xl text-red-50 opacity-90 leading-relaxed max-w-2xl">
+                            <h3 class="text-3xl md:text-5xl font-black mb-4 tracking-tight drop-shadow-lg">Selamat! Magang Selesai.</h3>
+                            <p class="text-lg md:text-xl text-red-50 opacity-90 leading-relaxed max-w-2xl font-medium">
                                 Anda telah resmi menyelesaikan program magang di <span class="font-bold underline decoration-red-200">Telkom Witel Semarang Jateng Utara</span>. Terima kasih atas dedikasi dan kontribusi luar biasa Anda selama program ini.
                             </p>
                             
                             <div class="mt-8 flex flex-wrap justify-center md:justify-start gap-4">
                                 {{-- 1. Rekap Logbook --}}
-                                <a href="{{ route('logbooks.exportExcel') }}" class="inline-flex items-center gap-2 bg-white text-red-600 px-6 py-3 rounded-2xl font-bold hover:bg-red-50 transition-all shadow-lg hover:shadow-white/20">
+                                <a href="{{ route('logbooks.exportExcel') }}" class="inline-flex items-center gap-2 bg-white text-red-600 px-6 py-3 rounded-2xl font-bold hover:bg-red-50 transition-all shadow-lg hover:shadow-white/20 active:scale-95">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125h-7.5a1.125 1.125 0 0 1-1.125-1.125m0 0h7.5m-7.5 0V5.625m0 12.75v1.5c0 .621-.504 1.125-1.125 1.125M9 5.625v9.75m6-9.75v9.75M3.375 5.625h17.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125H3.375a1.125 1.125 0 0 1-1.125-1.125V6.75c0-.621.504-1.125 1.125-1.125Z" />
                                     </svg>
@@ -137,11 +137,11 @@
                                     $transcriptDoc = $internship->documents->where('type', 'transcript')->first();
                                 @endphp
                                 @if($transcriptDoc)
-                                    <a href="{{ Storage::url($transcriptDoc->file_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-red-700/30 backdrop-blur-md text-white border border-white/20 px-6 py-3 rounded-2xl font-bold hover:bg-red-700/50 transition-all shadow-lg">
+                                    <a href="{{ Storage::url($transcriptDoc->file_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-black/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-2xl font-bold hover:bg-black/30 transition-all shadow-lg active:scale-95">
                                         📄 Transkrip Nilai
                                     </a>
                                 @else
-                                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white/70 border border-white/10 px-6 py-3 rounded-2xl font-medium italic text-sm">
+                                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white/80 border border-white/20 px-6 py-3 rounded-2xl font-bold italic text-sm">
                                         ⌛ Transkrip sedang diproses...
                                     </div>
                                 @endif
@@ -153,24 +153,24 @@
                                 @endphp
                                 
                                 @if($certDoc)
-                                    <a href="{{ Storage::url($certDoc->file_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-red-700/30 backdrop-blur-md text-white border border-white/20 px-6 py-3 rounded-2xl font-bold hover:bg-red-700/50 transition-all shadow-lg">
+                                    <a href="{{ Storage::url($certDoc->file_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-black/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-2xl font-bold hover:bg-black/30 transition-all shadow-lg active:scale-95">
                                         🎖️ Sertifikat Magang
                                     </a>
                                 @endif
 
                                 @if($pklDoc)
-                                    <a href="{{ Storage::url($pklDoc->file_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-red-700/30 backdrop-blur-md text-white border border-white/20 px-6 py-3 rounded-2xl font-bold hover:bg-red-700/50 transition-all shadow-lg">
+                                    <a href="{{ Storage::url($pklDoc->file_path) }}" target="_blank" class="inline-flex items-center gap-2 bg-black/20 backdrop-blur-md text-white border border-white/30 px-6 py-3 rounded-2xl font-bold hover:bg-black/30 transition-all shadow-lg active:scale-95">
                                         📋 Penilaian PKL
                                     </a>
                                 @endif
 
                                 {{-- 4. Laporan Akhir --}}
-                                <button onclick="openFinalReportModal()" class="inline-flex items-center gap-2 bg-purple-700/30 backdrop-blur-md text-white border border-purple-400/30 px-6 py-3 rounded-2xl font-bold hover:bg-purple-700/50 transition-all shadow-lg">
+                                <button onclick="openFinalReportModal()" class="inline-flex items-center gap-2 bg-indigo-600/40 backdrop-blur-md text-white border border-indigo-400/40 px-6 py-3 rounded-2xl font-bold hover:bg-indigo-600/60 transition-all shadow-lg active:scale-95">
                                     📁 Laporan Akhir
                                 </button>
 
                                 @if(!$certDoc && !$pklDoc)
-                                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white/70 border border-white/10 px-6 py-3 rounded-2xl font-medium italic text-sm">
+                                    <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md text-white/80 border border-white/20 px-6 py-3 rounded-2xl font-bold italic text-sm">
                                         ⌛ Dokumen kelulusan sedang diproses...
                                     </div>
                                 @endif
@@ -254,10 +254,10 @@
                 <div class="space-y-6">
                     {{-- Absensi Card --}}
                     @if($internship->status !== 'finished')
-                    <div class="bg-gradient-to-br from-indigo-900 to-slate-900 rounded-2xl shadow-xl overflow-hidden text-white relative">
+                    <div class="bg-gradient-to-br from-indigo-900 to-slate-900 dark:from-slate-900 dark:to-indigo-950 rounded-2xl shadow-xl dark:shadow-indigo-950/20 overflow-hidden text-white relative transition-all duration-300 border border-transparent dark:border-slate-800">
                         <!-- Decorative bg -->
                         <div class="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-white/5 rounded-full blur-3xl"></div>
-                        <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-red-500/20 rounded-full blur-2xl"></div>
+                        <div class="absolute bottom-0 left-0 -ml-16 -mb-16 w-48 h-48 bg-red-500/10 rounded-full blur-2xl"></div>
 
                         <div class="p-6 relative z-10">
                             <div class="flex justify-between items-start mb-6">

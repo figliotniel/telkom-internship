@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="sticky top-0 inset-x-0 z-[999] bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-b border-gray-100 dark:border-slate-800 shadow-[0_4px_20px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.2)] transition-colors duration-300">
+<nav x-data="{ open: false }" class="sticky top-0 inset-x-0 z-[999] bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-gray-100 dark:border-slate-800 shadow-[0_4px_20px_rgb(0,0,0,0.03)] dark:shadow-[0_8px_32px_rgb(0,0,0,0.4)] transition-all duration-500">
     {{-- Full Width Navbar Container --}}
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div class="flex justify-between items-center h-20 transition-all duration-300">
@@ -6,7 +6,8 @@
             {{-- Left: Logo --}}
             <div class="shrink-0 flex items-center gap-4">
                 <a href="{{ auth()->user()->role === 'mentor' ? route('mentor.dashboard') : route('dashboard') }}" class="flex items-center gap-3 group">
-                   <img src="{{ asset('images/logo-telkom.png') }}" class="h-20 w-auto dark:brightness-110" alt="Telkom Indonesia">
+                   <img src="{{ asset('images/logo-telkom.png') }}" class="h-20 w-auto dark:hidden" alt="Telkom Indonesia">
+                   <img src="{{ asset('images/logo-telkom-white.png') }}" class="h-20 w-auto hidden dark:block" alt="Telkom Indonesia logo">
                 </a>
             </div>
 
@@ -61,7 +62,7 @@
 
                 @foreach($links as $link)
                     <a href="{{ $link['route'] === '#' ? '#' : route($link['route']) }}" 
-                       class="px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 {{ $link['active'] ? 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10 shadow-sm border border-red-100 dark:border-red-500/20' : 'text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                       class="px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 group {{ $link['active'] ? 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10 shadow-sm border border-red-100 dark:border-red-500/20 ring-1 ring-red-500/50 dark:ring-red-400/30' : 'text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                         {{ $link['name'] }}
                         @if(isset($link['badge']) && $link['badge'])
                             <span class="bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center shadow-sm shadow-red-500/30">
@@ -138,7 +139,7 @@
             {{-- Mobile Menu Button --}}
             <div class="-mr-2 flex items-center sm:hidden gap-2">
                 {{-- Theme Toggle Mobile --}}
-                <button @click="toggleTheme()" class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 transition-all">
+                <button @click="toggleTheme()" class="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 active:scale-95 transition-all">
                     <template x-if="!darkMode">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 0 0 9.002-5.998Z" />
@@ -162,7 +163,14 @@
     </div>
 
     {{-- Mobile Menu Dropdown --}}
-    <div :class="{'block': open, 'hidden': ! open}" class="hidden sm:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-slate-800 shadow-xl rounded-b-[2rem] mt-2 mx-4 overflow-hidden border border-white/20 dark:border-slate-700/30">
+    <div x-show="open"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0 -translate-y-4"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100 translate-y-0"
+         x-transition:leave-end="opacity-0 -translate-y-4"
+         class="sm:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-gray-100 dark:border-slate-800 shadow-2xl rounded-b-[2rem] mt-2 mx-4 overflow-hidden border border-white/20 dark:border-slate-700/30">
         <div class="pt-2 pb-3 space-y-1 px-4">
              @foreach($links as $link)
                 <a href="{{ $link['route'] === '#' ? '#' : route($link['route']) }}" 
