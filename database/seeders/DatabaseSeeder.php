@@ -60,7 +60,9 @@ class DatabaseSeeder extends Seeder
 
         // 3. Buat 9 Akun Mahasiswa/Intern (3 per Mentor)
         for ($i = 1; $i <= 9; $i++) {
-            $intern = User::updateOrCreate(['email' => "intern{$i}@gmail.com"], [
+            $internEmail = ($i === 1) ? 'ashclapping@gmail.com' : "intern{$i}@gmail.com";
+
+            $intern = User::updateOrCreate(['email' => $internEmail], [
                 'name' => "Intern {$i}",
                 'password' => Hash::make('password'),
                 'role' => 'student',
