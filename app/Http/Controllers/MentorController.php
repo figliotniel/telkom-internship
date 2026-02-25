@@ -43,12 +43,21 @@ class MentorController extends Controller
 
         // Calculate counts for sub-filters (Active Only)
         $activeMahasiswaCount = (clone $query)->where('status', 'active')->whereHas('student.studentProfile', function ($q) {
-            $q->where('education_level', '!=', 'SMK');
-        })->count();
+            $q->where(function ($subQ) {
+                    $subQ->where('student_type', 'mahasiswa')
+                        ->orWhere('education_level', '!=', 'SMK')
+                        ->orWhereNull('education_level');
+                }
+                );
+            })->count();
 
         $activeSmkCount = (clone $query)->where('status', 'active')->whereHas('student.studentProfile', function ($q) {
-            $q->where('education_level', 'SMK');
-        })->count();
+            $q->where(function ($subQ) {
+                    $subQ->where('student_type', 'siswa')
+                        ->orWhere('education_level', 'SMK');
+                }
+                );
+            })->count();
 
         // Filter based on status
         $query->where('status', $status);
@@ -57,13 +66,22 @@ class MentorController extends Controller
         if ($status === 'active' && $type !== 'all') {
             if ($type === 'smk') {
                 $query->whereHas('student.studentProfile', function ($q) {
-                    $q->where('education_level', 'SMK');
-                });
+                    $q->where(function ($subQ) {
+                            $subQ->where('student_type', 'siswa')
+                                ->orWhere('education_level', 'SMK');
+                        }
+                        );
+                    });
             }
             elseif ($type === 'mahasiswa') {
                 $query->whereHas('student.studentProfile', function ($q) {
-                    $q->where('education_level', '!=', 'SMK');
-                });
+                    $q->where(function ($subQ) {
+                            $subQ->where('student_type', 'mahasiswa')
+                                ->orWhere('education_level', '!=', 'SMK')
+                                ->orWhereNull('education_level');
+                        }
+                        );
+                    });
             }
         }
 

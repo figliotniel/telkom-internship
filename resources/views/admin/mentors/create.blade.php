@@ -1,10 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex flex-col gap-1">
-            <h2 class="font-bold text-2xl text-slate-800 leading-tight">
+            <h2 class="font-bold text-2xl text-slate-800 dark:text-slate-200 leading-tight">
                 {{ __('Tambah Mentor Baru') }}
             </h2>
-            <p class="text-slate-500 text-sm">Masukan data mentor baru untuk pembimbingan magang</p>
+            <p class="text-slate-500 dark:text-slate-400 text-sm">Masukan data mentor baru untuk pembimbingan magang</p>
         </div>
     </x-slot>
 

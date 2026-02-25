@@ -10,9 +10,9 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-xl shadow-slate-200/50 dark:shadow-none sm:rounded-[2.5rem] border border-slate-100 dark:border-slate-800 transition-colors duration-300">
                 <div class="px-10 pt-10 pb-2">
-                    {{-- Tabs Navigation --}}
-                    <div class="border-b border-slate-200 dark:border-slate-800 transition-colors">
-                        <nav class="-mb-px flex space-x-10" aria-label="Tabs">
+                    {{-- Tabs Navigation & Filters --}}
+                    <div class="border-b border-slate-200 dark:border-slate-800 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-colors">
+                        <nav class="-mb-px flex space-x-10 overflow-x-auto w-full md:w-auto" aria-label="Tabs">
                             {{-- Active Tab --}}
                             <a href="{{ route('mentor.students.index', ['status' => 'active']) }}" 
                                class="{{ $status === 'active' ? 'border-red-500 text-red-600 dark:text-red-400' : 'border-transparent text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:border-slate-300 dark:hover:border-slate-700' }} 
@@ -33,25 +33,34 @@
                                 </span>
                             </a>
                         </nav>
-                    </div>
 
-                    {{-- Sub Filter (Only for Active Tab) --}}
-                    @if($status === 'active')
-                        <div class="mt-6 flex flex-wrap gap-2.5">
-                             <a href="{{ route('mentor.students.index', ['status' => 'active', 'type' => 'all']) }}" 
-                               class="px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all shadow-sm {{ $type === 'all' ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white shadow-slate-900/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                                Semua
-                             </a>
-                             <a href="{{ route('mentor.students.index', ['status' => 'active', 'type' => 'mahasiswa']) }}" 
-                               class="px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all shadow-sm {{ $type === 'mahasiswa' ? 'bg-red-600 text-white border-red-600 shadow-red-600/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                                Mahasiswa ({{ $activeMahasiswaCount }})
-                             </a>
-                             <a href="{{ route('mentor.students.index', ['status' => 'active', 'type' => 'smk']) }}" 
-                               class="px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest border transition-all shadow-sm {{ $type === 'smk' ? 'bg-red-600 text-white border-red-600 shadow-red-600/20' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
-                                SMK ({{ $activeSmkCount }})
-                             </a>
-                        </div>
-                    @endif
+                        {{-- Sub Filter (Only for Active Tab) --}}
+                        @if($status === 'active')
+                            <div class="inline-flex bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-1" role="group">
+                                 <a href="{{ route('mentor.students.index', ['status' => 'active', 'type' => 'all']) }}" 
+                                    class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all 
+                                    {{ $type === 'all' 
+                                       ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 shadow-sm' 
+                                       : 'text-gray-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
+                                    Semua
+                                 </a>
+                                 <a href="{{ route('mentor.students.index', ['status' => 'active', 'type' => 'mahasiswa']) }}" 
+                                    class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all 
+                                    {{ $type === 'mahasiswa' 
+                                       ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 shadow-sm' 
+                                       : 'text-gray-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
+                                    Mahasiswa ({{ $activeMahasiswaCount }})
+                                 </a>
+                                 <a href="{{ route('mentor.students.index', ['status' => 'active', 'type' => 'smk']) }}" 
+                                    class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all 
+                                    {{ $type === 'smk' 
+                                       ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 shadow-sm' 
+                                       : 'text-gray-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700' }}">
+                                    SMK ({{ $activeSmkCount }})
+                                 </a>
+                            </div>
+                        @endif
+                    </div>
                 </div>
 
                 <div class="p-10">

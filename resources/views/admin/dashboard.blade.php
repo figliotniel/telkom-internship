@@ -9,15 +9,7 @@
                     <p class="text-gray-500 dark:text-slate-400 mt-1">Welcome back, <span class="font-bold text-red-600 dark:text-red-400">{{ Auth::user()->name }}</span>. Here's your daily overview.</p>
                 </div>
                 
-                <div class="flex gap-3">
-                     <a href="{{ route('admin.users.index') }}" 
-                        class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        Manage Users
-                    </a>
-                </div>
+                
             </div>
 
             {{-- Stats Grid (Refined & Clean) --}}
@@ -76,7 +68,7 @@
                             <span class="text-xs font-medium text-red-100 opacity-60 italic tracking-wide">Tidak Ada Penambahan</span>
                         @endif
                     </div>
-                     <a href="#" class="absolute inset-0 z-10"></a>
+                     <a href="{{ route('admin.internships.index', ['status' => 'active']) }}" class="absolute inset-0 z-10"></a>
                 </div>
 
                 {{-- Card 3: Mentor --}}

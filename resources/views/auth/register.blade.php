@@ -97,34 +97,51 @@
 
                         <div>
                             <x-input-label for="email" :value="__('Alamat Email')" />
-                            <div class="relative">
-                                <x-text-input id="email" class="block mt-1 w-full bg-gray-50 focus:bg-white transition" 
-                                    x-bind:class="{'border-red-500 ring-red-500 focus:border-red-500 focus:ring-red-500': errors.email || emailAlreadyExists, 'border-green-500 ring-green-500': emailValidated && !emailAlreadyExists}" 
-                                    type="email" name="email" :value="old('email')" required placeholder="" 
-                                    @input="errors.email = false; emailAlreadyExists = false; emailValidated = false" 
-                                    @blur="checkEmailAvailability()" />
+                            <div class="relative mt-1">
+                                <x-text-input id="email" class="block w-full bg-gray-50 focus:bg-white transition pr-10" 
+                                    x-bind:class="{'border-red-500 ring-red-500 focus:border-red-500 focus:ring-red-500': errors.email || emailAlreadyExists, 'border-emerald-500 ring-emerald-500 focus:border-emerald-500 focus:ring-emerald-500': emailValidated && !emailAlreadyExists && email.length > 0}" 
+                                    type="email" name="email" required placeholder="contoh@email.com" 
+                                    x-model.debounce.500ms="email"
+                                />
                                 
-                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                     <template x-if="isCheckingEmail">
-                                        <svg class="animate-spin h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
+                                        <div>
+                                            <svg class="animate-spin h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                        </div>
                                     </template>
                                     <template x-if="emailAlreadyExists">
-                                        <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                                        </svg>
+                                        <div class="bg-red-100 rounded-full p-0.5">
+                                            <svg class="h-4 w-4 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </div>
                                     </template>
-                                    <template x-if="emailValidated && !emailAlreadyExists">
-                                        <svg class="h-5 w-5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                                        </svg>
+                                    <template x-if="emailValidated && !emailAlreadyExists && email.length > 0">
+                                        <div class="bg-emerald-100 rounded-full p-0.5">
+                                            <svg class="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </div>
                                     </template>
                                 </div>
                             </div>
-                            <p x-show="emailAlreadyExists" class="text-xs text-red-600 mt-1 font-semibold" x-transition>Email ini sudah terdaftar. Silakan gunakan email lain.</p>
-                            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                            
+                            <!-- Email Status Messages -->
+                            <div class="min-h-[20px] mt-1">
+                                <p x-show="emailAlreadyExists" x-transition.opacity duration.200ms class="text-xs text-red-600 font-medium flex items-center">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                                    Email ini sudah terdaftar.
+                                </p>
+                                <p x-show="emailValidated && !emailAlreadyExists && email.length > 0" x-transition.opacity duration.200ms class="text-xs text-emerald-600 font-medium flex items-center">
+                                    <svg class="w-3.5 h-3.5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    Email tersedia.
+                                </p>
+                                <x-input-error :messages="$errors->get('email')" />
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
@@ -475,6 +492,7 @@
                 isCheckingEmail: false,
                 emailValidated: false,
                 emailAlreadyExists: false,
+                email: '{{ old('email') }}',
                 
                 get durationText() {
                     if (!this.startDate || !this.endDate) return '';
@@ -522,6 +540,18 @@
                             this.educationLevel = '';
                         }
                     });
+
+                    this.$watch('email', value => {
+                        // Reset states when typing
+                        this.errors.email = false;
+                        this.emailAlreadyExists = false;
+                        this.emailValidated = false;
+
+                        // Only check if valid email format
+                        if (value && value.includes('@') && value.includes('.')) {
+                            this.checkEmailAvailability();
+                        }
+                    });
                 },
 
                 showError(message) {
@@ -533,8 +563,7 @@
                 },
 
                 async checkEmailAvailability() {
-                    const emailInput = document.getElementById('email');
-                    const email = emailInput.value;
+                    const email = this.email;
                     
                     if (!email || !email.includes('@')) return;
 
@@ -555,9 +584,14 @@
                         
                         if (data.exists) {
                             this.emailAlreadyExists = true;
+                            this.emailValidated = false;
                             this.errors.email = true;
-                            this.showError(data.message);
+                            // Optionally removing the toast error on every keystroke because it's annoying, 
+                            // we rely on the inline red error and red border instead.
+                            // this.showError(data.message); 
                         } else {
+                            this.emailAlreadyExists = false;
+                            this.errors.email = false;
                             this.emailValidated = true;
                         }
                     } catch (error) {
