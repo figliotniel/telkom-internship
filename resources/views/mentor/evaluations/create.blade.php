@@ -12,7 +12,7 @@
                 </h2>
                 <p class="text-slate-500 dark:text-slate-500 text-[10px] font-black uppercase tracking-widest mt-1 transition-colors">Berikan penilaian akhir untuk mahasiswa</p>
             </div>
-             <a href="{{ route('mentor.students.show', $internship->id) }}" class="inline-flex items-center px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl font-black text-[10px] text-slate-600 dark:text-slate-400 uppercase tracking-widest shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-red-600 dark:hover:text-red-400 hover:border-red-100 dark:hover:border-red-500/20 active:scale-95 transition-all">
+             <a href="{{ route('mentor.students.show', $internship->id) }}" class="inline-flex items-center px-5 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-red-500/30 hover:shadow-red-500/50 hover:-translate-y-0.5 active:translate-y-0 active:shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-25 transition-all duration-200">
                 &larr; Kembali
             </a>
         </div>
