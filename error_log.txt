@@ -1,0 +1,1 @@
+SQLSTATE[HY000]: General error: 1 no such column: pakta_integritas_file (Connection: sqlite, Database: C:\Users\Figlio Otniel\telkom-internship\database\database.sqlite, SQL: update "internships" set "status" = onboarding, "pakta_integritas_file" = ?, "updated_at" = 2026-02-25 13:57:55 where "id" = 20)
