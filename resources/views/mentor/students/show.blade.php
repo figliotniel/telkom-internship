@@ -18,8 +18,8 @@
                 </h2>
                 <p class="text-slate-500 dark:text-slate-400 text-sm transition-colors">Lihat profil dan rekap aktivitas intern</p>
             </div>
-             <a href="{{ route('mentor.students.index') }}" class="inline-flex items-center px-6 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl font-black text-[10px] text-slate-600 dark:text-slate-400 uppercase tracking-widest shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-red-600 dark:hover:text-red-400 hover:border-red-100 dark:hover:border-red-500/20 active:scale-95 transition-all">
-                &larr; Kembali
+             <a href="{{ route('mentor.students.index') }}" class="inline-flex items-center px-6 py-2.5 bg-red-600 border border-transparent rounded-2xl font-black text-[10px] text-white uppercase tracking-widest shadow-sm hover:shadow-red-500/20 hover:bg-red-700 active:bg-red-800 active:scale-95 transition-all">
+                ← Kembali
             </a>
         </div>
     </x-slot>
