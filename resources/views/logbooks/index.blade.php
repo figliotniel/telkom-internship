@@ -69,7 +69,6 @@
                                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Aktivitas</th>
                                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Bukti</th>
                                         <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Status</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Catatan Mentor</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800 transition-colors">
@@ -101,13 +100,10 @@
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
                                                 <x-status-badge :status="$logbook->status" />
                                             </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors italic">
-                                                {{ $logbook->mentor_note ?? '-' }}
-                                            </td>
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-slate-400 min-h-[160px]">
+                                            <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-slate-400 min-h-[160px]">
                                                 <div class="flex flex-col items-center justify-center h-full gap-2">
                                                     <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-2 transition-colors shadow-inner">
                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-slate-300 dark:text-slate-600 transition-colors">

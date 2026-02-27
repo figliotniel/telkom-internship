@@ -301,9 +301,13 @@
                                             </div>
                                         @endif
                                         
-                                        <div class="pt-2">
-                                            <button onclick="openPermissionModal()" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
-                                                Tidak masuk kerja? Ajukan Izin
+                                        <div class="pt-2 flex items-center justify-center gap-4">
+                                            <button type="button" onclick="openPermissionModal(false, 'temporary')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
+                                                Izin Sementara
+                                            </button>
+                                            <span class="text-indigo-500/50">•</span>
+                                            <button type="button" onclick="openFullDayPermissionModal()" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
+                                                Izin Full Day
                                             </button>
                                         </div>
                                     </div>
@@ -480,6 +484,9 @@
     {{-- 1. Permission Modal --}}
     <x-permission-modal />
 
+    {{-- 1b. Full Day Permission Modal --}}
+    <x-full-day-permission-modal />
+
     {{-- 2. Final Report Modal --}}
     <div id="finalReportModal" class="hidden fixed inset-0 z-[1000] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -507,7 +514,7 @@
     {{-- Scripts --}}
     <script>
     // Modal Functions
-    function openPermissionModal(isCheckedIn = false) { 
+    function openPermissionModal(isCheckedIn = false, defaultType = 'temporary') { 
         document.getElementById('permissionModal').classList.remove('hidden'); 
 
         const typeSelect = document.getElementById('permit_type');
@@ -518,10 +525,8 @@
         const dateInput = document.getElementById('permission_date');
         const hiddenDateInput = document.getElementById('hidden_date_input');
 
-        // Radio Buttons
+        // Radio Button
         const tempRadio = document.querySelector('input[name="permit_type"][value="temporary"]');
-        const fullRadio = document.querySelector('input[name="permit_type"][value="full"]');
-        const fullLabel = document.getElementById('full_permit_label');
 
         if (isCheckedIn) {
             // 1. Show Badge, Hide Input
@@ -534,12 +539,7 @@
             hiddenDateInput.disabled = false;
 
             // 2. Lock Permit Type to 'temporary'
-            tempRadio.checked = true;
-            fullRadio.disabled = true;
-            
-            // Visual disable for Label/Card
-            fullLabel.classList.add('opacity-50', 'cursor-not-allowed');
-            fullLabel.classList.remove('cursor-pointer');
+            if(tempRadio) tempRadio.checked = true;
         } else {
             // 1. Show Input, Hide Badge
             badgeContainer.classList.add('hidden');
@@ -550,15 +550,28 @@
             dateInput.disabled = false; 
             hiddenDateInput.disabled = true;
 
-             // 2. Unlock Permit Type
-             fullRadio.disabled = false;
-             
-             // Restore Visual
-             fullLabel.classList.remove('opacity-50', 'cursor-not-allowed');
-             fullLabel.classList.add('cursor-pointer');
+            // 2. Default to temporary for this modal
+            if(tempRadio) tempRadio.checked = true;
         }
 
         toggleAttachment(); // Ensure correct initial state
+    }
+
+    function openFullDayPermissionModal() {
+        alert("Fungsi openFullDayPermissionModal terpanggil!");
+        try {
+            var modal = document.getElementById('fullDayPermissionModal');
+            if (modal) {
+                alert("Elemen modal ditemukan! Menghapus class 'hidden'...");
+                modal.classList.remove('hidden');
+                alert("Class hidden telah dihapus. Apakah modal terlihat sekarang?");
+            } else {
+                alert("ERROR: Elemen dengan id 'fullDayPermissionModal' TIDAK DITEMUKAN di DOM!");
+            }
+        } catch(e) {
+            console.error("Error opening Full Day Modal:", e);
+            alert("Terjadi kesalahan saat membuka form izin. " + e.message);
+        }
     }
 
     function openFinalReportModal() { document.getElementById('finalReportModal').classList.remove('hidden'); }
@@ -736,6 +749,50 @@
             time_24hr: true,
             disableMobile: true,
             allowInput: true
+        });
+
+        // Inline Range Calendar for Full Day Permission Modal
+        const msPerDay = 1000 * 60 * 60 * 24;
+        flatpickr("#inline_calendar", {
+            mode: "range",
+            inline: true,
+            minDate: "today",
+            locale: "id",
+            dateFormat: "Y-m-d",
+            showMonths: 1,
+            onChange: function(selectedDates, dateStr, instance) {
+                const startDateEl = document.getElementById('display_start_date');
+                const endDateEl = document.getElementById('display_end_date');
+                const durationEl = document.getElementById('display_duration');
+                const hiddenRangeEl = document.getElementById('full_day_date_range');
+
+                if (selectedDates.length === 0) {
+                    startDateEl.innerText = "-";
+                    endDateEl.innerText = "-";
+                    durationEl.innerText = "0";
+                    hiddenRangeEl.value = "";
+                } else if (selectedDates.length === 1) {
+                    const formatted = instance.formatDate(selectedDates[0], "d F Y");
+                    startDateEl.innerText = formatted;
+                    endDateEl.innerText = formatted; // end date is same day initially
+                    durationEl.innerText = "1";
+                    
+                    // The hidden input should ideally have the range even if it's 1 day
+                    hiddenRangeEl.value = instance.formatDate(selectedDates[0], "Y-m-d"); 
+                } else if (selectedDates.length === 2) {
+                    const d1 = selectedDates[0];
+                    const d2 = selectedDates[1];
+                    startDateEl.innerText = instance.formatDate(d1, "d F Y");
+                    endDateEl.innerText = instance.formatDate(d2, "d F Y");
+                    
+                    // Inclusive duration calculation
+                    const diffTime = Math.abs(d2 - d1);
+                    const diffDays = Math.ceil(diffTime / msPerDay) + 1; 
+                    durationEl.innerText = diffDays;
+                    
+                    hiddenRangeEl.value = dateStr; // e.g., "2026-02-16 to 2026-02-20"
+                }
+            }
         });
     });
     </script>

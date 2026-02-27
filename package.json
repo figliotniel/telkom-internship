@@ -20,6 +20,7 @@
     },
     "dependencies": {
         "@alpinejs/intersect": "^3.15.6",
+        "@hotwired/turbo": "^8.0.23",
         "aos": "^2.3.4",
         "sweetalert2": "^11.26.17"
     }

@@ -63,7 +63,7 @@
                     {{-- 2. Permit Type --}}
                     <div>
                         <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3 ml-1">Pilih Jenis Izin</label>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 gap-4">
                             <!-- Temporary Permit Card -->
                             <label class="cursor-pointer relative group">
                                 <input type="radio" name="permit_type" value="temporary" class="peer sr-only" onchange="toggleAttachment()" checked>
@@ -75,27 +75,8 @@
                                             </svg>
                                         </div>
                                         <div>
-                                            <p class="font-black text-slate-800 dark:text-slate-200 peer-checked:text-red-700 dark:peer-checked:text-red-400 transition-colors tracking-tight">Izin Keluar</p>
+                                            <p class="font-black text-slate-800 dark:text-slate-200 peer-checked:text-red-700 dark:peer-checked:text-red-400 transition-colors tracking-tight">Izin Keluar / Setengah Hari</p>
                                             <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-tight">Sementara</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </label>
-
-                            <!-- Full Day Permit Card -->
-                            <label class="cursor-pointer relative group" id="full_permit_label">
-                                <input type="radio" name="permit_type" value="full" class="peer sr-only" onchange="toggleAttachment()">
-                                <div class="p-5 rounded-2xl border-2 border-slate-100 dark:border-slate-800 hover:border-red-100 dark:hover:border-red-900/30 bg-white dark:bg-slate-900 transition-all duration-300 peer-checked:border-red-500 dark:peer-checked:border-red-500 peer-checked:bg-red-50/50 dark:peer-checked:bg-red-500/5 shadow-sm peer-checked:shadow-red-500/10 peer-checked:ring-1 peer-checked:ring-red-500/20">
-                                    <div class="flex items-center gap-4">
-                                        <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 peer-checked:bg-red-600 dark:peer-checked:bg-red-600 peer-checked:text-white transition-all shadow-inner">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
-                                                <path fill-rule="evenodd" d="M7.502 6h7.128A3.375 3.375 0 0118 9.375v9.375a3 3 0 003-3V6.108c0-1.505-1.125-2.811-2.664-2.94a48.972 48.972 0 00-.673-.05A3 3 0 0015 1.5h-1.5a3 3 0 00-2.663 1.618c-.225.015-.45.032-.673.05C8.662 3.295 7.554 4.542 7.502 6zM13.5 1.5h-3c-1.103 0-2 .897-2 2s.897 2 2 2h3c1.103 0 2-.897 2-2s-.897-2-2-2z" clip-rule="evenodd" />
-                                                <path d="M4.5 9h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9A2.25 2.25 0 012.25 20.25v-9A2.25 2.25 0 014.5 9z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="font-black text-slate-800 dark:text-slate-200 peer-checked:text-red-700 dark:peer-checked:text-red-400 transition-colors tracking-tight">Izin Full / Sakit</p>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-tight">Satu Hari</p>
                                         </div>
                                     </div>
                                 </div>

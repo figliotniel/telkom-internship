@@ -138,32 +138,21 @@ class AttendanceController extends Controller
             return back()->with('error', 'Status magang Anda belum aktif.');
         }
 
-        // Check if attendance exists for date
-        $existingAttendance = Attendance::where('internship_id', $internship->id)
-            ->whereDate('date', $request->date)
-            ->first();
+        // Parse date. If permit_type is 'full', date can be "YYYY-MM-DD" or "YYYY-MM-DD to YYYY-MM-DD"
+        $datesToProcess = [];
+        if ($request->permit_type === 'full') {
+            $dateParts = explode(' to ', $request->date);
+            $startDate = \Carbon\Carbon::parse($dateParts[0]);
+            $endDate = isset($dateParts[1]) ?\Carbon\Carbon::parse($dateParts[1]) : $startDate->copy();
 
-        if ($existingAttendance) {
-            // Allow update ONLY if permit_type is 'temporary' (Half-day)
-            if ($request->permit_type === 'temporary') {
-                $attachmentPath = $existingAttendance->attachment;
-                if ($request->hasFile('attachment')) {
-                    $attachmentPath = $request->file('attachment')->store('permissions', 'public');
-                }
-
-                $existingAttendance->update([
-                    'status' => 'permit',
-                    'permit_type' => 'temporary',
-                    'permit_start_time' => $request->start_time,
-                    'permit_end_time' => $request->end_time,
-                    'note' => $request->note,
-                    'attachment' => $attachmentPath,
-                ]);
-
-                return back()->with('success', 'Pengajuan izin sementara berhasil disimpan.');
+            $currentDate = $startDate->copy();
+            while ($currentDate->lte($endDate)) {
+                $datesToProcess[] = $currentDate->format('Y-m-d');
+                $currentDate->addDay();
             }
-
-            return back()->with('error', 'Absensi/Izin untuk tanggal ini sudah ada.');
+        }
+        else {
+            $datesToProcess[] = \Carbon\Carbon::parse($request->date)->format('Y-m-d');
         }
 
         $attachmentPath = null;
@@ -171,16 +160,52 @@ class AttendanceController extends Controller
             $attachmentPath = $request->file('attachment')->store('permissions', 'public');
         }
 
-        Attendance::create([
-            'internship_id' => $internship->id,
-            'date' => $request->date,
-            'status' => 'permit', // Set as permit
-            'permit_type' => $request->permit_type,
-            'permit_start_time' => $request->permit_type === 'temporary' ? $request->start_time : null,
-            'permit_end_time' => $request->permit_type === 'temporary' ? $request->end_time : null,
-            'note' => $request->note,
-            'attachment' => $attachmentPath,
-        ]);
+        $successCount = 0;
+        $errorDates = [];
+
+        foreach ($datesToProcess as $processDate) {
+            $existingAttendance = Attendance::where('internship_id', $internship->id)
+                ->whereDate('date', $processDate)
+                ->first();
+
+            if ($existingAttendance) {
+                // Allow update ONLY if permit_type is 'temporary' (Half-day)
+                if ($request->permit_type === 'temporary') {
+                    $existingAttendance->update([
+                        'status' => 'permit',
+                        'permit_type' => 'temporary',
+                        'permit_start_time' => $request->start_time,
+                        'permit_end_time' => $request->end_time,
+                        'note' => $request->note,
+                        'attachment' => $attachmentPath ?? $existingAttendance->attachment,
+                    ]);
+                    $successCount++;
+                }
+                else {
+                    $errorDates[] = $processDate;
+                }
+            }
+            else {
+                Attendance::create([
+                    'internship_id' => $internship->id,
+                    'date' => $processDate,
+                    'status' => 'permit', // Set as permit
+                    'permit_type' => $request->permit_type,
+                    'permit_start_time' => $request->permit_type === 'temporary' ? $request->start_time : null,
+                    'permit_end_time' => $request->permit_type === 'temporary' ? $request->end_time : null,
+                    'note' => $request->note,
+                    'attachment' => $attachmentPath,
+                ]);
+                $successCount++;
+            }
+        }
+
+        if (count($errorDates) > 0 && $successCount === 0) {
+            return back()->with('error', 'Absensi/Izin untuk tanggal yang dipilih sudah ada.');
+        }
+        elseif (count($errorDates) > 0 && $successCount > 0) {
+            return back()->with('success', "Sebagian pengajuan izin dikirim ($successCount hari). Beberapa hari (" . count($errorDates) . " hari) tidak diproses karena sudah ada absensi.");
+        }
 
         return back()->with('success', 'Pengajuan izin berhasil dikirim.');
     }
