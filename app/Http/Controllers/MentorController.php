@@ -21,6 +21,7 @@ class MentorController extends Controller
 
         $internships = Internship::with('student')
             ->where('mentor_id', Auth::id())
+            ->where('status', '!=', 'rejected')
             ->get();
 
         return view('mentor.dashboard', compact('pendingLogbooks', 'internships'));
@@ -35,7 +36,8 @@ class MentorController extends Controller
         $type = $request->get('type', 'all'); // all, mahasiswa, smk
 
         $query = Internship::with(['student.studentProfile', 'division'])
-            ->where('mentor_id', Auth::id());
+            ->where('mentor_id', Auth::id())
+            ->where('status', '!=', 'rejected');
 
         // Calculate counts for main tabs
         $activeCount = (clone $query)->where('status', 'active')->count();

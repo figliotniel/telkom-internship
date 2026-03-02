@@ -3,11 +3,10 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div class="flex justify-between items-center py-4 min-h-[100px] transition-all duration-300">
             
-            {{-- Left: Logo --}}
             <div class="shrink-0 flex items-center gap-4">
                 <a href="{{ auth()->user()->role === 'mentor' ? route('mentor.dashboard') : route('dashboard') }}" class="flex items-center gap-3 group transition-transform duration-300 hover:scale-105">
-                   <img src="{{ asset('images/logo-telkom.png') }}" class="h-[76px] w-auto dark:hidden" alt="Telkom Indonesia">
-                   <img src="{{ asset('images/logo-telkom-white.png') }}" class="h-[76px] w-auto hidden dark:block" alt="Telkom Indonesia logo">
+                   <img src="{{ asset('images/logo-telkom.png') }}" class="h-[80px] w-auto dark:hidden" alt="Telkom Indonesia">
+                   <img src="{{ asset('images/logo-telkom-white.png') }}" class="h-[80px] w-auto hidden dark:block" alt="Telkom Indonesia logo">
                 </a>
             </div>
 
@@ -62,7 +61,7 @@
 
                 @foreach($links as $link)
                     <a href="{{ $link['route'] === '#' ? '#' : route($link['route']) }}" 
-                       class="px-5 py-2.5 rounded-full text-[15px] font-semibold transition-all duration-300 flex items-center gap-2 group {{ $link['active'] ? 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10 shadow-sm border border-red-100 dark:border-red-500/20 ring-1 ring-red-500/50 dark:ring-red-400/30' : 'text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
+                       class="px-5 py-2.5 rounded-full text-[16px] font-bold transition-all duration-300 flex items-center gap-2 group {{ $link['active'] ? 'text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-500/10 shadow-sm border border-red-100 dark:border-red-500/20 ring-1 ring-red-500/50 dark:ring-red-400/30' : 'text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500 hover:bg-slate-50 dark:hover:bg-slate-800' }}">
                         {{ $link['name'] }}
                         @if(isset($link['badge']) && $link['badge'])
                             <span class="bg-red-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full min-w-[20px] text-center shadow-sm shadow-red-500/30">

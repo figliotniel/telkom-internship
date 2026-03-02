@@ -1,6 +1,6 @@
 @props(['logbooks', 'todayLogbook'])
 
-<div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-2xl border border-slate-100 dark:border-slate-800 transition-colors duration-300">
+<div x-data="{ showEvidenceModal: false, evidenceUrl: '', isImage: false }" class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm sm:rounded-2xl border border-slate-100 dark:border-slate-800 transition-colors duration-300">
     <div class="p-6">
         <div class="flex justify-between items-center mb-6">
             <div>
@@ -52,13 +52,16 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
                                 @if($logbook->evidence)
-                                    <a href="{{ Storage::url($logbook->evidence) }}" target="_blank" class="inline-flex items-center gap-1.5 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-bold transition-all transform hover:scale-105">
+                                    @php
+                                        $isImage = preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $logbook->evidence);
+                                    @endphp
+                                    <button @click="showEvidenceModal = true; evidenceUrl = '{{ Storage::url($logbook->evidence) }}'; isImage = {{ $isImage ? 'true' : 'false' }}" class="inline-flex items-center gap-1.5 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 font-bold transition-all transform hover:scale-105">
                                         <div class="p-1.5 rounded-lg bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 group-hover:bg-red-600 group-hover:text-white dark:group-hover:bg-red-600 dark:group-hover:text-white transition-all">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
                                                 <path fill-rule="evenodd" d="M15.621 4.379a3 3 0 00-4.242 0l-7 7a3 3 0 004.241 4.243h.001l.497-.5a.75.75 0 011.064 1.057l-.498.501-.002.002a4.5 4.5 0 01-6.364-6.364l7-7a4.5 4.5 0 016.368 6.36l-3.455 3.553A2.625 2.625 0 119.52 9.52l3.45-3.551a.75.75 0 111.061 1.06l-3.45 3.551a1.125 1.125 0 001.587 1.595l3.454-3.553a3 3 0 000-4.242z" clip-rule="evenodd" />
                                             </svg>
                                         </div>
-                                    </a>
+                                    </button>
                                 @else
                                     <span class="text-slate-400 dark:text-slate-500">-</span>
                                 @endif
@@ -84,6 +87,73 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- Evidence Detail Modal -->
+    <div x-show="showEvidenceModal" 
+        class="fixed inset-0 z-[1000] overflow-y-auto" 
+        aria-labelledby="modal-title" 
+        role="dialog" 
+        aria-modal="true"
+        style="display: none;">
+        
+        <!-- Backdrop -->
+        <div x-show="showEvidenceModal"
+            x-transition:enter="ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" 
+            @click="showEvidenceModal = false"></div>
+
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div x-show="showEvidenceModal"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-900 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl w-full border border-slate-200 dark:border-slate-800">
+                
+                <!-- Header -->
+                <div class="bg-white dark:bg-slate-900 px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-slate-100 dark:border-slate-800">
+                    <div class="sm:flex sm:items-start justify-between">
+                        <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="text-lg font-bold leading-6 text-slate-900 dark:text-slate-100" id="modal-title">
+                                        Bukti Logbook
+                                    </h3>
+                                </div>
+                                <button @click="showEvidenceModal = false" type="button" class="text-slate-400 hover:text-red-500 focus:outline-none transition-colors">
+                                    <span class="sr-only">Close</span>
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="bg-slate-50 dark:bg-slate-950 p-4 flex justify-center items-center overflow-hidden min-h-[50vh] max-h-[85vh]">
+                    <template x-if="evidenceUrl">
+                        <div class="w-full h-full flex justify-center items-center">
+                            <template x-if="isImage">
+                                <img :src="evidenceUrl" alt="Bukti Logbook" class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-sm border border-slate-200 dark:border-slate-800">
+                            </template>
+                            <template x-if="!isImage">
+                                <iframe :src="evidenceUrl" class="w-full h-[75vh] border-0 rounded-lg shadow-sm" title="Bukti Attachment"></iframe>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </div>
         </div>
     </div>
 </div>

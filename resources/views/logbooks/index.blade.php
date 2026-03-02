@@ -6,7 +6,7 @@
         <p class="text-slate-500 dark:text-slate-400 text-sm">Riwayat lengkap aktivitas magang kamu</p>
     </x-slot>
 
-    <div class="py-12" x-data="{ activeTab: 'logbook', showModal: false, modalContent: '', modalDate: '', modalTitle: '' }">
+    <div class="py-12" x-data="{ activeTab: 'logbook', showModal: false, modalContent: '', modalDate: '', modalTitle: '', showEvidenceModal: false, evidenceUrl: '', isImage: false }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             {{-- Tabs Navigation --}}
@@ -92,7 +92,11 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
                                                 @if($logbook->evidence)
-                                                    <a href="{{ Storage::url($logbook->evidence) }}" target="_blank" class="text-red-600 dark:text-red-400 hover:underline">Lihat</a>
+                                                    @php
+                                                        $ext = strtolower(pathinfo($logbook->evidence, PATHINFO_EXTENSION));
+                                                        $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                                    @endphp
+                                                    <button type="button" @click="showEvidenceModal = true; evidenceUrl = '{{ Storage::url($logbook->evidence) }}'; isImage = {{ $isImage ? 'true' : 'false' }}" class="text-red-600 dark:text-red-400 hover:underline font-medium focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900 rounded px-1 transition-all">Lihat Bukti</button>
                                                 @else
                                                     <span class="text-slate-400 dark:text-slate-500">-</span>
                                                 @endif
@@ -350,6 +354,73 @@
                                 @click="showModal = false">
                                 Tutup
                             </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evidence Detail Modal -->
+            <div x-show="showEvidenceModal" 
+                class="fixed inset-0 z-[1000] overflow-y-auto" 
+                aria-labelledby="modal-title" 
+                role="dialog" 
+                aria-modal="true"
+                style="display: none;">
+                
+                <!-- Backdrop -->
+                <div x-show="showEvidenceModal"
+                    x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
+                    class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" 
+                    @click="showEvidenceModal = false"></div>
+
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div x-show="showEvidenceModal"
+                        x-transition:enter="ease-out duration-300"
+                        x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                        x-transition:leave="ease-in duration-200"
+                        x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                        x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-900 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-4xl w-full border border-slate-200 dark:border-slate-800">
+                        
+                        <!-- Header -->
+                        <div class="bg-white dark:bg-slate-900 px-4 pb-4 pt-5 sm:p-6 sm:pb-4 border-b border-slate-100 dark:border-slate-800">
+                            <div class="sm:flex sm:items-start justify-between">
+                                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <h3 class="text-lg font-bold leading-6 text-slate-900 dark:text-slate-100" id="modal-title">
+                                                Bukti Logbook
+                                            </h3>
+                                        </div>
+                                        <button @click="showEvidenceModal = false" type="button" class="text-slate-400 hover:text-red-500 focus:outline-none transition-colors">
+                                            <span class="sr-only">Close</span>
+                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="bg-slate-50 dark:bg-slate-950 p-4 flex justify-center items-center overflow-hidden min-h-[50vh] max-h-[85vh]">
+                            <template x-if="evidenceUrl">
+                                <div class="w-full h-full flex justify-center items-center">
+                                    <template x-if="isImage">
+                                        <img :src="evidenceUrl" alt="Bukti Logbook" class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-sm border border-slate-200 dark:border-slate-800">
+                                    </template>
+                                    <template x-if="!isImage">
+                                        <iframe :src="evidenceUrl" class="w-full h-[75vh] border-0 rounded-lg shadow-sm" title="Bukti Attachment"></iframe>
+                                    </template>
+                                </div>
+                            </template>
                         </div>
                     </div>
                 </div>
