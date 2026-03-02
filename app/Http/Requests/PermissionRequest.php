@@ -22,9 +22,9 @@ class PermissionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date' => 'required|date',
+            'date' => 'required|string',
             'permit_type' => 'required|in:full,temporary',
-            'note' => 'required|string',
+            'note' => 'nullable|string',
             'attachment' => 'nullable|file|mimes:pdf,jpg,png|max:2048',
             'start_time' => 'nullable|required_if:permit_type,temporary|date_format:H:i',
             'end_time' => 'nullable|required_if:permit_type,temporary|date_format:H:i|after:start_time',

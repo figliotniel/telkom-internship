@@ -516,58 +516,11 @@
     // Modal Functions
     function openPermissionModal(isCheckedIn = false, defaultType = 'temporary') { 
         document.getElementById('permissionModal').classList.remove('hidden'); 
-
-        const typeSelect = document.getElementById('permit_type');
-        
-        // Elements for Date Toggle
-        const badgeContainer = document.getElementById('date_badge_container');
-        const inputContainer = document.getElementById('date_input_container');
-        const dateInput = document.getElementById('permission_date');
-        const hiddenDateInput = document.getElementById('hidden_date_input');
-
-        // Radio Button
-        const tempRadio = document.querySelector('input[name="permit_type"][value="temporary"]');
-
-        if (isCheckedIn) {
-            // 1. Show Badge, Hide Input
-            badgeContainer.classList.remove('hidden');
-            inputContainer.classList.add('hidden');
-            
-            // Manage Inputs: Enable Hidden, Disable Manual
-            dateInput.removeAttribute('required'); 
-            dateInput.disabled = true; 
-            hiddenDateInput.disabled = false;
-
-            // 2. Lock Permit Type to 'temporary'
-            if(tempRadio) tempRadio.checked = true;
-        } else {
-            // 1. Show Input, Hide Badge
-            badgeContainer.classList.add('hidden');
-            inputContainer.classList.remove('hidden');
-            
-            // Manage Inputs: Disable Hidden, Enable Manual
-            dateInput.setAttribute('required', 'required');
-            dateInput.disabled = false; 
-            hiddenDateInput.disabled = true;
-
-            // 2. Default to temporary for this modal
-            if(tempRadio) tempRadio.checked = true;
-        }
-
-        toggleAttachment(); // Ensure correct initial state
     }
 
     function openFullDayPermissionModal() {
-        alert("Fungsi openFullDayPermissionModal terpanggil!");
         try {
-            var modal = document.getElementById('fullDayPermissionModal');
-            if (modal) {
-                alert("Elemen modal ditemukan! Menghapus class 'hidden'...");
-                modal.classList.remove('hidden');
-                alert("Class hidden telah dihapus. Apakah modal terlihat sekarang?");
-            } else {
-                alert("ERROR: Elemen dengan id 'fullDayPermissionModal' TIDAK DITEMUKAN di DOM!");
-            }
+            document.getElementById('fullDayPermissionModal').classList.remove('hidden');
         } catch(e) {
             console.error("Error opening Full Day Modal:", e);
             alert("Terjadi kesalahan saat membuka form izin. " + e.message);
@@ -577,27 +530,6 @@
     function openFinalReportModal() { document.getElementById('finalReportModal').classList.remove('hidden'); }
 
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-    
-
-
-        // Logic for Time Input (Temporary Permit)
-        function toggleAttachment() {
-            // Get checked radio value
-            const type = document.querySelector('input[name="permit_type"]:checked')?.value || 'temporary';
-            const timeDiv = document.getElementById('time_div');
-            const startTime = document.getElementById('start_time');
-            const endTime = document.getElementById('end_time');
-
-            if (type === 'temporary') {
-                timeDiv.classList.remove('hidden');
-                startTime.setAttribute('required', 'required');
-                endTime.setAttribute('required', 'required');
-            } else {
-                timeDiv.classList.add('hidden');
-                startTime.removeAttribute('required');
-                endTime.removeAttribute('required');
-            }
-        }
 
     // 1. Fungsi Konfirmasi CHECK-IN
 
@@ -739,7 +671,7 @@
             dateFormat: "H:i",
             time_24hr: true,
             disableMobile: true,
-            allowInput: true
+            allowInput: false
         });
 
         flatpickr("#end_time", {
@@ -748,7 +680,7 @@
             dateFormat: "H:i",
             time_24hr: true,
             disableMobile: true,
-            allowInput: true
+            allowInput: false
         });
 
         // Inline Range Calendar for Full Day Permission Modal
@@ -757,7 +689,13 @@
             mode: "range",
             inline: true,
             minDate: "today",
-            locale: "id",
+            locale: {
+                firstDayOfWeek: 1, // Starts week on Monday
+                weekdays: {
+                    shorthand: ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"],
+                    longhand: ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
+                }
+            },
             dateFormat: "Y-m-d",
             showMonths: 1,
             onChange: function(selectedDates, dateStr, instance) {
