@@ -15,6 +15,15 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                telkom: {
+                    500: '#EE0000',
+                    600: '#ce0024',
+                    700: '#D6001C',
+                    800: '#a0001c',
+                    900: '#b00017',
+                }
+            },
         },
     },
 

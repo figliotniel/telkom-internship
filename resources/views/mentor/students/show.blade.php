@@ -2,6 +2,7 @@
     <div class="py-12" x-data="{ 
         showModal: false, 
         showPreview: false,
+        showMonthlyReportModal: false,
         previewUrl: '',
         selectedLogbook: { name: '', title: '', date: '', activity: '' } 
     }">
@@ -198,7 +199,7 @@
                                 <p class="text-[10px] text-slate-500 dark:text-slate-500 font-black uppercase tracking-widest mt-1 transition-colors">Rekap kehadiran & logbook</p>
                             </div>
                         </div>
-                        <button onclick="openMonthlyReportModal()" class="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 px-6 py-3 rounded-2xl hover:bg-blue-600 hover:text-white hover:border-blue-600 active:scale-95 transition-all shadow-sm">
+                        <button type="button" @click="showMonthlyReportModal = true" class="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 px-6 py-3 rounded-2xl hover:bg-blue-600 hover:text-white hover:border-blue-600 active:scale-95 transition-all shadow-sm">
                             Unduh
                         </button>
                     </div>
@@ -390,11 +391,11 @@
     
     {{-- MODALS --}}
     {{-- Monthly Report Modal --}}
-    <div id="monthlyReportModal" class="hidden fixed inset-0 z-[1000] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div x-show="showMonthlyReportModal" class="fixed inset-0 z-[1000] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true" style="display: none;" x-cloak>
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity" aria-hidden="true" onclick="document.getElementById('monthlyReportModal').classList.add('hidden')"></div>
+            <div x-show="showMonthlyReportModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity" aria-hidden="true" @click="showMonthlyReportModal = false"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-[2.5rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full border border-slate-100 dark:border-slate-800 transition-colors duration-300">
+            <div x-show="showMonthlyReportModal" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-[2.5rem] text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full border border-slate-100 dark:border-slate-800 transition-colors duration-300">
                 <form action="{{ route('mentor.students.monthlyReport', $internship->id) }}" method="GET" target="_blank" class="p-8">
                     <div class="flex items-center gap-3 mb-6">
                         <div class="w-10 h-10 bg-blue-50 dark:bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-500 shadow-sm border border-blue-100 dark:border-blue-500/20">
@@ -468,7 +469,7 @@
                     </div>
 
                     <div class="flex justify-end gap-3">
-                        <button type="button" onclick="document.getElementById('monthlyReportModal').classList.add('hidden')" class="grow py-3.5 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-600 dark:text-slate-400 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95">Batal</button>
+                        <button type="button" @click="showMonthlyReportModal = false" class="grow py-3.5 border border-slate-200 dark:border-slate-800 rounded-2xl text-slate-600 dark:text-slate-400 font-bold text-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-all active:scale-95">Batal</button>
                         <button type="submit" class="grow py-3.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl font-black text-sm transition-all shadow-xl shadow-slate-900/20 dark:shadow-none hover:bg-red-600 dark:hover:bg-red-50 hover:text-white dark:hover:text-red-600 active:scale-95">Cetak</button>
                     </div>
                 </form>

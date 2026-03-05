@@ -80,9 +80,13 @@
                                 <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-4">
-                                            <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-red-500 to-orange-500 flex items-center justify-center text-white font-bold text-base shadow-sm group-hover:scale-110 transition-transform">
-                                                {{ substr($data->student->name, 0, 1) }}
-                                            </div>
+                                            @if($data->student->studentProfile && $data->student->studentProfile->photo)
+                                                <img class="h-10 w-10 rounded-full object-cover shadow-sm border border-white dark:border-slate-700 transition-transform group-hover:scale-110" src="{{ asset('storage/' . $data->student->studentProfile->photo) }}" alt="{{ $data->student->name }}">
+                                            @else
+                                                <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-red-500 to-orange-500 flex items-center justify-center text-white font-bold text-base shadow-sm group-hover:scale-110 transition-transform border border-white dark:border-slate-700">
+                                                    {{ substr($data->student->name, 0, 1) }}
+                                                </div>
+                                            @endif
                                             <div>
                                                 <div class="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">{{ $data->student->name }}</div>
                                                 <div class="text-xs text-slate-500 dark:text-slate-500 font-bold tracking-widest mt-0.5 transition-colors">{{ $data->student->email }}</div>

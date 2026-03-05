@@ -157,7 +157,7 @@
                                 @endif
 
                                 {{-- 4. Laporan Akhir --}}
-                                <button onclick="openFinalReportModal()" class="inline-flex items-center gap-2 bg-indigo-600/40 backdrop-blur-md text-white border border-indigo-400/40 px-6 py-3 rounded-2xl font-bold hover:bg-indigo-600/60 transition-all shadow-lg active:scale-95">
+                                <button @click="$dispatch('open-final-report-modal')" class="inline-flex items-center gap-2 bg-indigo-600/40 backdrop-blur-md text-white border border-indigo-400/40 px-6 py-3 rounded-2xl font-bold hover:bg-indigo-600/60 transition-all shadow-lg active:scale-95">
                                     📁 Laporan Akhir
                                 </button>
 
@@ -299,12 +299,12 @@
                                                     Izin Sementara
                                                 </button>
                                             @else
-                                                <button type="button" onclick="openPermissionModal(false, 'temporary')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
+                                                <button type="button" @click="$dispatch('open-permission-modal')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
                                                     Izin Sementara
                                                 </button>
                                             @endif
                                             <span class="text-indigo-500/50">•</span>
-                                            <button type="button" onclick="openFullDayPermissionModal()" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
+                                            <button type="button" @click="$dispatch('open-full-day-permission-modal')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
                                                 Izin Full Day
                                             </button>
                                         </div>
@@ -387,12 +387,12 @@
                                                     Izin Sementara
                                                 </button>
                                             @else
-                                                <button type="button" onclick="openPermissionModal(false, 'temporary')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
+                                                <button type="button" @click="$dispatch('open-permission-modal')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
                                                     Izin Sementara
                                                 </button>
                                             @endif
                                             <span class="text-indigo-500/50">•</span>
-                                            <button type="button" onclick="openFullDayPermissionModal()" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
+                                            <button type="button" @click="$dispatch('open-full-day-permission-modal')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
                                                 Izin Full Day
                                             </button>
                                         </div>
@@ -422,7 +422,7 @@
                                         </div>
                                         
                                         <div class="pt-2 flex items-center justify-center gap-4">
-                                            <button type="button" onclick="openFullDayPermissionModal()" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
+                                            <button type="button" @click="$dispatch('open-full-day-permission-modal')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
                                                 Izin Full Day
                                             </button>
                                         </div>
@@ -502,11 +502,16 @@
     <x-full-day-permission-modal />
 
     {{-- 2. Final Report Modal --}}
-    <div id="finalReportModal" class="hidden fixed inset-0 z-[1000] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div x-data="{ show: false }"
+         @open-final-report-modal.window="show = true"
+         x-show="show"
+         style="display: none;"
+         x-cloak
+         class="fixed inset-0 z-[1000] overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('finalReportModal')"></div>
+            <div x-show="show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" @click="show = false"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-200 dark:border-slate-800">
+            <div x-show="show" x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" class="inline-block align-bottom bg-white dark:bg-slate-900 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md sm:w-full border border-slate-200 dark:border-slate-800">
                 <form action="{{ route('documents.storeFinalReport') }}" method="POST" enctype="multipart/form-data" class="p-6">
                     @csrf
                     <h3 class="text-lg font-medium text-gray-900 dark:text-slate-100 mb-4">Upload Laporan Akhir</h3>
@@ -566,7 +571,7 @@
                         </div>
                     </div>
                     <div class="flex justify-end gap-3">
-                        <button type="button" onclick="closeModal('finalReportModal')" class="py-2 px-4 border dark:border-slate-700 rounded-md text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">Batal</button>
+                        <button type="button" @click="show = false" class="py-2 px-4 border dark:border-slate-700 rounded-md text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors">Batal</button>
                         <button type="submit" class="py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-md shadow-lg shadow-purple-500/20 transition-all">Upload</button>
                     </div>
                 </form>
@@ -578,24 +583,6 @@
 
     {{-- Scripts --}}
     <script>
-    // Modal Functions
-    function openPermissionModal(isCheckedIn = false, defaultType = 'temporary') { 
-        document.getElementById('permissionModal').classList.remove('hidden'); 
-    }
-
-    function openFullDayPermissionModal() {
-        try {
-            document.getElementById('fullDayPermissionModal').classList.remove('hidden');
-        } catch(e) {
-            console.error("Error opening Full Day Modal:", e);
-            alert("Terjadi kesalahan saat membuka form izin. " + e.message);
-        }
-    }
-
-    function openFinalReportModal() { document.getElementById('finalReportModal').classList.remove('hidden'); }
-
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
     function showDuplicatePermitError() {
         Swal.fire({
             icon: 'error',

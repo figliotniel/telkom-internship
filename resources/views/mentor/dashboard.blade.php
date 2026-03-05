@@ -14,7 +14,7 @@
             {{-- Stats Grid --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Card 1: Total Students -->
-                <div class="bg-gradient-to-br from-[#ce0024] to-[#a0001c] rounded-2xl p-6 text-white shadow-lg dark:shadow-red-900/20 relative overflow-hidden group hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 border-b-4 border-red-800/50">
+                <div class="bg-gradient-to-br from-telkom-600 to-telkom-800 rounded-2xl p-6 text-white shadow-lg dark:shadow-red-900/20 relative overflow-hidden group hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 border-b-4 border-red-800/50">
                     <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all duration-500"></div>
                     <div class="flex justify-between items-start relative z-10">
                         <div>
@@ -41,7 +41,7 @@
                 </div>
 
                 <!-- Card 2: Pending Validations -->
-                <div class="bg-gradient-to-br from-[#ce0024] to-[#a0001c] rounded-2xl p-6 text-white shadow-lg dark:shadow-red-900/20 relative overflow-hidden group hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 border-b-4 border-red-800/50">
+                <div class="bg-gradient-to-br from-telkom-600 to-telkom-800 rounded-2xl p-6 text-white shadow-lg dark:shadow-red-900/20 relative overflow-hidden group hover:-translate-y-1 hover:shadow-2xl transition-all duration-300 border-b-4 border-red-800/50">
                     <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:bg-white/10 transition-all duration-500"></div>
                     <div class="flex justify-between items-start relative z-10">
                         <div>
@@ -94,9 +94,13 @@
                                 <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-4">
-                                            <div class="h-10 w-10 rounded-2xl bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 font-black text-lg shadow-sm border border-white dark:border-slate-700 transition-all group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-lg dark:group-hover:shadow-slate-900/40">
-                                                {{ substr($internship->student->name, 0, 1) }}
-                                            </div>
+                                            @if($internship->student->studentProfile && $internship->student->studentProfile->photo)
+                                                <img class="h-10 w-10 rounded-2xl object-cover shadow-sm border border-white dark:border-slate-700 transition-all group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-lg dark:group-hover:shadow-slate-900/40" src="{{ asset('storage/' . $internship->student->studentProfile->photo) }}" alt="{{ $internship->student->name }}">
+                                            @else
+                                                <div class="h-10 w-10 rounded-2xl bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 font-black text-lg shadow-sm border border-white dark:border-slate-700 transition-all group-hover:scale-110 group-hover:rotate-3 group-hover:shadow-lg dark:group-hover:shadow-slate-900/40">
+                                                    {{ substr($internship->student->name, 0, 1) }}
+                                                </div>
+                                            @endif
                                             <div>
                                                 <div class="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">{{ $internship->student->name }}</div>
                                                 <div class="text-xs text-slate-500 dark:text-slate-500 font-bold transition-colors mt-0.5">{{ $internship->student->email }}</div>
