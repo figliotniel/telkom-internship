@@ -134,7 +134,11 @@
     <!-- Body -->
     <div class="content">
         <p>Dengan hormat,</p>
+        @if(auth()->check() && auth()->user()->role === 'student')
+        <p>Berikut kami sampaikan laporan rekapan aktivitas harian (logbook) intern untuk periode <strong>{{ \Carbon\Carbon::createFromDate($year, $month, 1)->translatedFormat('F Y') }}</strong>:</p>
+        @else
         <p>Berikut kami sampaikan laporan rekapan aktivitas harian (logbook) dan kehadiran (presensi) intern untuk periode <strong>{{ \Carbon\Carbon::createFromDate($year, $month, 1)->translatedFormat('F Y') }}</strong>:</p>
+        @endif
         
         <table class="student-info">
             <tr>
@@ -158,6 +162,7 @@
         </table>
     </div>
 
+    @if(!auth()->check() || auth()->user()->role !== 'student')
     <!-- A. Kehadiran -->
     <h4>A. Rekap Kehadiran</h4>
     <table class="data-table">
@@ -193,6 +198,10 @@
 
     <!-- B. Logbook -->
     <h4>B. Logbook Harian</h4>
+    @else
+    <!-- Logbook -->
+    <h4>Logbook Harian</h4>
+    @endif
     <table class="data-table">
         <thead>
             <tr>
