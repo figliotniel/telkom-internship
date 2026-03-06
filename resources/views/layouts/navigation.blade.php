@@ -32,11 +32,7 @@
                             ],
                         ];
                     } elseif ($roleFn('admin')) {
-                         $links = [
-                            ['name' => 'Overview', 'route' => 'admin.dashboard', 'active' => request()->routeIs('admin.dashboard')],
-                            ['name' => 'Database', 'route' => 'admin.users.index', 'active' => request()->routeIs('admin.users*')],
-                            ['name' => 'Monitoring', 'route' => 'admin.internships.index', 'active' => request()->routeIs('admin.internships*')],
-                        ];
+                         $links = []; // Admins use the vertical Sidebar now.
                     } else {
                         // Student Menu
                         $internship = Auth::user()->internship;
