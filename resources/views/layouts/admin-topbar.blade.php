@@ -101,36 +101,16 @@
             </div>
         </div>
 
-        {{-- Profile Dropdown --}}
-        <div class="relative pl-4 border-l border-slate-200 dark:border-slate-800" x-data="{ open: false }">
-            <button @click="open = !open" @click.away="open = false" class="flex items-center gap-3 focus:outline-none group">
+        {{-- Profile Info --}}
+        <div class="relative pl-4 border-l border-slate-200 dark:border-slate-800">
+            <div class="flex items-center gap-3">
                 <div class="text-right hidden sm:block">
-                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 group-hover:text-red-600 transition-colors">{{ Auth::user()->name }}</p>
+                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-200">{{ Auth::user()->name }}</p>
                     <p class="text-[11px] text-slate-500 uppercase tracking-wider font-bold">Administrator</p>
                 </div>
                 <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-red-600 to-red-500 flex items-center justify-center text-white text-sm font-bold shadow-md shadow-red-500/20 ring-2 ring-white dark:ring-slate-900 border border-transparent">
                     {{ substr(Auth::user()->name, 0, 1) }}
                 </div>
-            </button>
-            
-            <div x-cloak x-show="open" 
-                 x-transition:enter="transition ease-out duration-200"
-                 x-transition:enter-start="transform opacity-0 scale-95 translate-y-2"
-                 x-transition:enter-end="transform opacity-100 scale-100 translate-y-0"
-                 x-transition:leave="transition ease-in duration-75"
-                 x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
-                 x-transition:leave-end="transform opacity-0 scale-95 translate-y-2"
-                 class="absolute right-0 mt-3 w-48 bg-white dark:bg-slate-800 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-gray-100 dark:border-slate-700 overflow-hidden py-1 z-50 origin-top-right">
-                
-                <form method="POST" action="{{ route('logout') }}" class="m-0">
-                    @csrf
-                    <button type="submit" class="w-full flex items-center gap-3 text-left px-4 py-2.5 text-sm font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
-                          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-                        </svg>
-                        Logout
-                    </button>
-                </form>
             </div>
         </div>
     </div>

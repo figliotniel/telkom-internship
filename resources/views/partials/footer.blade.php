@@ -1,4 +1,4 @@
-<footer class="bg-white dark:bg-slate-950 border-t border-gray-100 dark:border-slate-800 py-12 px-5 w-full transition-colors duration-300">
+<footer class="bg-transparent border-t border-slate-200/60 dark:border-slate-800/60 mt-10 py-10 px-5 w-full transition-colors duration-300">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-8 md:gap-20">
         
         <!-- Logo Section -->

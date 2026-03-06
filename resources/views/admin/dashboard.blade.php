@@ -1,6 +1,6 @@
 <x-app-layout>
     {{-- Dashboard Main Area (New Layout Structure) --}}
-    <div class="max-w-7xl mx-auto space-y-10">
+    <div class="p-8 lg:p-10 max-w-7xl mx-auto space-y-10">
         
         {{-- Welcome Section --}}
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -17,7 +17,7 @@
         </div>
 
         {{-- Stats Grid --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {{-- Stat 1: Total Interns --}}
             <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-[0_2px_20px_-3px_rgba(0,0,0,0.05)] dark:shadow-none hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:hover:shadow-red-900/20 transition-all duration-300 relative overflow-hidden group border border-slate-100 dark:border-slate-800">
@@ -99,37 +99,13 @@
                  <a href="{{ route('admin.users.index', ['role' => 'mentor']) }}" class="absolute inset-0 z-10"></a>
             </div>
 
-            {{-- Stat 4: Logbook Rate (Placeholder / Visual Filler from Mockup) --}}
-            <div class="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-[0_2px_20px_-3px_rgba(0,0,0,0.05)] dark:shadow-none hover:-translate-y-1 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:hover:shadow-indigo-900/20 transition-all duration-300 relative overflow-hidden group border border-slate-100 dark:border-slate-800">
-                <div class="absolute top-0 left-0 w-full h-1 bg-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div class="flex items-start justify-between">
-                    <div>
-                        <p class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Overview</p>
-                        <h3 class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Data</h3>
-                    </div>
-                    <div class="p-3.5 bg-indigo-50 dark:bg-indigo-500/10 rounded-xl text-indigo-500 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-300 ring-1 ring-indigo-100 dark:ring-indigo-500/20">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    </div>
-                </div>
-                <div class="mt-6">
-                    <div class="flex justify-between items-end mb-1.5">
-                        <span class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">System Health</span>
-                        <span class="text-xs font-bold text-slate-700 dark:text-slate-300">100%</span>
-                    </div>
-                    <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5">
-                        <div class="bg-gradient-to-r from-indigo-400 to-indigo-500 h-1.5 rounded-full relative" style="width: 100%">
-                            <div class="absolute right-0 top-0 bottom-0 w-1.5 bg-white/40 rounded-full animate-pulse"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         {{-- Main Sections Grid --}}
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 items-start">
             
             {{-- Left Column: Recent Activity (Takes up 2 cols) --}}
-            <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl shadow-[0_2px_20px_-3px_rgba(0,0,0,0.05)] dark:shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden">
+            <div class="xl:col-span-2 bg-white dark:bg-slate-900 rounded-2xl shadow-[0_2px_20px_-3px_rgba(0,0,0,0.05)] dark:shadow-none border border-slate-100 dark:border-slate-800 overflow-hidden">
                 <div class="px-7 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-transparent relative z-10">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Recent Internship Enrollments</h3>
                     <a href="{{ route('admin.internships.index') }}" class="text-sm font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex items-center gap-1 group">
@@ -154,11 +130,11 @@
                                 <td class="px-7 py-4 whitespace-nowrap">
                                     <div class="flex items-center gap-3">
                                         <div class="w-9 h-9 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold border border-slate-200 dark:border-slate-700">
-                                            {{ substr($internship->student->name, 0, 1) }}
+                                            {{ substr(optional($internship->student)->name ?? 'U', 0, 1) }}
                                         </div>
                                         <div>
-                                            <div class="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">{{ $internship->student->name }}</div>
-                                            <div class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ $internship->student->email }}</div>
+                                            <div class="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">{{ optional($internship->student)->name ?? 'Unknown User' }}</div>
+                                            <div class="text-xs font-medium text-slate-500 dark:text-slate-400">{{ optional($internship->student)->email ?? 'No Email' }}</div>
                                         </div>
                                     </div>
                                 </td>
@@ -174,7 +150,7 @@
                                     </span>
                                 </td>
                                 <td class="px-7 py-4 whitespace-nowrap text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
-                                    {{ $internship->created_at->format('d M Y') }}
+                                    {{ $internship->created_at ? $internship->created_at->format('d M Y') : '-' }}
                                 </td>
                             </tr>
                             @empty
@@ -195,7 +171,7 @@
             </div>
 
              {{-- Right Column: Requires Attention (Premium Dark Aesthetic) --}}
-            <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-xl border border-slate-700 text-white overflow-hidden relative group">
+            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] rounded-2xl shadow-xl border border-slate-700/60 text-white overflow-hidden relative group h-full flex flex-col">
                 {{-- Decorative background elements --}}
                 <div class="absolute -top-20 -right-20 w-48 h-48 bg-red-600 rounded-full blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none"></div>
                 <div class="absolute -bottom-20 -left-20 w-48 h-48 bg-amber-600 rounded-full blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none"></div>
@@ -210,38 +186,38 @@
                     @endif
                 </div>
                 
-                <div class="p-6 space-y-4 relative z-10">
+                <div class="p-6 space-y-4 relative z-10 flex-1 flex flex-col justify-center">
                     
                     {{-- Pending Applicants Card --}}
                     <a href="{{ $pendingApplicants > 0 ? route('admin.internships.index', ['status' => 'pending']) : '#' }}" 
-                       class="block bg-[#1e293b]/70 backdrop-blur-sm border {{ $pendingApplicants > 0 ? 'border-red-500/30' : 'border-slate-700/80' }} rounded-xl p-4 hover:border-red-500/50 hover:bg-slate-800/80 transition-all shadow-sm group/card relative {{ $pendingApplicants == 0 ? 'cursor-default opacity-60' : '' }}">
-                        <div class="flex justify-between items-start mb-1.5">
-                            <h4 class="font-bold text-sm text-slate-100 group-hover/card:text-red-400 transition-colors">Pending Applications</h4>
-                            <span class="{{ $pendingApplicants > 0 ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-slate-700 text-slate-400' }} text-[10px] font-bold px-2 py-0.5 rounded-md">
+                       class="block bg-[#0f172a]/50 backdrop-blur-xl border {{ $pendingApplicants > 0 ? 'border-red-500/30' : 'border-slate-700/80' }} rounded-xl p-5 hover:border-red-500/50 hover:bg-[#1e293b]/80 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] group/card relative {{ $pendingApplicants == 0 ? 'cursor-default opacity-60' : '' }}">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-extrabold text-sm text-slate-100 group-hover/card:text-red-400 transition-colors">Pending Applications</h4>
+                            <span class="{{ $pendingApplicants > 0 ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-slate-800 border border-slate-700 text-slate-400' }} text-[11px] font-bold px-2.5 py-1 rounded-md">
                                 {{ $pendingApplicants }} Waiting
                             </span>
                         </div>
-                        <p class="text-xs text-slate-400 leading-relaxed font-medium">Review and approve recently submitted applications to join the program.</p>
+                        <p class="text-[13px] text-slate-400 leading-relaxed font-medium">Review and approve recently submitted applications to join the program.</p>
                         @if($pendingApplicants > 0)
-                            <div class="mt-3 flex items-center text-[11px] font-bold text-red-400 opacity-0 group-hover/card:opacity-100 transition-opacity transform translate-y-1 group-hover/card:translate-y-0">
-                                Review Now <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            <div class="mt-4 flex items-center text-[11px] font-bold text-red-400 opacity-0 group-hover/card:opacity-100 transition-opacity transform translate-y-1 group-hover/card:translate-y-0 uppercase tracking-wider">
+                                Review Now <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </div>
                         @endif
                     </a>
 
                     {{-- Pending Extensions Card --}}
                     <a href="{{ $pendingExtensions->count() > 0 ? route('admin.internships.index', ['status' => 'extension']) : '#' }}" 
-                       class="block bg-[#1e293b]/70 backdrop-blur-sm border {{ $pendingExtensions->count() > 0 ? 'border-amber-500/30' : 'border-slate-700/80' }} rounded-xl p-4 hover:border-amber-500/50 hover:bg-slate-800/80 transition-all shadow-sm group/card relative {{ $pendingExtensions->count() == 0 ? 'cursor-default opacity-60' : '' }}">
-                        <div class="flex justify-between items-start mb-1.5">
-                            <h4 class="font-bold text-sm text-slate-100 group-hover/card:text-amber-400 transition-colors">Extension Requests</h4>
-                            <span class="{{ $pendingExtensions->count() > 0 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-700 text-slate-400' }} text-[10px] font-bold px-2 py-0.5 rounded-md">
+                       class="block bg-[#0f172a]/50 backdrop-blur-xl border {{ $pendingExtensions->count() > 0 ? 'border-amber-500/30' : 'border-slate-700/80' }} rounded-xl p-5 hover:border-amber-500/50 hover:bg-[#1e293b]/80 transition-all shadow-[0_8px_30px_rgb(0,0,0,0.12)] group/card relative {{ $pendingExtensions->count() == 0 ? 'cursor-default opacity-60' : '' }}">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-extrabold text-sm text-slate-100 group-hover/card:text-amber-400 transition-colors">Extension Requests</h4>
+                            <span class="{{ $pendingExtensions->count() > 0 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-800 border border-slate-700 text-slate-400' }} text-[11px] font-bold px-2.5 py-1 rounded-md">
                                 {{ $pendingExtensions->count() }} Requests
                             </span>
                         </div>
-                        <p class="text-xs text-slate-400 leading-relaxed font-medium">Review time extension requests submitted by active interns.</p>
+                        <p class="text-[13px] text-slate-400 leading-relaxed font-medium">Review time extension requests submitted by active interns.</p>
                         @if($pendingExtensions->count() > 0)
-                            <div class="mt-3 flex items-center text-[11px] font-bold text-amber-400 opacity-0 group-hover/card:opacity-100 transition-opacity transform translate-y-1 group-hover/card:translate-y-0">
-                                Review Now <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                            <div class="mt-4 flex items-center text-[11px] font-bold text-amber-400 opacity-0 group-hover/card:opacity-100 transition-opacity transform translate-y-1 group-hover/card:translate-y-0 uppercase tracking-wider">
+                                Review Now <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                             </div>
                         @endif
                     </a>
@@ -250,8 +226,7 @@
             
         </div>
     </div>
-    
-    @include('admin.internships.partials.extension-modal')
+
 
     @push('scripts')
     <script>
