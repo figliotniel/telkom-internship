@@ -3,6 +3,7 @@
         showModal: false, 
         showPreview: false,
         showMonthlyReportModal: false,
+        showUploadModal: false,
         previewUrl: '',
         selectedLogbook: { name: '', title: '', date: '', activity: '' } 
     }">
@@ -19,57 +20,96 @@
                 </h2>
                 <p class="text-slate-500 dark:text-slate-400 text-sm transition-colors">Lihat profil dan rekap aktivitas intern</p>
             </div>
-             <a href="{{ route('mentor.students.index') }}" class="inline-flex items-center px-6 py-2.5 bg-red-600 border border-transparent rounded-2xl font-black text-[10px] text-white uppercase tracking-widest shadow-sm hover:shadow-red-500/20 hover:bg-red-700 active:bg-red-800 active:scale-95 transition-all">
-                ← Kembali
-            </a>
         </div>
     </x-slot>
 
     <div class="py-8 bg-gray-50 dark:bg-slate-950 min-h-screen transition-colors duration-300">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
-            {{-- 2. PROFILE CARD --}}
-            <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] p-10 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 flex flex-col md:flex-row items-center md:items-center gap-10 transition-colors duration-300">
-                {{-- Photo --}}
-                <div class="shrink-0 relative group">
-                    <div class="absolute -inset-1 bg-gradient-to-tr from-red-600 to-orange-600 rounded-full blur opacity-25 group-hover:opacity-40 transition-opacity"></div>
-                    @if($internship->student->studentProfile && $internship->student->studentProfile->photo)
-                        <img class="relative h-32 w-32 rounded-full object-cover shadow-2xl border-4 border-white dark:border-slate-800 transition-colors" src="{{ asset('storage/' . $internship->student->studentProfile->photo) }}" alt="{{ $internship->student->name }}">
+            <!-- Page actions matching Admin style -->
+            <div class="flex justify-between sm:justify-end items-center mb-4 gap-3">
+                @if(!$internship->evaluation)
+                    @php
+                        $canInputGrade = \Carbon\Carbon::parse($internship->end_date)->subDays(7)->lte(\Carbon\Carbon::now());
+                        $daysRemaining = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($internship->end_date), false);
+                    @endphp
+
+                    @if($canInputGrade)
+                        <a href="{{ route('mentor.evaluations.create', $internship->id) }}" 
+                           class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold text-[10px] md:text-xs uppercase tracking-widest shadow-lg shadow-slate-900/20 dark:shadow-none hover:bg-slate-800 dark:hover:bg-slate-100 transition-all active:scale-95 duration-200 whitespace-nowrap">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                            </svg>
+                            Input Nilai Akhir
+                        </a>
                     @else
-                        <div class="relative h-32 w-32 rounded-full bg-gradient-to-tr from-red-600 to-orange-600 flex items-center justify-center text-white text-5xl font-black shadow-2xl border-4 border-white dark:border-slate-800 transition-colors">
+                        <button disabled class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-xl font-bold text-[10px] md:text-xs uppercase tracking-widest cursor-not-allowed border border-slate-300 dark:border-slate-700 whitespace-nowrap" title="Penilaian baru dibuka 7 hari sebelum magang selesai">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                            </svg>
+                            Input Nilai ({{ ceil($daysRemaining - 7) }} Hari)
+                        </button>
+                    @endif
+                @endif
+                <button type="button" onclick="window.history.back()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 dark:hover:bg-slate-600 text-white dark:text-slate-100 rounded-xl font-bold text-[10px] md:text-xs uppercase tracking-widest shadow-lg shadow-slate-900/20 dark:shadow-none hover:shadow-slate-900/40 transition-all active:scale-95 duration-200 whitespace-nowrap">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+                    </svg>
+                    Kembali
+                </button>
+            </div>
+
+            {{-- 1. Header Card: Identity & Status --}}
+            <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row items-center md:items-start gap-8 relative overflow-hidden transition-colors duration-300">
+                <!-- Decorative Background Blurs -->
+                <div class="absolute -top-24 -right-24 w-96 h-96 bg-red-500/10 dark:bg-red-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-orange-500/10 dark:bg-orange-500/5 rounded-full blur-3xl pointer-events-none"></div>
+
+                <!-- Photo -->
+                <div class="shrink-0 relative z-10">
+                    @if($internship->student->studentProfile && $internship->student->studentProfile->photo)
+                        <img class="h-32 w-32 rounded-3xl object-cover shadow-lg shadow-red-500/20 dark:shadow-none border-4 border-white dark:border-slate-800 transition-colors" src="{{ asset('storage/' . $internship->student->studentProfile->photo) }}" alt="{{ $internship->student->name }}">
+                    @else
+                        <div class="h-32 w-32 rounded-3xl bg-gradient-to-tr from-red-500 to-orange-600 flex items-center justify-center text-white text-5xl font-black shadow-lg shadow-red-500/20 dark:shadow-none border-4 border-white dark:border-slate-800 transition-colors">
                             {{ substr($internship->student->name, 0, 1) }}
                         </div>
                     @endif
+                    <div class="absolute -bottom-2 -right-2 h-8 w-8 bg-emerald-500 border-4 border-white dark:border-slate-900 rounded-full flex items-center justify-center shadow-lg" title="Active Account">
+                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
                 </div>
 
-                {{-- Info --}}
-                <div class="grow text-center md:text-left space-y-4">
+                <!-- Info -->
+                <div class="grow text-center md:text-left space-y-4 z-10">
                     <div>
-                        <h1 class="text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tight transition-colors">{{ $internship->student->name }}</h1>
-                        <p class="text-slate-500 dark:text-slate-500 font-black tracking-widest text-[10px] mt-1 transition-colors">{{ $internship->student->email }}</p>
+                        <h1 class="text-3xl font-extrabold text-slate-800 dark:text-slate-100 transition-colors tracking-tight">{{ $internship->student->name }}</h1>
+                        <p class="text-slate-500 dark:text-slate-400 font-bold flex items-center justify-center md:justify-start gap-1.5 mt-1 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            {{ $internship->student->email }}
+                        </p>
                     </div>
-
-                    {{-- MERGED: INFO STATS FROM INCOMING CHANGE --}}
-                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4">
-                         <div class="px-5 py-2.5 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-slate-100 dark:border-slate-800 transition-colors">
-                            <p class="text-[10px] text-slate-400 dark:text-slate-600 uppercase tracking-widest font-black mb-1">Universitas</p>
-                            <p class="font-bold text-slate-700 dark:text-slate-300 text-xs">{{ $internship->student->studentProfile->university ?? '-' }}</p>
-                        </div>
-                        <div class="px-5 py-2.5 bg-red-50 dark:bg-red-500/10 rounded-2xl border border-red-100 dark:border-red-500/20 transition-colors">
-                            <p class="text-[10px] text-red-400 dark:text-red-500 uppercase tracking-widest font-black mb-1">Divisi</p>
-                            <p class="font-black text-red-600 dark:text-red-400 text-xs uppercase tracking-tight">{{ $internship->division->name }}</p>
-                        </div>
-                         <div class="px-5 py-2.5 bg-slate-900 dark:bg-white rounded-2xl border border-slate-900 dark:border-white shadow-lg shadow-slate-900/20 dark:shadow-none transition-colors">
-                            <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-black mb-1">Total Logbook</p>
-                            <p class="font-black text-white dark:text-slate-900 text-xs">{{ $internship->dailyLogbooks->count() }} Aktivitas</p>
-                        </div>
+                    
+                    <div class="flex flex-wrap items-center justify-center md:justify-start gap-3">
+                        <x-status-badge :status="$internship->status" class="px-4 py-1.5 text-[11px] font-black uppercase tracking-widest shadow-sm" />
+                        
+                        <span class="inline-flex items-center px-4 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-widest bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-500/20 shadow-sm transition-colors">
+                            {{ $internship->division->name ?? 'Belum Ada Divisi' }}
+                        </span>
+                        
+                         <span class="inline-flex items-center px-4 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-widest bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 shadow-sm gap-2 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-3.5 h-3.5">
+                                <path d="M11.644 1.59a.75.75 0 01.712 0l9.75 5.25a.75.75 0 010 1.32l-9.75 5.25a.75.75 0 01-.712 0l-9.75-5.25a.75.75 0 010-1.32l9.75-5.25z" />
+                                <path d="M3.265 10.602l7.666 4.128a1.5 1.5 0 001.338 0l7.666-4.128v6.225A2.25 2.25 0 0117.685 19l-4.435 2.387a2.25 2.25 0 01-2.5 0L6.315 19a2.25 2.25 0 01-1.25-2.015v-6.383z" />
+                            </svg>
+                            {{ $internship->dailyLogbooks->count() }} Aktivitas
+                        </span>
                     </div>
                 </div>
 
                 {{-- Action / Grading --}}
-                <div class="shrink-0 md:ml-auto flex flex-col items-center md:items-end justify-center">
+                <div class="shrink-0 md:ml-auto flex flex-col items-center md:items-end justify-center z-10 w-full md:w-auto mt-4 md:mt-0">
                          @if($internship->evaluation)
-                              <div class="text-center md:text-right bg-emerald-50 dark:bg-emerald-500/5 p-6 rounded-[2rem] border border-emerald-100 dark:border-emerald-500/10 transition-colors">
+                              <div class="text-center md:text-right bg-emerald-50 dark:bg-emerald-500/5 p-6 rounded-[2rem] border border-emerald-100 dark:border-emerald-500/10 transition-colors w-full md:w-auto">
                                  <span class="block text-[10px] text-emerald-600 dark:text-emerald-500 uppercase font-black tracking-widest mb-3 transition-colors">Nilai Akhir</span>
                                  <div class="relative inline-block">
                                      <div class="absolute -inset-4 bg-emerald-500 rounded-full blur-xl opacity-20"></div>
@@ -79,50 +119,180 @@
                                  </div>
                               </div>
                         @else
-                            @php
-                                $canInputGrade = \Carbon\Carbon::parse($internship->end_date)->subDays(7)->lte(\Carbon\Carbon::now());
-                                $daysRemaining = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($internship->end_date), false);
-                            @endphp
-
-                            @if($canInputGrade)
-                                <a href="{{ route('mentor.evaluations.create', $internship->id) }}" 
-                                   class="group inline-flex items-center gap-3 px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black rounded-2xl shadow-xl shadow-slate-900/20 dark:shadow-none hover:bg-red-600 dark:hover:bg-red-50 hover:text-white dark:hover:text-red-600 text-sm uppercase tracking-widest transition-all hover:scale-105 active:scale-95">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                                    </svg>
-                                    Input Nilai Akhir
-                                </a>
-                            @else
-                                <div class="text-right">
-                                    <button disabled class="group inline-flex items-center gap-3 px-8 py-4 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 font-black rounded-2xl border border-slate-200 dark:border-slate-700 cursor-not-allowed text-sm uppercase tracking-widest transition-colors" title="Penilaian baru dibuka 7 hari sebelum magang selesai">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                                        </svg>
-                                        Input Nilai Terkunci
-                                    </button>
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-600 mt-3 font-black uppercase tracking-widest transition-colors text-right">
-                                        Terbuka dalam <span class="text-slate-800 dark:text-slate-200">{{ ceil($daysRemaining - 7) }}</span> hari lagi
-                                    </p>
-                                </div>
-                            @endif
+                              <!-- Evaluasi belum tersedia / Tombol dipindah ke atas -->
+                              <div class="hidden md:block w-32"></div>
                         @endif
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+                
+                <!-- Left Column (Detail Mahasiswa) -->
+                <div class="space-y-6 lg:space-y-8">
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden transition-colors duration-300">
+                        <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30 flex items-center justify-between">
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 transition-colors">Informasi Intern</h3>
+                            <div class="p-2 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 text-slate-400 dark:text-slate-500 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                                    <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                        @php $profile = $internship->student->studentProfile; @endphp
+                        <div class="p-6 space-y-6">
+                            <div>
+                                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest mb-1.5 flex items-center gap-1.5 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 text-red-500 dark:text-red-600"><path d="M10 2l8 4-8 4-8-4 8-4z" /><path d="M2.5 9v4c0 2 1.5 4 7.5 5.5C16 17 17.5 15 17.5 13V9l-7.5 3.75L2.5 9z" /></svg>
+                                    Institusi Pendidikan
+                                </p>
+                                <p class="text-slate-800 dark:text-slate-200 font-bold transition-colors">{{ $profile->university ?? '-' }}</p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest mb-1.5 transition-colors">Jurusan</p>
+                                    <p class="text-slate-800 dark:text-slate-200 font-bold transition-colors">{{ $profile->major ?? '-' }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest mb-1.5 transition-colors">Jenjang</p>
+                                    <span class="inline-flex px-2.5 py-1 text-[10px] uppercase tracking-widest font-black rounded-lg shadow-sm bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-500/20 transition-colors">
+                                        {{ $profile->education_level ?? '-' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest mb-1.5 transition-colors">{{ optional($profile)->student_type === 'siswa' ? 'NIS/NISN' : 'NIM' }}</p>
+                                    <p class="text-slate-800 dark:text-slate-200 font-mono text-sm font-bold transition-colors">{{ $profile->nim ?? '-' }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest mb-1.5 transition-colors">Kontak (WA/HP)</p>
+                                    <p class="text-slate-800 dark:text-slate-200 font-mono text-sm font-bold transition-colors">{{ $profile->phone_number ?? '-' }}</p>
+                                </div>
+                            </div>
+                            <div class="pt-2">
+                                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest mb-1.5 flex items-center gap-1.5 transition-colors">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 text-red-500 dark:text-red-600"><path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" /></svg>
+                                    Alamat Domisili
+                                </p>
+                                <p class="text-slate-600 dark:text-slate-300 text-sm font-medium leading-relaxed bg-slate-50 dark:bg-slate-800/50 p-3.5 rounded-xl border border-slate-100 dark:border-slate-700/50 transition-colors">{{ $profile->address ?? '-' }}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Right Column (Detail Magang & Dokumen) -->
+                <div class="lg:col-span-2 space-y-6 lg:space-y-8">
+                     <!-- Durasi & Lokasi -->
+                    <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden relative transition-colors duration-300">
+                        <!-- Background Accent Layout -->
+                        <div class="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-red-50/50 dark:from-red-500/5 to-transparent pointer-events-none"></div>
+
+                        <div class="px-6 py-5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/30 flex justify-between items-center relative z-10">
+                            <h3 class="font-bold text-slate-800 dark:text-slate-100 transition-colors">Detail Pelaksanaan</h3>
+                            <div class="flex items-center gap-3">
+                                @if($internship->status === 'finished')
+                                    <span class="bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-400 text-[10px] px-3 py-1.5 rounded-lg font-black uppercase tracking-widest border border-red-200 dark:border-red-500/30 shadow-sm transition-colors">
+                                        Status: Selesai
+                                    </span>
+                                @elseif($internship->status === 'active')
+                                    @php
+                                        $start = \Carbon\Carbon::parse($internship->start_date);
+                                        $end = \Carbon\Carbon::parse($internship->end_date);
+                                        $diff = $start->diff($end);
+                                        $durationStr = '';
+                                        if($diff->y > 0) $durationStr .= $diff->y . ' Tahun ';
+                                        if($diff->m > 0) $durationStr .= $diff->m . ' Bulan ';
+                                        if($diff->d > 0) $durationStr .= $diff->d . ' Hari';
+                                    @endphp
+                                    <span class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-[10px] px-3 py-1.5 rounded-lg font-black uppercase tracking-widest border border-emerald-200 dark:border-emerald-500/30 shadow-sm transition-colors">
+                                        Durasi: {{ trim($durationStr) ?: '0 Hari' }}
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 relative z-10">
+                             <!-- Periode Magang -->
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2.5 bg-red-500/10 text-red-500 border border-red-500/20 shadow-sm rounded-xl transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                                            <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 017.5 3v1.5h9V3A.75.75 0 0118 3v1.5h.75a3 3 0 013 3v11.25a3 3 0 01-3 3H5.25a3 3 0 01-3-3V7.5a3 3 0 013-3H6V3a.75.75 0 01.75-.75zm13.5 9a1.5 1.5 0 00-1.5-1.5H5.25a1.5 1.5 0 00-1.5 1.5v7.5a1.5 1.5 0 001.5 1.5h13.5a1.5 1.5 0 001.5-1.5v-7.5z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] transition-colors">Periode Magang</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="bg-white dark:bg-slate-950/40 border border-slate-200 dark:border-slate-800/80 rounded-[2rem] p-6 pl-8 relative overflow-hidden transition-colors shadow-sm">
+                                    <!-- Timeline connector graphic -->
+                                    <div class="absolute left-8 top-10 bottom-10 w-[2px] bg-slate-200 dark:bg-slate-800 transition-colors"></div>
+                                    
+                                    <div class="space-y-8 relative z-10">
+                                        <div class="flex items-center gap-6">
+                                            <div class="w-4 h-4 rounded-full bg-slate-400 dark:bg-slate-700 ring-[6px] ring-white dark:ring-slate-900 shadow-sm -ml-[7px] transition-colors relative z-20"></div>
+                                            <div>
+                                                <p class="text-[11px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest transition-colors mb-1">Mulai (Start)</p>
+                                                <p class="text-xl font-black text-slate-800 dark:text-slate-100 transition-colors tracking-tight">{{ \Carbon\Carbon::parse($internship->start_date)->translatedFormat('d M Y') }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-6">
+                                            <div class="w-4 h-4 rounded-full bg-red-600 dark:bg-red-500 ring-[6px] ring-white dark:ring-slate-900 shadow-sm -ml-[7px] transition-colors relative z-20"></div>
+                                            <div>
+                                                <p class="text-[11px] font-black uppercase text-red-600 dark:text-red-500 tracking-widest transition-colors mb-1">Selesai (End)</p>
+                                                <p class="text-xl font-black text-slate-800 dark:text-slate-100 transition-colors tracking-tight">{{ \Carbon\Carbon::parse($internship->end_date)->translatedFormat('d M Y') }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Upload Dokumen Intern -->
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="p-2.5 bg-blue-500/10 text-blue-600 border border-blue-500/20 shadow-sm rounded-xl transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5">
+                                            <path fill-rule="evenodd" d="M10.5 3.75a6 6 0 00-5.98 6.496A5.25 5.25 0 005.25 20.25H18a4.5 4.5 0 002.206-8.423 3.75 3.75 0 00-4.133-4.303A6.001 6.001 0 0010.5 3.75zm2.03 5.47a.75.75 0 00-1.06 0l-3 3a.75.75 0 101.06 1.06l1.72-1.72v4.94a.75.75 0 001.5 0v-4.94l1.72 1.72a.75.75 0 101.06-1.06l-3-3z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em] transition-colors">Dokumen Ke Intern</p>
+                                    </div>
+                                </div>
+                                
+                                <button type="button" @click="showUploadModal = true" class="w-full h-[148px] bg-slate-50 dark:bg-slate-900/40 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-[2rem] flex flex-col items-center justify-center p-6 text-center hover:bg-slate-100 dark:hover:bg-slate-800/80 hover:border-blue-400 dark:hover:border-blue-500/50 transition-colors group cursor-pointer shadow-sm">
+                                    <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-500 flex items-center justify-center mb-3 group-hover:scale-110 group-hover:-translate-y-1 transition-all shadow-sm">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-black text-slate-700 dark:text-slate-300 transition-colors">Upload Dokumen</p>
+                                    <p class="text-[10px] text-slate-500 dark:text-slate-500 font-bold mt-1 tracking-widest uppercase transition-colors">Kirim Ke Mahasiswa</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- 4. DOKUMEN & LAPORAN REMOVED PER REQUEST --}}
+
+                </div>
+            </div>
+
             {{-- 3. TRANSKRIP NILAI --}}
             @if($internship->evaluation)
-            <div x-data="{ show: false }" class="bg-white dark:bg-slate-900 overflow-hidden shadow-xl shadow-slate-200/50 dark:shadow-none sm:rounded-[2.5rem] border border-slate-100 dark:border-slate-800 transition-colors duration-300">
-                <div class="px-10 py-6 bg-slate-50/50 dark:bg-slate-950/50 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between transition-colors">
+            <div x-data="{ show: false }" class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 rounded-3xl transition-colors duration-300">
+                <div class="px-8 py-5 bg-slate-50/50 dark:bg-slate-950/30 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between transition-colors">
                     <div>
-                        <h3 class="font-black text-lg text-slate-800 dark:text-slate-100 tracking-tight transition-colors">Transkrip Nilai Magang</h3>
-                        <p class="text-[10px] text-slate-500 dark:text-slate-500 font-black uppercase tracking-widest mt-1 transition-colors">Hasil evaluasi akhir kegiatan magang</p>
+                        <h3 class="font-bold text-slate-800 dark:text-slate-100 transition-colors">Transkrip Nilai Magang</h3>
+                        <p class="text-[10px] text-slate-500 dark:text-slate-500 font-extrabold uppercase tracking-widest mt-0.5 transition-colors">Hasil evaluasi akhir kegiatan magang</p>
                     </div>
-                    <div class="flex gap-3">
-                        <button @click="show = !show" class="text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-6 py-2.5 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-red-600 dark:hover:text-red-400 hover:border-red-100 dark:hover:border-red-500/20 active:scale-95 transition-all shadow-sm flex items-center gap-2">
+                    <div class="flex gap-2">
+                        <button @click="show = !show" class="text-[10px] font-black uppercase tracking-widest text-slate-600 dark:text-slate-400 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-5 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-red-600 dark:hover:text-red-400 active:scale-95 transition-all shadow-sm flex items-center gap-2">
                              <span x-text="show ? 'Sembunyikan' : 'Lihat Transkrip'"></span>
                         </button>
-                        <a href="{{ route('mentor.students.transcript', $internship->id) }}" target="_blank" class="text-[10px] font-black uppercase tracking-widest text-white bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-2xl transition-all shadow-lg shadow-blue-500/30 flex items-center gap-2 active:scale-95">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015-1.837-2.175a48.041 48.041 0 00-1.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" /></svg>
+                        <a href="{{ route('mentor.students.transcript', $internship->id) }}" target="_blank" class="text-[10px] font-black uppercase tracking-widest text-white bg-red-600 hover:bg-red-700 px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 active:scale-95">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0021 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 00-1.913-.247M6.34 18H5.25A2.25 2.25 0 013 15.75V9.456c0-1.081.768-2.015-1.837-2.175a48.041 48.041 0 00-1.913-.247m10.5 0a48.536 48.536 0 00-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5zm-3 0h.008v.008H15V10.5z" /></svg>
                             Cetak Transkrip
                         </a>
                     </div>
@@ -133,10 +303,10 @@
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
                             <thead class="bg-gray-50 dark:bg-slate-950/50 transition-colors">
                                 <tr>
-                                    <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-24">No</th>
-                                    <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Komponen Penilaian</th>
-                                    <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-40">Nilai Angka</th>
-                                    <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-40">Predikat</th>
+                                    <th scope="col" class="px-6 py-4 text-center text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-24">No</th>
+                                    <th scope="col" class="px-6 py-4 text-left text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Komponen Penilaian</th>
+                                    <th scope="col" class="px-6 py-4 text-center text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-40">Nilai Angka</th>
+                                    <th scope="col" class="px-6 py-4 text-center text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-40">Predikat</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800 transition-colors">
@@ -170,7 +340,7 @@
                                         </span>
                                     </td>
                                 </tr>
-                                <tr class="bg-emerald-500 dark:bg-emerald-600 text-white transition-colors">
+                                <tr class="bg-red-600 dark:bg-red-700 text-white transition-colors">
                                     <td colspan="2" class="px-6 py-6 whitespace-nowrap text-right font-black uppercase tracking-widest text-xs">Nilai Akhir Rata-Rata</td>
                                     <td class="px-6 py-6 whitespace-nowrap text-center font-black text-2xl">{{ $internship->evaluation->final_score }}</td>
                                     <td class="px-6 py-6 whitespace-nowrap text-center font-black text-2xl">{{ $internship->evaluation->final_score >= 85 ? 'A' : ($internship->evaluation->final_score >= 70 ? 'B' : 'C') }}</td>
@@ -178,131 +348,103 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
             </div>
             @endif
 
-            {{-- 4. DOKUMEN & LAPORAN --}}
-            <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-xl shadow-slate-200/50 dark:shadow-none sm:rounded-[2.5rem] border border-slate-100 dark:border-slate-800 p-10 space-y-6 transition-colors duration-300">
-                <h3 class="font-black text-2xl text-slate-800 dark:text-slate-100 tracking-tight transition-colors">Dokumen & Laporan</h3>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {{-- Monthly Report --}}
-                    <div class="flex items-center justify-between p-8 bg-slate-50/50 dark:bg-slate-950/50 rounded-[2rem] border border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-blue-500/20 group transition-all duration-300">
-                        <div class="flex items-center gap-6">
-                            <div class="bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-500 p-5 rounded-[1.5rem] shadow-lg shadow-blue-500/10 group-hover:scale-110 transition-all">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-7 h-7">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0h18M5 10.5h14" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 class="font-black text-xl text-slate-800 dark:text-slate-200 transition-colors">Laporan Bulanan</h4>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-500 font-black uppercase tracking-widest mt-1 transition-colors">Rekap kehadiran & logbook</p>
-                            </div>
-                        </div>
-                        <button type="button" @click="showMonthlyReportModal = true" class="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 px-6 py-3 rounded-2xl hover:bg-blue-600 hover:text-white hover:border-blue-600 active:scale-95 transition-all shadow-sm">
-                            Unduh
-                        </button>
-                    </div>
-
-                    {{-- Final Report --}}
-                    @php $finalReport = $internship->documents->where('type', 'laporan_akhir')->first(); @endphp
-                    <div class="flex items-center justify-between p-8 bg-slate-50/50 dark:bg-slate-950/50 rounded-[2rem] border border-slate-100 dark:border-slate-800 hover:border-purple-200 dark:hover:border-purple-500/20 group transition-all duration-300">
-                        <div class="flex items-center gap-6">
-                            <div class="bg-purple-50 dark:bg-purple-500/10 text-purple-600 dark:text-purple-500 p-5 rounded-[1.5rem] shadow-lg shadow-purple-500/10 group-hover:scale-110 transition-all">
-                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-7 h-7">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
-                                </svg>
-                            </div>
-                            <div>
-                                <h4 class="font-black text-xl text-slate-800 dark:text-slate-200 transition-colors">Laporan Akhir</h4>
-                                <p class="text-[10px] text-slate-500 dark:text-slate-500 font-black uppercase tracking-widest mt-1 transition-colors">File laporan final mahasiswa</p>
-                            </div>
-                        </div>
-                        @if($finalReport)
-                            <a href="{{ Storage::url($finalReport->file_path) }}" target="_blank" class="text-[10px] font-black uppercase tracking-widest text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-500/30 px-6 py-3 rounded-2xl hover:bg-purple-600 hover:text-white hover:border-purple-600 active:scale-95 transition-all shadow-sm">
-                                Download
-                            </a>
-                        @else
-                             <span class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-600 border border-slate-100 dark:border-slate-800 px-6 py-3 rounded-2xl bg-slate-50 dark:bg-slate-900/50 cursor-not-allowed transition-colors">
-                                Kosong
-                            </span>
-                        @endif
-                    </div>
-                </div>
-
             {{-- 5. LOGBOOK HISTORY --}}
-            <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-xl shadow-slate-200/50 dark:shadow-none sm:rounded-[2.5rem] border border-slate-100 dark:border-slate-800 transition-colors duration-300">
-                <div class="p-10">
-                    <h3 id="logbook-section" class="text-2xl font-black text-slate-800 dark:text-slate-100 mb-8 flex items-center gap-3 scroll-mt-24 transition-colors">
-                        <span class="w-2.5 h-8 bg-gradient-to-b from-red-600 to-red-800 rounded-full shadow-lg shadow-red-500/20"></span>
+            <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 rounded-3xl transition-colors duration-300">
+                <div class="p-8">
+                    <h3 id="logbook-section" class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-3 scroll-mt-24 transition-colors">
+                        <span class="w-2 h-7 bg-red-600 rounded-full shadow-lg shadow-red-500/20"></span>
                         Riwayat Logbook Harian
                     </h3>
                     
-                    <div class="overflow-hidden rounded-[2rem] border border-slate-100 dark:border-slate-800 transition-colors">
+                    <div class="overflow-hidden rounded-2xl border border-slate-100 dark:border-slate-800 transition-colors">
                     <div class="overflow-x-auto">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
                             <thead class="bg-gray-50 dark:bg-slate-950/50 transition-colors">
                                 <tr>
-                                    <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Tanggal</th>
-                                    <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-1/4">Judul</th>
-                                    <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-1/2">Aktivitas</th>
-                                    <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-64">Penilaian Mentor</th>
+                                    <th scope="col" class="px-6 py-4 text-left text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-32">Tanggal</th>
+                                    <th scope="col" class="px-6 py-4 text-left text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Judul Aktivitas</th>
+                                    <th scope="col" class="px-6 py-4 text-center text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-40">Status</th>
+                                    <th scope="col" class="px-6 py-4 text-center text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-48">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800 transition-colors">
                                 @forelse($internship->dailyLogbooks as $logbook)
                                 <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-slate-700 dark:text-slate-300 align-top transition-colors">
-                                        {{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}
+                                    <td class="px-6 py-5 whitespace-nowrap group">
+                                        <div class="flex flex-col">
+                                            <span class="text-xs font-black text-slate-800 dark:text-slate-200 transition-colors">{{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('d M Y') }}</span>
+                                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('l') }}</span>
+                                        </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-normal align-top">
-                                        <span class="text-sm font-black text-slate-800 dark:text-slate-200 line-clamp-2 transition-colors">
-                                            {{ $logbook->title ?? '-' }}
-                                        </span>
+                                    <td class="px-6 py-5">
+                                        <div class="flex flex-col gap-1.5">
+                                            <span class="text-sm font-bold text-slate-700 dark:text-slate-200 line-clamp-1 transition-colors">{{ $logbook->title ?? 'Tanpa Judul' }}</span>
+                                            <div class="flex items-center gap-2">
+                                                 <button type="button" 
+                                                    @click="selectedLogbook = { 
+                                                       name: '{{ addslashes($internship->student->name) }}', 
+                                                       title: '{{ addslashes($logbook->title) }}',
+                                                       date: '{{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}', 
+                                                       activity: {{ json_encode($logbook->activity) }},
+                                                       evidence: {{ $logbook->evidence ? "'" . Storage::url($logbook->evidence) . "'" : 'null' }}
+                                                    }; showModal = true"
+                                                    class="text-[9px] font-black text-slate-400 hover:text-red-600 transition-all flex items-center gap-1 uppercase tracking-widest group/btn">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 group-hover/btn:scale-110 transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
+                                                    Detail Aktivitas
+                                                </button>
+                                                @if($logbook->evidence)
+                                                    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
+                                                    <a href="{{ Storage::url($logbook->evidence) }}" target="_blank" class="text-[9px] font-black text-slate-400 hover:text-blue-600 transition-all flex items-center gap-1 uppercase tracking-widest">
+                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32a1.5 1.5 0 01-2.121-2.121l10.94-10.94" /></svg>
+                                                         Lihat Bukti
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td class="px-6 py-4 whitespace-normal align-top">
-                                        <button type="button" 
-                                                @click="selectedLogbook = { 
-                                                   name: '{{ addslashes($internship->student->name) }}', 
-                                                   title: '{{ addslashes($logbook->title) }}',
-                                                   date: '{{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}', 
-                                                   activity: {{ json_encode($logbook->activity) }},
-                                                   evidence: {{ $logbook->evidence ? "'" . Storage::url($logbook->evidence) . "'" : 'null' }}
-                                                }; showModal = true"
-                                                class="text-[10px] font-black text-slate-500 hover:text-blue-600 transition-all flex items-center justify-center gap-1.5 uppercase tracking-widest active:scale-95 group/btn bg-slate-100/50 hover:bg-blue-50 dark:bg-slate-800/50 dark:hover:bg-blue-900/40 px-3 py-1.5 rounded-lg border border-slate-200/50 dark:border-slate-700/50 hover:border-blue-200 dark:hover:border-blue-500/30 w-fit mt-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3.5 h-3.5 group-hover/btn:scale-110 transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
-                                            <span class="group-hover/btn:-translate-x-0.5 transition-transform">Lihat Detail</span>
-                                        </button>
-                                    </td>
-                                    
-                                    <td class="px-6 py-4 whitespace-nowrap text-center align-top">
+                                    <td class="px-6 py-5 whitespace-nowrap text-center">
                                         @if($logbook->status == 'pending')
-                                            <form action="{{ route('mentor.logbook.update', $logbook->id) }}" method="POST">
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 font-black text-[9px] uppercase tracking-widest border border-amber-100 dark:border-amber-500/20 shadow-sm">
+                                                Pending
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 font-black text-[9px] uppercase tracking-widest border border-emerald-100 dark:border-amber-500/20 shadow-sm">
+                                                Approved
+                                            </span>
+                                        @endif
+                                    </td>
+                                    <td class="px-6 py-5 whitespace-nowrap text-center">
+                                        @if($logbook->status == 'pending')
+                                            <form action="{{ route('mentor.logbook.update', $logbook->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('PATCH')
                                                 <input type="hidden" name="status" value="approved">
-                                                <button type="button" data-status="approved" class="btn-action w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black px-6 py-2.5 rounded-xl text-[10px] transition-all shadow-sm active:scale-95 hover:bg-emerald-600 dark:hover:bg-emerald-50 hover:text-white dark:hover:text-emerald-600 uppercase tracking-widest border border-slate-900 dark:border-white hover:border-emerald-600 dark:hover:border-emerald-500/20">
+                                                <button type="button" data-status="approved" class="btn-action bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black px-5 py-2 rounded-xl text-[9px] transition-all shadow-md active:scale-95 hover:bg-emerald-600 dark:hover:bg-emerald-50 hover:text-white dark:hover:text-emerald-600 uppercase tracking-widest border border-slate-900 dark:border-white hover:border-emerald-600">
                                                     Setujui
                                                 </button>
                                             </form>
                                         @else
-                                            <div class="text-[10px] text-slate-400 dark:text-slate-500 font-black uppercase tracking-widest py-2 italic transition-colors flex items-center justify-center gap-2">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4 text-emerald-500"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                                Tervalidasi
-                                            </div>
+                                            <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest py-2 flex items-center justify-center gap-1.5 opacity-60">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                                                Selesai
+                                            </span>
                                         @endif
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                <td colspan="4" class="px-6 py-12 text-center text-gray-500 dark:text-slate-400 min-h-[160px]">
-                                        <div class="flex flex-col items-center justify-center h-full gap-2">
-                                            <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-2 transition-colors shadow-inner">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-slate-300 dark:text-slate-600 transition-colors">
+                                    <td colspan="4" class="px-6 py-20 text-center">
+                                        <div class="flex flex-col items-center gap-4">
+                                            <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-center shadow-inner">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-slate-300 dark:text-slate-600">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                 </svg>
                                             </div>
-                                            <p class="text-base font-bold text-slate-500 dark:text-slate-500 transition-colors">Belum ada logbook yang disubmit.</p>
+                                            <p class="text-sm font-bold text-slate-400 dark:text-slate-500">Belum ada riwayat logbook yang tersedia.</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -659,6 +801,86 @@
                         Tutup
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+    {{-- Upload Document Modal --}}
+    <div x-show="showUploadModal" 
+         class="fixed inset-0 z-[1200] overflow-y-auto" 
+         style="display: none;"
+         x-cloak>
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div x-show="showUploadModal" 
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0"
+                 x-transition:enter-end="opacity-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100"
+                 x-transition:leave-end="opacity-0"
+                 class="fixed inset-0 transition-opacity bg-slate-900/90 backdrop-blur-xl" 
+                 @click="showUploadModal = false"></div>
+
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+            <div x-show="showUploadModal"
+                 x-transition:enter="ease-out duration-300"
+                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave="ease-in duration-200"
+                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                 class="inline-block w-full overflow-hidden text-left align-bottom transition-all transform bg-white dark:bg-slate-900 rounded-[2.5rem] shadow-2xl sm:my-8 sm:align-middle sm:max-w-xl border border-slate-100 dark:border-slate-800 transition-colors duration-300 p-8">
+                
+                <div class="flex items-center justify-between mb-8">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-500 shadow-sm border border-blue-100 dark:border-blue-500/20">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">Upload Dokumen</h3>
+                            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Kirim file ke mahasiswa magang</p>
+                        </div>
+                    </div>
+                    <button @click="showUploadModal = false" class="w-10 h-10 rounded-full flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all active:scale-95">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <form action="#" method="POST" enctype="multipart/form-data" class="space-y-6">
+                    @csrf
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest mb-2">Pilih File Dokumen</label>
+                        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 dark:border-slate-700 border-dashed rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer" onclick="document.getElementById('file-upload').click()">
+                            <div class="space-y-1 text-center flex flex-col items-center">
+                                <svg class="mx-auto h-12 w-12 text-slate-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                                <div class="flex text-sm text-slate-600 dark:text-slate-400 justify-center mt-2">
+                                    <span class="relative cursor-pointer bg-transparent rounded-md font-bold text-blue-600 dark:text-blue-400 hover:text-blue-500 focus-within:outline-none">
+                                        <span>Unggah file</span>
+                                        <input id="file-upload" name="document" type="file" class="sr-only">
+                                    </span>
+                                </div>
+                                <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-bold">PDF, DOC, DOCX up to 10MB</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest mb-2">Keterangan (Opsional)</label>
+                        <textarea name="description" rows="3" class="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-sm text-slate-700 dark:text-slate-300 p-4 transition-colors" placeholder="Tambahkan catatan untuk mahasiswa..."></textarea>
+                    </div>
+
+                    <div class="pt-4 flex justify-end gap-3">
+                        <button type="button" @click="showUploadModal = false" class="px-6 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-xl font-bold text-xs uppercase tracking-widest transition-all active:scale-95">Batal</button>
+                        <button type="button" onclick="alert('Fitur Upload Dokumen belum tersedia.')" class="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-xs uppercase tracking-widest shadow-lg shadow-blue-500/30 transition-all active:scale-95">Upload & Kirim</button>
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>
