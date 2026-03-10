@@ -13,7 +13,7 @@
         <!-- Info Section -->
         <div class="flex flex-col items-center md:items-start text-center md:text-left">
             <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-3 transition-colors">
-                <strong class="text-slate-800 dark:text-slate-200 font-black">Divisi Telkom Regional IV</strong><br>
+                <strong class="text-slate-800 dark:text-slate-200 font-black">Telkom Witel Jateng Utara</strong><br>
                 Jl. Pahlawan No.10, Pleburan, Kec. Semarang Selatan,<br>
                 Kota Semarang, Jawa Tengah 50249.
             </p>

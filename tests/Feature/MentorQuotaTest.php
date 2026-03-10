@@ -14,7 +14,7 @@ class MentorQuotaTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_cannot_assign_intern_to_full_quota_mentor()
+    public function test_admin_can_assign_intern_regardless_of_quota()
     {
         // 1. Create Admin
         $admin = User::factory()->create(['role' => 'admin']);
@@ -22,7 +22,7 @@ class MentorQuotaTest extends TestCase
         // 2. Create Division
         $division = Division::create(['name' => 'IT Division']);
 
-        // 3. Create Mentor with Quota 1
+        // 3. Create Mentor with Quota 1 (previously)
         $mentor = User::factory()->create(['role' => 'mentor']);
         MentorProfile::create([
             'user_id' => $mentor->id,
@@ -35,7 +35,7 @@ class MentorQuotaTest extends TestCase
         $student1 = User::factory()->create(['role' => 'student']);
         $student2 = User::factory()->create(['role' => 'student']);
 
-        // 5. Assign Student 1 to Mentor (Quota 1/1)
+        // 5. Assign Student 1 to Mentor
         $this->actingAs($admin)->post(route('admin.internship.store'), [
             'student_id' => $student1->id,
             'mentor_id' => $mentor->id,
@@ -44,7 +44,7 @@ class MentorQuotaTest extends TestCase
             'end_date' => now()->addMonth(),
         ])->assertRedirect(route('admin.dashboard'));
 
-        // 6. Assign Student 2 to Mentor (Quota Exceeded)
+        // 6. Assign Student 2 to Mentor (Quota no longer enforced)
         $response = $this->actingAs($admin)->post(route('admin.internship.store'), [
             'student_id' => $student2->id,
             'mentor_id' => $mentor->id,
@@ -53,7 +53,8 @@ class MentorQuotaTest extends TestCase
             'end_date' => now()->addMonth(),
         ]);
 
-        // 7. Assert Error
-        $response->assertSessionHas('error');
+        // 7. Assert Success
+        $response->assertRedirect(route('admin.dashboard'));
+        $this->assertEquals(2, Internship::where('mentor_id', $mentor->id)->count());
     }
 }

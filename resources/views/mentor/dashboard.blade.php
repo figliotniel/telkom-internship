@@ -9,11 +9,11 @@
                 <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm md:text-base">Here's the summary of your mentees for today, {{ now()->translatedFormat('l, M d') }}.</p>
             </div>
             
-            @if(($pendingLogbooks ?? 0) > 0)
+            @if(($pendingLogbooksCount ?? 0) > 0)
             <div class="flex gap-3">
                 <a href="{{ route('mentor.approvals.index') }}" class="px-5 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all font-semibold text-sm shadow-lg shadow-red-500/30 hover:shadow-red-500/50 active:scale-95 flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Validate {{ $pendingLogbooks }} Logbooks
+                    Validate {{ $pendingLogbooksCount }} Logbooks
                 </a>
             </div>
             @endif
@@ -64,10 +64,10 @@
                 <div class="relative z-10 flex items-start justify-between">
                     <div>
                         <div class="flex items-center gap-2 mb-2">
-                            <span class="w-2 h-2 rounded-full {{ ($pendingLogbooks ?? 0) > 0 ? 'bg-orange-400 shadow-[0_0_10px_rgba(251,146,60,0.8)]' : 'bg-red-400/50' }}"></span>
+                            <span class="w-2 h-2 rounded-full {{ ($pendingLogbooksCount ?? 0) > 0 ? 'bg-orange-400 shadow-[0_0_10px_rgba(251,146,60,0.8)]' : 'bg-red-400/50' }}"></span>
                             <p class="text-[11px] font-black text-red-200 uppercase tracking-widest">Requires Validation</p>
                         </div>
-                        <h3 class="text-6xl font-black text-white tracking-tighter">{{ $pendingLogbooks ?? 0 }}</h3>
+                        <h3 class="text-6xl font-black text-white tracking-tighter">{{ $pendingLogbooksCount ?? 0 }}</h3>
                     </div>
                     <div class="p-4 bg-black/10 backdrop-blur-md rounded-2xl text-white border border-white/20 group-hover:scale-110 transition-transform duration-300 shadow-xl">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
@@ -76,9 +76,9 @@
                 
                 <div class="mt-8 relative z-10">
                     <div class="flex items-center flex-wrap gap-2 text-sm">
-                        @if(($pendingLogbooks ?? 0) > 0)
+                        @if(($pendingLogbooksCount ?? 0) > 0)
                             <span class="flex items-center text-white font-bold bg-black/20 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10 text-xs shadow-inner">
-                                {{ $pendingLogbooks ?? 0 }} Logbooks
+                                {{ $pendingLogbooksCount ?? 0 }} Logbooks
                             </span>
                             <a href="{{ route('mentor.approvals.index') }}" class="text-red-200 mt-2 sm:mt-0 sm:ml-2 font-medium hover:text-white transition-colors cursor-pointer flex items-center gap-1 group/link text-xs">
                                 Validate now <svg class="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
@@ -92,9 +92,12 @@
 
         </div>
 
-        <!-- Mentees List Section -->
-        <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-800 overflow-hidden">
-            <div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-transparent relative z-10">
+        <!-- Content Grid: Mentees and Pending Logbooks -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            
+            <!-- Left: Mentees List (2 columns wide) -->
+            <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-800 overflow-hidden h-[540px] flex flex-col group/mentees transition-all duration-300 hover:shadow-xl">
+                <div class="px-7 py-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-transparent relative z-10 font-sans">
                 <div>
                     <h3 class="text-xl font-extrabold text-slate-800 dark:text-white tracking-tight">Active Mentees</h3>
                     <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">Manage and monitor the progress of your assigned interns</p>
@@ -110,11 +113,11 @@
                 </div>
             </div>
             
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto flex-1 custom-scrollbar">
                 <table class="min-w-full divide-y divide-slate-100 dark:divide-slate-800">
                     <thead class="bg-slate-50/50 dark:bg-slate-950/50">
                         <tr>
-                            <th scope="col" class="px-8 py-5 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Intern</th>
+                            <th scope="col" class="px-7 py-5 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Intern</th>
                             <th scope="col" class="px-8 py-5 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Division</th>
                             <th scope="col" class="px-8 py-5 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">Program Status</th>
                             <th scope="col" class="px-8 py-5 text-left text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest hidden sm:table-cell">Progress</th>
@@ -144,13 +147,13 @@
                                         <div class="text-sm font-bold text-slate-800 dark:text-slate-200 group-hover:text-red-600 transition-colors">
                                             {{ optional($internship->student)->name ?? 'Unknown Student' }}
                                         </div>
-                                        <div class="text-[11px] font-bold text-slate-500 mt-0.5">
+                                        <div class="text-[10px] font-bold text-slate-500 mt-0.5">
                                             {{ optional(optional($internship->student)->studentProfile)->university ?? 'Universitas Tidak Diketahui' }}
                                         </div>
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-8 py-4 whitespace-nowrap">
+                            <td class="px-7 py-4 whitespace-nowrap">
                                 <div class="text-sm font-semibold text-slate-700 dark:text-slate-300">{{ optional($internship->division)->name ?? 'No Division' }}</div>
                                 <div class="text-xs text-slate-500">{{ optional($internship->position)->name ?? 'No Target Role' }}</div>
                             </td>
@@ -171,7 +174,7 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-8 py-4 whitespace-nowrap hidden sm:table-cell">
+                            <td class="px-7 py-4 whitespace-nowrap">
                                 <div class="w-48">
                                     <div class="flex justify-between items-end mb-1">
                                         <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Logbooks Approved</span>
@@ -189,7 +192,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-8 py-4 whitespace-nowrap text-center">
+                            <td class="px-7 py-4 whitespace-nowrap text-center">
                                 <a href="{{ route('mentor.students.show', $internship->id) }}" class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-red-600 hover:border-red-200 hover:bg-red-50 dark:hover:bg-red-500/10 dark:hover:border-red-500/30 transition-all cursor-pointer shadow-sm group-hover:shadow hover:scale-105 active:scale-95" title="View Intern Details">
                                     <svg class="w-4 h-4 text-slate-500 group-hover:text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
                                 </a>
@@ -212,6 +215,69 @@
                 </table>
             </div>
         </div>
+
+        <!-- Right: Pending Logbooks (1 column wide) -->
+        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl shadow-xl border border-slate-700 text-white overflow-hidden relative group h-[540px] flex flex-col">
+            {{-- Decorative background elements --}}
+            <div class="absolute -top-20 -right-20 w-48 h-48 bg-red-600 rounded-full blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-48 h-48 bg-blue-600 rounded-full blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none"></div>
+
+            <div class="px-7 py-6 border-b border-slate-700/50 relative z-10 flex items-center justify-between bg-transparent">
+                <div>
+                    <h3 class="text-lg font-bold tracking-tight">Need Approval</h3>
+                    <p class="text-[11px] text-slate-400 font-medium uppercase tracking-wider mt-0.5">Logbooks waiting for review</p>
+                </div>
+                @if($pendingLogbooksCount > 0)
+                    <a href="{{ route('mentor.approvals.index') }}" class="text-[11px] font-black text-red-500 hover:text-red-400 transition-colors uppercase tracking-widest flex items-center gap-1 group/all">
+                        View All
+                        <svg class="w-3 h-3 transform group-hover/all:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </a>
+                @endif
+            </div>
+
+            <div class="flex-1 overflow-y-auto custom-scrollbar relative z-10 p-5 space-y-4">
+                @forelse($recentPendingLogbooks as $logbook)
+                    <div class="group/item relative">
+                        <div class="absolute -inset-2 bg-gradient-to-r from-red-600/0 to-blue-600/0 group-hover/item:from-red-600/5 group-hover/item:to-blue-600/5 rounded-2xl transition-all duration-500"></div>
+                        <div class="relative flex items-center gap-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 hover:border-white/20 transition-all">
+                            <div class="flex-shrink-0 h-10 w-10 relative">
+                                @if(optional(optional($logbook->internship->student)->studentProfile)->photo)
+                                    <img class="h-10 w-10 rounded-full object-cover border border-white/10" src="{{ asset('storage/' . $logbook->internship->student->studentProfile->photo) }}" alt="">
+                                @else
+                                    <div class="h-10 w-10 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold border border-white/10">
+                                        {{ substr($logbook->internship->student->name ?? 'U', 0, 1) }}
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-xs font-bold text-white truncate">{{ $logbook->internship->student->name }}</p>
+                                <p class="text-[10px] text-slate-400 font-medium mt-0.5">{{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('d F Y') }}</p>
+                            </div>
+                            <a href="{{ route('mentor.approvals.index') }}" class="flex-shrink-0 p-2 bg-red-600/10 text-red-500 rounded-lg border border-red-500/20 hover:bg-red-600 hover:text-white transition-all">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+                @empty
+                    <div class="h-full flex flex-col items-center justify-center text-center p-8">
+                        <div class="w-16 h-16 bg-slate-700/30 rounded-full flex items-center justify-center mb-4">
+                            <svg class="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h4 class="text-sm font-bold text-slate-300">No Pending Logbooks</h4>
+                        <p class="text-xs text-slate-500 mt-1">Excellent work! All logbooks have been reviewed.</p>
+                    </div>
+                @endforelse
+            </div>
+            
+            <div class="p-5 border-t border-slate-700/50 relative z-10 bg-slate-900/50">
+                 <a href="{{ route('mentor.approvals.index') }}" class="w-full py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-all font-bold text-xs flex items-center justify-center gap-2 group/btn">
+                    Open Validation Page
+                    <svg class="w-3.5 h-3.5 transform group-hover/btn:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+        </div>
+
+    </div>
 
     </div>
 </x-app-layout>

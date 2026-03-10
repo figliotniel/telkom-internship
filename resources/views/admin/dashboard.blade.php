@@ -111,10 +111,9 @@
                         <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </a>
                 </div>
-                
-                <div class="divide-y divide-slate-100/80 dark:divide-slate-800/80">
+                <div class="h-[465px] overflow-y-auto divide-y divide-slate-100/80 dark:divide-slate-800/80 custom-scrollbar">
                     @forelse($recentInternships as $internship)
-                    <div class="px-7 py-4 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between group cursor-pointer {{ $loop->last ? 'rounded-b-2xl' : '' }}" onclick="window.location='{{ route('admin.internships.show', $internship->id) }}'">
+                    <div class="px-7 py-6 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between group cursor-pointer {{ $loop->last ? 'rounded-b-2xl' : '' }}" onclick="window.location='{{ route('admin.internships.show', $internship->id) }}'">
                         
                         <div class="flex items-center gap-4">
                             <div class="relative flex-shrink-0">
@@ -174,12 +173,12 @@
             </div>
 
             {{-- Right: Quick Actions / Need Attention (Dark Premium Aesthetic) --}}
-            <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-xl border border-slate-700 text-white overflow-hidden relative group h-fit">
+            <div class="lg:h-[535px] bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl shadow-xl border border-slate-700 text-white overflow-hidden relative group">
                 {{-- Decorative background elements --}}
                 <div class="absolute -top-20 -right-20 w-48 h-48 bg-red-600 rounded-full blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none"></div>
                 <div class="absolute -bottom-20 -left-20 w-48 h-48 bg-blue-600 rounded-full blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none"></div>
 
-                <div class="px-7 py-5 border-b border-slate-700/50 relative z-10 flex items-center justify-between bg-transparent">
+                <div class="px-7 py-7 border-b border-slate-700/50 relative z-10 flex items-center justify-between bg-transparent">
                     <h3 class="text-lg font-bold tracking-tight">Requires Attention</h3>
                     @if($pendingApplicants > 0 || $pendingExtensions->count() > 0)
                         <span class="flex h-2.5 w-2.5 relative">
@@ -189,7 +188,7 @@
                     @endif
                 </div>
 
-                <div class="p-6 space-y-3.5 relative z-10">
+                <div class="p-6 pb-10 space-y-4 relative z-10">
                     
                     {{-- Pending Applicants Card --}}
                     <a href="{{ $pendingApplicants > 0 ? route('admin.internships.index', ['status' => 'pending']) : '#' }}" 
@@ -201,7 +200,7 @@
                                 {{ $pendingApplicants }} Waiting
                             </span>
                         </div>
-                        <p class="text-xs text-slate-400 leading-relaxed font-medium">Review and approve recently submitted applications to join the program.</p>
+                        <p class="text-xs text-slate-400 leading-relaxed font-medium">Review new internship applications.</p>
                         
                         @if($pendingApplicants > 0)
                             <div class="mt-3 flex items-center text-[11px] font-bold text-amber-500 opacity-0 group-hover/card:opacity-100 transition-opacity transform translate-y-1 group-hover/card:translate-y-0 uppercase tracking-wider">
@@ -212,6 +211,28 @@
                         @endif
                     </a>
 
+                    {{-- Finished Internships Card --}}
+                    <div class="relative group/card-parent">
+                        <a href="{{ $finishedInternsCount > 0 ? route('admin.internships.index', ['status' => 'finished']) : '#' }}" 
+                           class="block bg-[#1e293b]/70 backdrop-blur-sm border {{ $finishedInternsCount > 0 ? 'border-blue-500/30' : 'border-slate-700/80' }} rounded-xl p-4 hover:border-blue-500/50 hover:bg-slate-800/80 transition-all shadow-sm group/card {{ $finishedInternsCount == 0 ? 'cursor-default opacity-60' : 'cursor-pointer' }}">
+                            <div class="flex justify-between items-start mb-1.5">
+                                <h4 class="font-bold text-sm text-slate-100 group-hover/card:text-blue-400 transition-colors">Finished Internships</h4>
+                                <span class="{{ $finishedInternsCount > 0 ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 'bg-slate-800 text-slate-400 border-slate-700' }} text-[10px] font-bold px-2 py-0.5 rounded-md border">
+                                    {{ $finishedInternsCount }} Ended
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400 leading-relaxed font-medium">Prepare completion documents and certificates.</p>
+                            
+                            @if($finishedInternsCount > 0)
+                                <div class="mt-3 flex items-center text-[11px] font-bold text-blue-500 opacity-0 group-hover/card:opacity-100 transition-opacity transform translate-y-1 group-hover/card:translate-y-0 uppercase tracking-wider">
+                                    View List <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                </div>
+                            @else
+                                <div class="mt-3 flex items-center text-[11px] font-bold text-slate-500 uppercase tracking-wider">All Clear</div>
+                            @endif
+                        </a>
+                    </div>
+
                     {{-- Pending Extensions Card --}}
                     <a href="{{ $pendingExtensions->count() > 0 ? route('admin.internships.index', ['status' => 'extension']) : '#' }}" 
                        class="block bg-[#1e293b]/70 backdrop-blur-sm border {{ $pendingExtensions->count() > 0 ? 'border-amber-500/30' : 'border-slate-700/80' }} rounded-xl p-4 peer hover:border-amber-500/50 hover:bg-slate-800/80 transition-all shadow-sm group/card {{ $pendingExtensions->count() == 0 ? 'cursor-default opacity-60' : 'cursor-pointer' }}">
@@ -221,7 +242,7 @@
                                 {{ $pendingExtensions->count() }} Requests
                             </span>
                         </div>
-                        <p class="text-xs text-slate-400 leading-relaxed font-medium">Review time extension requests submitted by active interns.</p>
+                        <p class="text-xs text-slate-400 leading-relaxed font-medium">Review time extension requests.</p>
                         @if($pendingExtensions->count() > 0)
                             <div class="mt-3 flex items-center text-[11px] font-bold text-amber-500 opacity-0 group-hover/card:opacity-100 transition-opacity transform translate-y-1 group-hover/card:translate-y-0 uppercase tracking-wider">
                                 Review Now <svg class="w-3.5 h-3.5 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -236,6 +257,27 @@
         </div>
 
     </div>
+
+    @push('styles')
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #cbd5e1;
+        }
+    </style>
+    @endpush
 
     @push('scripts')
     <script>

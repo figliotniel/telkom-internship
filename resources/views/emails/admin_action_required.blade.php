@@ -13,7 +13,7 @@
         @if($type === 'new_applicant')
             <p style="font-size: 16px; color: #475569;">Sistem mendeteksi adanya <strong>pengajuan magang baru</strong>. Pendaftar telah melengkapi data profil dan dokumen awal. Mohon segera melakukan reviu atas pengajuan ini. Saat ini status pendaftar adalah <strong>Pending</strong>.</p>
         @elseif($type === 'needs_induction')
-            <p style="font-size: 16px; color: #475569;">Seorang mahasiswa magang telah berhasil mengunggah <strong>Pakta Integritas</strong> yang sudah ditandatangani. Anda dapat memvalidasinya dan segera mengatur <strong>Jadwal Induksi</strong>. Saat ini status peserta magang adalah <strong>Onboarding</strong>.</p>
+            <p style="font-size: 16px; color: #475569;">Seorang mahasiswa magang telah berhasil mengunggah <strong>Pakta Integritas</strong> yang sudah ditandatangani. Anda dapat memvalidasinya dan segera mengatur <strong>Jadwal Induksi</strong>. Saat ini status peserta magang adalah <strong>Pending (Melengkapi Berkas)</strong>.</p>
         @endif
         
         <div style="background-color: #f1f5f9; padding: 20px; border-radius: 8px; margin: 25px 0;">

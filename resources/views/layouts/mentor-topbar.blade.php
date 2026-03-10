@@ -9,6 +9,39 @@
             <img src="{{ asset('images/logo-telkom.png') }}" class="h-8 w-auto dark:hidden" alt="Telkom">
             <img src="{{ asset('images/logo-telkom-white.png') }}" class="h-8 w-auto hidden dark:block" alt="Telkom">
         </a>
+
+        {{-- Premium Real-time Clock --}}
+        <div class="hidden lg:flex items-center gap-4 py-1"
+             x-data="{ 
+                day: '',
+                date: '',
+                time: '',
+                updateTime() {
+                    const now = new Date();
+                    this.day = now.toLocaleDateString('id-ID', { weekday: 'long' });
+                    this.date = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                    this.time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+                }
+             }"
+             x-init="updateTime(); setInterval(() => updateTime(), 1000)">
+            
+            <div class="flex items-center gap-4 bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm px-5 py-2 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm group/clock transition-all hover:bg-white dark:hover:bg-slate-800/50">
+                <div class="flex flex-col border-r border-slate-200 dark:border-slate-700 pr-4">
+                    <span x-text="day" class="text-[10px] font-black text-red-600 dark:text-red-500 uppercase tracking-[0.2em] leading-none mb-1"></span>
+                    <span x-text="date" class="text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap leading-none"></span>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <div class="text-2xl font-black text-slate-800 dark:text-white tracking-tighter tabular-nums leading-none flex items-center">
+                        <span x-text="time"></span>
+                        <span class="flex h-2 w-2 relative ml-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     
     <div class="flex items-center gap-4 sm:gap-6">

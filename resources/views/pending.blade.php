@@ -30,7 +30,7 @@
                         
                         <h3 class="text-3xl font-bold text-gray-900 dark:text-white mb-3 tracking-tight transition-colors">Selamat Datang di Telkom Internship!</h3>
                         <p class="text-gray-500 dark:text-slate-400 max-w-lg mx-auto mb-10 text-lg leading-relaxed transition-colors">
-                            Pengajuan magang Anda telah diterima (Onboarding). Silakan ikuti langkah-langkah berikut untuk aktivasi akun sepenuhnya.
+                            Pengajuan magang Anda telah diterima (Pending - Melengkapi Berkas). Silakan ikuti langkah-langkah berikut untuk aktivasi akun sepenuhnya.
                         </p>
 
                         {{-- Division & Mentor Info Card --}}

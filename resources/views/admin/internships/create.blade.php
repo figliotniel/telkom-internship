@@ -221,8 +221,6 @@
                                                 <div class="font-bold text-sm" x-text="mentor.name"></div>
                                                 <div class="text-xs text-slate-500 mt-0.5 flex items-center gap-1.5">
                                                     <span x-text="mentor.email" class="opacity-80"></span>
-                                                    <span class="inline-block w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-600"></span>
-                                                    <span :class="mentor.is_full ? 'text-red-500 font-bold' : 'text-emerald-500'">Aktif: <span x-text="mentor.active"></span>/<span x-text="mentor.quota"></span></span>
                                                 </div>
                                             </div>
                                         </template>

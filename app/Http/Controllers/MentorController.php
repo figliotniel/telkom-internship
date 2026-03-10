@@ -17,18 +17,27 @@ class MentorController extends Controller
 {
     public function dashboard()
     {
-        $pendingLogbooks = DailyLogbook::whereHas('internship', function ($q) {
+        $pendingLogbooksCount = DailyLogbook::whereHas('internship', function ($q) {
             $q->where('mentor_id', Auth::id());
         })
             ->where('status', 'pending')
             ->count();
 
-        $internships = Internship::with('student')
+        $recentPendingLogbooks = DailyLogbook::with(['internship.student.studentProfile'])
+            ->whereHas('internship', function ($q) {
+            $q->where('mentor_id', Auth::id());
+        })
+            ->where('status', 'pending')
+            ->latest()
+            ->take(10)
+            ->get();
+
+        $internships = Internship::with(['student.studentProfile', 'division', 'project'])
             ->where('mentor_id', Auth::id())
             ->where('status', '!=', 'rejected')
             ->get();
 
-        return view('mentor.dashboard', compact('pendingLogbooks', 'internships'));
+        return view('mentor.dashboard', compact('pendingLogbooksCount', 'recentPendingLogbooks', 'internships'));
     }
 
     /**

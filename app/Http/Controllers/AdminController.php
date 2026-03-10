@@ -21,16 +21,19 @@ class AdminController extends Controller
         $totalMentors = User::where('role', 'mentor')->count();
         $activeInternships = Internship::where('status', 'active')->count();
 
-        // Ambil 5 data magang terbaru untuk ditampilkan di tabel
+        // Ambil 15 data magang terbaru untuk ditampilkan di tabel (scrollable)
         $recentInternships = Internship::with(['student.studentProfile', 'mentor', 'division'])
             ->latest()
-            ->take(5)
+            ->take(15)
             ->get();
 
         // Ambil data perpanjangan magang yang pending
         $pendingExtensions = \App\Models\InternshipExtension::with(['internship.student', 'internship.division', 'internship.mentor'])
             ->where('status', 'pending')
             ->get();
+
+        // Count finished interns who need document attention (e.g., status is finished but maybe we can add a flag later, for now just finished)
+        $finishedInternsCount = Internship::where('status', 'finished')->count();
 
         // Hitung growth (data baru bulan ini)
         $studentGrowth = User::where('role', 'student')
@@ -48,14 +51,14 @@ class AdminController extends Controller
             ->whereYear('created_at', Carbon::now()->year)
             ->count();
 
-        // Count pending applicants (new)
-        $pendingApplicants = Internship::where('status', 'pending')->count();
+        // Count pending applicants (Combined Pending + Onboarding)
+        $pendingApplicants = Internship::whereIn('status', ['pending', 'onboarding'])->count();
 
         return view('admin.dashboard', compact(
             'totalStudents', 'totalMentors', 'activeInternships',
             'recentInternships', 'pendingExtensions',
             'studentGrowth', 'mentorGrowth', 'internshipGrowth',
-            'pendingApplicants'
+            'pendingApplicants', 'finishedInternsCount'
         ));
     }
 
@@ -116,18 +119,11 @@ class AdminController extends Controller
             ->get();
 
         $formattedMentors = $mentors->map(function ($mentor) {
-            $quota = $mentor->mentorProfile->quota ?? 5;
-            $active = $mentor->activeInternships->count();
-            $isFull = $active >= $quota;
-
             return [
             'id' => $mentor->id,
             'name' => $mentor->name,
             'email' => $mentor->email,
-            'quota' => $quota,
-            'active' => $active,
-            'is_full' => $isFull,
-            'display_text' => "{$mentor->name} ({$active}/{$quota})" . ($isFull ? ' - Penuh' : '')
+            'display_text' => $mentor->name
             ];
         });
 
@@ -156,12 +152,6 @@ class AdminController extends Controller
             return back()->with('error', 'Mahasiswa ini sudah memiliki program magang aktif!');
         }
 
-        // Cek Kuota Mentor
-        $mentor = User::findOrFail($request->mentor_id);
-        $quota = $mentor->mentorProfile->quota ?? 5; // Default 5 jika null
-        if ($mentor->activeInternships()->count() >= $quota) {
-            return back()->with('error', 'Mentor ini sudah mencapai batas kuota (' . $quota . ' mahasiswa). Silakan pilih mentor lain.');
-        }
 
         // Simpan
         Internship::create([
@@ -184,10 +174,18 @@ class AdminController extends Controller
         $studentType = $request->query('student_type'); // New filter parameter
         $search = $request->query('search'); // Search query parameter
 
-        // Base query for all active/pending users (excluding admins, rejected, finished)
+        // Base query: Mentors are always shown, but Students (interns) are filtered by active status
         $baseQuery = User::where('role', '!=', 'admin')
-            ->whereDoesntHave('internship', function ($query) {
-            $query->whereIn('status', ['rejected', 'finished']);
+            ->where(function ($query) {
+            $query->where('role', 'mentor')
+                ->orWhere(function ($q) {
+                $q->where('role', 'student')
+                    ->whereHas('internship', function ($sub) {
+                    $sub->where('status', 'active');
+                }
+                );
+            }
+            );
         });
 
         // Global counts for tabs (Before category filters or search)
@@ -232,8 +230,16 @@ class AdminController extends Controller
                 );
             })
             ->where('role', '!=', 'admin')
-            ->whereDoesntHave('internship', function ($query) {
-            $query->whereIn('status', ['rejected', 'finished']);
+            ->where(function ($query) {
+            $query->where('role', 'mentor')
+                ->orWhere(function ($q) {
+                $q->where('role', 'student')
+                    ->whereHas('internship', function ($sub) {
+                    $sub->where('status', 'active');
+                }
+                );
+            }
+            );
         })
             ->latest()
             ->paginate(10);
@@ -295,8 +301,9 @@ class AdminController extends Controller
         $studentType = $request->query('student_type');
 
         // Counts for Tabs
-        $pendingCount = Internship::where('status', 'pending')->count();
+        // Merge Pending and Onboarding into a single count
         $onboardingCount = Internship::where('status', 'onboarding')->count();
+        $pendingCount = Internship::where('status', 'pending')->count() + $onboardingCount;
         $activeCount = Internship::where('status', 'active')->count();
         $finishedCount = Internship::where('status', 'finished')->count();
 
@@ -333,7 +340,11 @@ class AdminController extends Controller
         }
         else {
             $internships = Internship::with(['student.studentProfile', 'mentor', 'division'])
-                ->where('status', $status)
+                ->when($status === 'pending', function ($query) {
+                return $query->whereIn('status', ['pending', 'onboarding']);
+            }, function ($query) use ($status) {
+                return $query->where('status', $status);
+            })
                 ->when($studentType, function ($query) use ($studentType) {
                 return $query->whereHas('student.studentProfile', function ($q) use ($studentType) {
                         if ($studentType === 'smk') {
@@ -374,12 +385,6 @@ class AdminController extends Controller
             'mentor_id' => 'required|exists:users,id',
         ]);
 
-        // Cek Kuota Mentor
-        $mentor = User::findOrFail($request->mentor_id);
-        $quota = $mentor->mentorProfile->quota ?? 5; // Default 5
-        if ($mentor->activeInternships()->count() >= $quota) {
-            return back()->with('error', 'Mentor ini sudah mencapai batas kuota (' . $quota . ' mahasiswa). Mohon pilih mentor lain.');
-        }
 
         // Hardcoded Link (per user request)
         $paktaLink = 'https://docs.google.com/document/d/1MYswMj78AfqPH9yBIeH8U9VBA5jDaRguTzwQX-9ARe8/edit?tab=t.0';
@@ -409,7 +414,7 @@ class AdminController extends Controller
         }
 
         return redirect()->route('admin.internships.index', ['status' => 'pending'])
-            ->with('success', 'Pengajuan diterima! Mahasiswa kini statusnya Onboarding.');
+            ->with('success', 'Pengajuan diterima! Mahasiswa kini statusnya Pending (Melengkapi Berkas).');
     }
 
     /**
@@ -488,7 +493,7 @@ class AdminController extends Controller
             $message .= ' Namun email gagal dikirim (Cek konfigurasi SMTP Anda).';
         }
 
-        return redirect()->route('admin.internships.index', ['status' => 'onboarding'])
+        return redirect()->route('admin.internships.index', ['status' => 'pending'])
             ->with('success', $message);
     }
 

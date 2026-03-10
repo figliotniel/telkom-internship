@@ -41,41 +41,31 @@
                             @csrf
                             @method('PATCH')
 
-                            <div x-show="selectedIds.length > 0"
-                                 x-transition:enter="transition ease-out duration-300"
-                                 x-transition:enter-start="translate-y-full opacity-0"
-                                 x-transition:enter-end="translate-y-0 opacity-100"
-                                 x-transition:leave="transition ease-in duration-200"
-                                 x-transition:leave-start="translate-y-0 opacity-100"
-                                 x-transition:leave-end="translate-y-full opacity-0"
-                                 class="fixed bottom-10 left-1/2 -translate-x-1/2 z-[90] w-full max-w-lg px-4">
-                                <div class="bg-slate-900/90 dark:bg-white/95 text-white dark:text-slate-900 rounded-3xl shadow-2xl p-5 flex items-center justify-between border border-white/10 dark:border-slate-200 backdrop-blur-xl">
-                                    <div class="flex items-center gap-4">
-                                        <div class="bg-emerald-500 rounded-2xl p-3 shadow-lg shadow-emerald-500/20">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-6 h-6 text-white">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="text-base font-black tracking-tight"><span x-text="selectedIds.length"></span> Aktivitas Terpilih</p>
-                                            <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-black">Klik untuk menyetujui sekaligus</p>
-                                        </div>
-                                    </div>
-                                    <button type="button"
-                                            onclick="confirmMassApprove()"
-                                            class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white px-8 py-3 rounded-2xl text-sm font-black transition-all shadow-xl shadow-emerald-500/40 flex items-center gap-2">
-                                        Setujui Massal
-                                    </button>
-                                </div>
-                            </div>
 
                             <div class="mb-10 flex items-center justify-between">
                                 <div class="flex items-center gap-3">
                                     <div class="w-1.5 h-8 bg-red-600 dark:bg-red-500 rounded-full transition-colors"></div>
                                     <h3 class="text-2xl font-black text-slate-800 dark:text-slate-100 tracking-tight transition-colors">Daftar Aktivitas Pending</h3>
                                 </div>
-                                <div class="hidden md:block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]" x-show="selectedIds.length === 0">
-                                    Pilih Logbook untuk Aksi Massal
+                                <div class="flex items-center gap-4">
+                                    <div x-show="selectedIds.length > 0" 
+                                         x-transition:enter="transition ease-out duration-300"
+                                         x-transition:enter-start="opacity-0 -translate-x-4"
+                                         x-transition:enter-end="opacity-100 translate-x-0"
+                                         class="flex items-center gap-4 bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-100 dark:border-emerald-500/20 rounded-2xl px-5 py-3 shadow-sm">
+                                        <div class="flex flex-col">
+                                            <p class="text-sm font-black text-emerald-700 dark:text-emerald-400 tracking-tight leading-none"><span x-text="selectedIds.length"></span> Aktivitas Terpilih</p>
+                                            <p class="text-[9px] text-emerald-600/60 dark:text-emerald-400/50 uppercase tracking-widest font-black mt-1">Siap divalidasi massal</p>
+                                        </div>
+                                        <button type="button"
+                                                @click="confirmMassApprove()"
+                                                class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white px-6 py-2 rounded-xl text-xs font-black transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+                                            Setujui Sekarang
+                                        </button>
+                                    </div>
+                                    <div class="hidden md:block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]" x-show="selectedIds.length === 0">
+                                        Pilih Logbook untuk Aksi Massal
+                                    </div>
                                 </div>
                             </div>
 
