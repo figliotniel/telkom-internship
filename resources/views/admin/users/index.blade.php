@@ -46,33 +46,23 @@
                         </nav>
                         
                         <!-- Actions & Filters -->
-                        <div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+                        <div class="flex flex-col sm:flex-row flex-wrap items-center justify-end gap-4 w-full lg:w-auto">
                             {{-- Sub Filter for Interns --}}
                             @if(request('role') == 'student')
-                                <div class="inline-flex bg-slate-50 dark:bg-slate-950 rounded-lg shadow-inner border border-slate-200 dark:border-slate-800 p-0.5 shrink-0" role="group">
-                                    <a href="{{ route('admin.users.index', array_merge(request()->query(), ['student_type' => null, 'page' => null])) }}"
-                                        class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-md transition-all flex items-center gap-1
-                                        {{ !request('student_type')
-                                            ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-700' 
-                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent' }}">
-                                            Semua
-                                            <span class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-1 py-0.5 rounded text-[8px]">{{ $totalStudents }}</span>
-                                    </a>
-                                    <a href="{{ route('admin.users.index', array_merge(request()->query(), ['student_type' => 'mahasiswa', 'page' => null])) }}"
-                                        class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-md transition-all flex items-center gap-1
+                                <div class="inline-flex bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-1 shrink-0" role="group">
+                                    <a href="{{ route('admin.users.index', array_merge(request()->query(), ['student_type' => request('student_type') == 'mahasiswa' ? null : 'mahasiswa', 'page' => null])) }}"
+                                        class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all 
                                         {{ request('student_type') == 'mahasiswa' 
-                                            ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-700' 
-                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent' }}">
-                                            MHS
-                                            <span class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-1 py-0.5 rounded text-[8px]">{{ $studentMahasiswaCount }}</span>
+                                            ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 shadow-sm' 
+                                            : 'text-gray-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400' }}">
+                                        MHS ({{ $studentMahasiswaCount }})
                                     </a>
-                                    <a href="{{ route('admin.users.index', array_merge(request()->query(), ['student_type' => 'smk', 'page' => null])) }}" 
-                                        class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-md transition-all flex items-center gap-1
+                                    <a href="{{ route('admin.users.index', array_merge(request()->query(), ['student_type' => request('student_type') == 'smk' ? null : 'smk', 'page' => null])) }}" 
+                                        class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all 
                                         {{ request('student_type') == 'smk' 
-                                            ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-700' 
-                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent' }}">
-                                            SMK
-                                            <span class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-1 py-0.5 rounded text-[8px]">{{ $studentSmkCount }}</span>
+                                            ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 shadow-sm' 
+                                            : 'text-gray-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400' }}">
+                                        SMK ({{ $studentSmkCount }})
                                     </a>
                                 </div>
                             @endif

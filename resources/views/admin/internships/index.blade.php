@@ -78,24 +78,25 @@
                         </nav>
 
                         <!-- Actions & Filters -->
-                        <div class="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
-                            <!-- Toggle Filters -->
-                            <div class="inline-flex bg-slate-50 dark:bg-slate-950 rounded-xl shadow-inner border border-slate-200 dark:border-slate-800 p-1 shrink-0" role="group">
-                                <a href="{{ route('admin.internships.index', array_merge(request()->query(), ['student_type' => 'mahasiswa', 'page' => null])) }}" 
-                                   class="px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-2
+                        <div class="flex flex-col sm:flex-row flex-wrap items-center justify-end gap-4 w-full xl:w-auto">
+                            @if($status !== 'pending')
+                            <div class="inline-flex bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-1 shrink-0" role="group">
+                                <a href="{{ route('admin.internships.index', array_merge(request()->query(), ['student_type' => request('student_type') == 'mahasiswa' ? null : 'mahasiswa', 'page' => null])) }}" 
+                                   class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-2
                                    {{ request('student_type') == 'mahasiswa' 
-                                      ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-700' 
-                                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent' }}">
-                                    Mahasiswa
+                                      ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 shadow-sm' 
+                                      : 'text-gray-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400' }}">
+                                    MHS ({{ $internMahasiswaCount }})
                                 </a>
-                                <a href="{{ route('admin.internships.index', array_merge(request()->query(), ['student_type' => 'smk', 'page' => null])) }}" 
-                                   class="px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-2
+                                <a href="{{ route('admin.internships.index', array_merge(request()->query(), ['student_type' => request('student_type') == 'smk' ? null : 'smk', 'page' => null])) }}" 
+                                   class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all flex items-center gap-2
                                    {{ request('student_type') == 'smk' 
-                                      ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-700' 
-                                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent' }}">
-                                    SMK
+                                      ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 shadow-sm' 
+                                      : 'text-gray-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400' }}">
+                                    SMK ({{ $internSmkCount }})
                                 </a>
                             </div>
+                            @endif
 
                             <!-- Search -->
                             <form action="{{ route('admin.internships.index') }}" method="GET" class="relative w-full sm:w-64" x-data x-ref="form">

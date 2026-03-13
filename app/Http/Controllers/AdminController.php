@@ -196,7 +196,9 @@ class AdminController extends Controller
         // Sub-counts for students (Mahasiswa vs SMK)
         $studentMahasiswaCount = (clone $baseQuery)->where('role', 'student')
             ->whereHas('studentProfile', function ($q) {
-            $q->where('student_type', 'mahasiswa')->where('education_level', '!=', 'SMK');
+            $q->where('student_type', 'mahasiswa')->where(function($sub) {
+                $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
+            });
         })->count();
 
         $studentSmkCount = (clone $baseQuery)->where('role', 'student')
@@ -224,7 +226,9 @@ class AdminController extends Controller
                         $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
                     }
                     elseif ($studentType === 'mahasiswa') {
-                        $q->where('student_type', 'mahasiswa')->where('education_level', '!=', 'SMK');
+                        $q->where('student_type', 'mahasiswa')->where(function($sub) {
+                            $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
+                        });
                     }
                 }
                 );
@@ -311,6 +315,28 @@ class AdminController extends Controller
         // Count Pending Extensions
         $extensionCount = \App\Models\InternshipExtension::where('status', 'pending')->count();
 
+        // Sub-counts for current tab's students (Mahasiswa vs SMK vs Semua)
+        $baseInternshipQuery = Internship::query();
+        if ($status === 'extension') {
+            $baseInternshipQuery->whereHas('extensions', function ($q) {
+                $q->where('status', 'pending');
+            });
+        } elseif ($status === 'pending') {
+            $baseInternshipQuery->whereIn('status', ['pending', 'onboarding']);
+        } else {
+            $baseInternshipQuery->where('status', $status);
+        }
+
+        $totalInterns = (clone $baseInternshipQuery)->count();
+        $internMahasiswaCount = (clone $baseInternshipQuery)->whereHas('student.studentProfile', function ($q) {
+            $q->where('student_type', 'mahasiswa')->where(function($sub) {
+                $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
+            });
+        })->count();
+        $internSmkCount = (clone $baseInternshipQuery)->whereHas('student.studentProfile', function ($q) {
+            $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
+        })->count();
+
         // Redirect if trying to view extensions but none exist
         if ($status === 'extension' && $extensionCount === 0) {
             return redirect()->route('admin.internships.index', ['status' => 'pending']);
@@ -327,7 +353,9 @@ class AdminController extends Controller
                             $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
                         }
                         elseif ($studentType === 'mahasiswa') {
-                            $q->where('student_type', 'mahasiswa')->where('education_level', '!=', 'SMK');
+                            $q->where('student_type', 'mahasiswa')->where(function($sub) {
+                                $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
+                            });
                         }
                     }
                     );
@@ -358,7 +386,9 @@ class AdminController extends Controller
                             $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
                         }
                         elseif ($studentType === 'mahasiswa') {
-                            $q->where('student_type', 'mahasiswa')->where('education_level', '!=', 'SMK');
+                            $q->where('student_type', 'mahasiswa')->where(function($sub) {
+                                $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
+                            });
                         }
                     }
                     );
@@ -378,7 +408,11 @@ class AdminController extends Controller
         $divisions = Division::all();
         $mentors = User::where('role', 'mentor')->get();
 
-        return view('admin.internships.index', compact('internships', 'status', 'studentType', 'search', 'pendingCount', 'onboardingCount', 'activeCount', 'finishedCount', 'extensionCount', 'divisions', 'mentors'));
+        return view('admin.internships.index', compact(
+            'internships', 'status', 'studentType', 'search', 
+            'pendingCount', 'onboardingCount', 'activeCount', 'finishedCount', 'extensionCount', 
+            'divisions', 'mentors', 'totalInterns', 'internMahasiswaCount', 'internSmkCount'
+        ));
     }
 
     /**
