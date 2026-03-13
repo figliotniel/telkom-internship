@@ -75,6 +75,8 @@ class ProfileController extends Controller
                 $data['position'] = $request->position;
             if ($request->has('phone_number'))
                 $data['phone_number'] = $request->phone_number;
+            if ($request->has('telegram_username'))
+                $data['telegram_username'] = $request->telegram_username;
 
             // Handle Photo Upload using same logic
             if ($request->hasFile('photo')) {

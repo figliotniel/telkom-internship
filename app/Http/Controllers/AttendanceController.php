@@ -29,15 +29,6 @@ class AttendanceController extends Controller
             return back()->with('error', 'Status magang Anda belum aktif.');
         }
 
-        // Time Validation: 07:00 - 09:00
-        $now = Carbon::now();
-        $startCheckIn = $now->copy()->hour(7)->minute(0)->second(0);
-        $endCheckIn = $now->copy()->hour(9)->minute(0)->second(0);
-
-        if (!$now->between($startCheckIn, $endCheckIn)) {
-            return back()->with('error', 'Check-in hanya dapat dilakukan antara pukul 07:00 - 09:00 WIB.');
-        }
-
         // Cek apakah hari ini sudah absen? (Logic Reset jam 7 pagi)
         $dateCheck = Carbon::now()->hour < 7 ?Carbon::yesterday() : Carbon::today();
 
@@ -47,7 +38,7 @@ class AttendanceController extends Controller
 
         if ($existingAttendance) {
             // Logic Izin Sementara: Boleh check-in jika jam izin sudah lewat
-            if ($existingAttendance->status === 'permit' && $existingAttendance->permit_type === 'temporary') {
+            if ($existingAttendance->status === 'pending' && $existingAttendance->permit_type === 'temporary') {
                 $permitEndTime = Carbon::parse($existingAttendance->date . ' ' . $existingAttendance->permit_end_time);
 
                 if (Carbon::now()->lt($permitEndTime)) {
@@ -59,13 +50,23 @@ class AttendanceController extends Controller
                     'check_in_time' => Carbon::now()->format('H:i:s'),
                     'check_in_lat' => $request->latitude,
                     'check_in_long' => $request->longitude,
-                    // Status tetap 'permit'
+                    // Status menjadi present setelah check-in
+                    'status' => 'present',
                 ]);
 
                 return back()->with('success', 'Berhasil Check-in setelah izin sementara!');
             }
 
             return back()->with('error', 'Kamu sudah check-in hari ini!');
+        }
+
+        // Time Validation: 07:00 - 09:00 for normal check-in
+        $now = Carbon::now();
+        $startCheckIn = $now->copy()->hour(7)->minute(0)->second(0);
+        $endCheckIn = $now->copy()->hour(9)->minute(0)->second(0);
+
+        if (!$now->between($startCheckIn, $endCheckIn)) {
+            return back()->with('error', 'Check-in hanya dapat dilakukan antara pukul 07:00 - 09:00 WIB.');
         }
 
         Attendance::create([

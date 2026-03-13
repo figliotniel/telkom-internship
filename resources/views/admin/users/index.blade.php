@@ -49,22 +49,30 @@
                         <div class="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
                             {{-- Sub Filter for Interns --}}
                             @if(request('role') == 'student')
-                                <div class="inline-flex bg-slate-50 dark:bg-slate-950 rounded-xl shadow-inner border border-slate-200 dark:border-slate-800 p-1 shrink-0" role="group">
-                                    <a href="{{ route('admin.users.index', array_merge(request()->query(), ['student_type' => 'mahasiswa', 'page' => null])) }}"
-                                        class="px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-2
-                                        {{ !request('student_type') || request('student_type') == 'mahasiswa' 
+                                <div class="inline-flex bg-slate-50 dark:bg-slate-950 rounded-lg shadow-inner border border-slate-200 dark:border-slate-800 p-0.5 shrink-0" role="group">
+                                    <a href="{{ route('admin.users.index', array_merge(request()->query(), ['student_type' => null, 'page' => null])) }}"
+                                        class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-md transition-all flex items-center gap-1
+                                        {{ !request('student_type')
                                             ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-700' 
                                             : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent' }}">
-                                            Mahasiswa
-                                            <span class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-1.5 py-0.5 rounded text-[9px]">{{ $studentMahasiswaCount }}</span>
+                                            Semua
+                                            <span class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-1 py-0.5 rounded text-[8px]">{{ $totalStudents }}</span>
+                                    </a>
+                                    <a href="{{ route('admin.users.index', array_merge(request()->query(), ['student_type' => 'mahasiswa', 'page' => null])) }}"
+                                        class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-md transition-all flex items-center gap-1
+                                        {{ request('student_type') == 'mahasiswa' 
+                                            ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-700' 
+                                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent' }}">
+                                            MHS
+                                            <span class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-1 py-0.5 rounded text-[8px]">{{ $studentMahasiswaCount }}</span>
                                     </a>
                                     <a href="{{ route('admin.users.index', array_merge(request()->query(), ['student_type' => 'smk', 'page' => null])) }}" 
-                                        class="px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-2
+                                        class="px-2.5 py-1 text-[9px] font-black uppercase tracking-wider rounded-md transition-all flex items-center gap-1
                                         {{ request('student_type') == 'smk' 
                                             ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-700' 
                                             : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent' }}">
                                             SMK
-                                            <span class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-1.5 py-0.5 rounded text-[9px]">{{ $studentSmkCount }}</span>
+                                            <span class="bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 px-1 py-0.5 rounded text-[8px]">{{ $studentSmkCount }}</span>
                                     </a>
                                 </div>
                             @endif

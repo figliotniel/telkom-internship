@@ -90,11 +90,23 @@
                         </span>
                         
                         @if($internship->mentor)
-                             <span class="inline-flex items-center px-4 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-widest bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 shadow-sm gap-2 transition-colors">
+                             <span class="inline-flex items-center px-4 py-1.5 rounded-xl text-[11px] font-black uppercase tracking-widest bg-amber-50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-500/20 shadow-sm gap-2 transition-colors group relative cursor-help">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5">
                                     <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
                                 </svg>
                                 Mentor: {{ $internship->mentor->name }}
+                                
+                                @if(optional($internship->mentor->mentorProfile)->telegram_username)
+                                    <!-- Tooltip for Telegram -->
+                                    <div class="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 w-max opacity-0 transition-opacity group-hover:opacity-100">
+                                        <div class="flex items-center gap-1.5 rounded-lg bg-slate-800 dark:bg-slate-700 px-3 py-1.5 text-xs font-semibold text-white shadow-lg">
+                                            <svg class="w-3.5 h-3.5 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.508-.163-.911-.247-.872-.516.02-.14.24-.28.665-.42 2.607-1.134 4.346-1.884 5.216-2.25 2.478-1.042 2.992-1.22 3.328-1.228z"/>
+                                            </svg>
+                                            {{ '@' . $internship->mentor->mentorProfile->telegram_username }}
+                                        </div>
+                                    </div>
+                                @endif
                             </span>
                         @endif
                     </div>
@@ -383,7 +395,7 @@
                                 <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Status Penetapan</label>
                                 <select name="status" required class="w-full border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 font-bold">
                                     <option value="present">Hadir</option>
-                                    <option value="alpha">Absen (Alpha)</option>
+                                    <option value="alpha">Absen</option>
                                     <option value="sick">Sakit</option>
                                     <option value="permit">Izin</option>
                                 </select>

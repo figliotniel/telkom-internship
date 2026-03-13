@@ -299,6 +299,7 @@ class AdminController extends Controller
     {
         $status = $request->query('status', 'pending'); // Default to 'pending' (Applicants)
         $studentType = $request->query('student_type');
+        $search = $request->query('search');
 
         // Counts for Tabs
         // Merge Pending and Onboarding into a single count
@@ -334,9 +335,15 @@ class AdminController extends Controller
                 ->with(['student.studentProfile', 'mentor', 'division', 'extensions' => function ($q) {
                 $q->where('status', 'pending');
             }])
+                ->when($search, function ($query, $search) {
+                    return $query->whereHas('student', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%{$search}%")
+                          ->orWhere('email', 'LIKE', "%{$search}%");
+                    });
+                })
                 ->latest()
                 ->paginate(10)
-                ->appends(['status' => $status, 'student_type' => $studentType]);
+                ->appends(['status' => $status, 'student_type' => $studentType, 'search' => $search]);
         }
         else {
             $internships = Internship::with(['student.studentProfile', 'mentor', 'division'])
@@ -356,16 +363,22 @@ class AdminController extends Controller
                     }
                     );
                 })
+                ->when($search, function ($query, $search) {
+                    return $query->whereHas('student', function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%{$search}%")
+                          ->orWhere('email', 'LIKE', "%{$search}%");
+                    });
+                })
                 ->latest()
                 ->paginate(10)
-                ->appends(['status' => $status, 'student_type' => $studentType]);
+                ->appends(['status' => $status, 'student_type' => $studentType, 'search' => $search]);
         }
 
         // Pass Divisions and Mentors for Dropdowns in Review Modal
         $divisions = Division::all();
         $mentors = User::where('role', 'mentor')->get();
 
-        return view('admin.internships.index', compact('internships', 'status', 'studentType', 'pendingCount', 'onboardingCount', 'activeCount', 'finishedCount', 'extensionCount', 'divisions', 'mentors'));
+        return view('admin.internships.index', compact('internships', 'status', 'studentType', 'search', 'pendingCount', 'onboardingCount', 'activeCount', 'finishedCount', 'extensionCount', 'divisions', 'mentors'));
     }
 
     /**
@@ -550,6 +563,15 @@ class AdminController extends Controller
         $mentors = User::where('role', 'mentor')->get();
         $divisions = Division::all();
         return view('admin.internships.show', compact('internship', 'mentors', 'divisions'));
+    }
+
+    /**
+     * Detail Evaluasi Magang
+     */
+    public function showEvaluation($id)
+    {
+        $evaluation = \App\Models\Evaluation::with(['internship.student', 'internship.mentor', 'internship.division'])->findOrFail($id);
+        return view('admin.evaluations.show', compact('evaluation'));
     }
 
     /**

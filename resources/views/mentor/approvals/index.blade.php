@@ -64,7 +64,7 @@
                                         </button>
                                     </div>
                                     <div class="hidden md:block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]" x-show="selectedIds.length === 0">
-                                        Pilih Logbook untuk Aksi Massal
+                                        Pilih Logbook untuk Setujui
                                     </div>
                                 </div>
                             </div>
@@ -73,19 +73,19 @@
                                 <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
                                     <thead class="bg-gray-50 dark:bg-slate-950/50 transition-colors">
                                         <tr>
-                                            <th scope="col" class="px-6 py-4 w-10 text-center">
+                                            <th scope="col" class="px-4 py-4 w-10 text-center">
                                                 <input type="checkbox" id="selectAll" @change="selectAll($event)" class="w-5 h-5 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-red-600 focus:ring-red-500 focus:ring-offset-white dark:focus:ring-offset-slate-900 transition-all cursor-pointer shadow-sm">
                                             </th>
-                                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Intern</th>
-                                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Tanggal Aktivitas</th>
-                                            <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Judul Laporan</th>
-                                            <th scope="col" class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Aksi</th>
+                                            <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Intern</th>
+                                            <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Tanggal Aktivitas</th>
+                                            <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Judul Laporan</th>
+                                            <th scope="col" class="px-4 py-4 text-center text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800 transition-colors">
                                         @foreach($pendingLogbooks as $logbook)
                                             <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <td class="px-4 py-4 whitespace-nowrap text-center">
                                                     <input type="checkbox"
                                                            name="logbook_ids[]"
                                                            value="{{ $logbook->id }}"
@@ -93,24 +93,24 @@
                                                            x-model="selectedIds"
                                                            class="logbook-checkbox w-5 h-5 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-red-600 focus:ring-red-500 focus:ring-offset-white dark:focus:ring-offset-slate-900 transition-all cursor-pointer shadow-sm">
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                <td class="px-4 py-4 whitespace-nowrap">
                                                     <div class="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">{{ $logbook->internship->student->name }}</div>
                                                     <div class="text-xs font-bold uppercase tracking-widest mt-0.5 transition-colors text-slate-500 dark:text-slate-500">{{ $logbook->internship->division->name ?? '-' }}</div>
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                <td class="px-4 py-4 whitespace-nowrap">
                                                     <div class="flex flex-col">
                                                         <span class="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">{{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('d F Y') }}</span>
                                                         <span class="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widers mt-0.5 transition-colors">{{ \Carbon\Carbon::parse($logbook->date)->diffForHumans() }}</span>
                                                     </div>
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                <td class="px-4 py-4 whitespace-normal break-words min-w-[200px] max-w-sm">
                                                     <div class="flex flex-col gap-1.5">
-                                                        <span class="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors w-48 overflow-hidden overflow-ellipsis" title="{{ $logbook->title }}">
+                                                        <span class="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors w-full" title="{{ $logbook->title }}">
                                                             {{ $logbook->title ?? '-' }}
                                                         </span>
                                                     </div>
                                                 </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                                <td class="px-4 py-4 whitespace-nowrap text-center">
                                                     <div class="flex items-center justify-center gap-3">
                                                         {{-- Approve Button --}}
                                                         <button type="button"

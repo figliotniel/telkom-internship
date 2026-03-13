@@ -77,24 +77,41 @@
                             @endif
                         </nav>
 
-                        <!-- Filters -->
-                        <div class="flex items-center gap-3 w-full xl:w-auto">
-                            <div class="inline-flex bg-slate-50 dark:bg-slate-950 rounded-xl shadow-inner border border-slate-200 dark:border-slate-800 p-1" role="group">
-                                <a href="{{ route('admin.internships.index', ['status' => $status, 'student_type' => 'mahasiswa']) }}" 
-                                   class="px-5 py-1.5 text-xs font-bold rounded-lg transition-all 
-                                   {{ (!$studentType || $studentType == 'mahasiswa') 
+                        <!-- Actions & Filters -->
+                        <div class="flex flex-col sm:flex-row items-center gap-4 w-full xl:w-auto">
+                            <!-- Toggle Filters -->
+                            <div class="inline-flex bg-slate-50 dark:bg-slate-950 rounded-xl shadow-inner border border-slate-200 dark:border-slate-800 p-1 shrink-0" role="group">
+                                <a href="{{ route('admin.internships.index', array_merge(request()->query(), ['student_type' => 'mahasiswa', 'page' => null])) }}" 
+                                   class="px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-2
+                                   {{ request('student_type') == 'mahasiswa' 
                                       ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-700' 
-                                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent' }}">
                                     Mahasiswa
                                 </a>
-                                <a href="{{ route('admin.internships.index', ['status' => $status, 'student_type' => 'smk']) }}" 
-                                   class="px-5 py-1.5 text-xs font-bold rounded-lg transition-all 
-                                   {{ $studentType == 'smk' 
+                                <a href="{{ route('admin.internships.index', array_merge(request()->query(), ['student_type' => 'smk', 'page' => null])) }}" 
+                                   class="px-4 py-2 text-[10px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-2
+                                   {{ request('student_type') == 'smk' 
                                       ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-sm border border-slate-200 dark:border-slate-700' 
-                                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 border border-transparent' }}">
                                     SMK
                                 </a>
                             </div>
+
+                            <!-- Search -->
+                            <form action="{{ route('admin.internships.index') }}" method="GET" class="relative w-full sm:w-64" x-data x-ref="form">
+                                @if(request('status'))
+                                    <input type="hidden" name="status" value="{{ request('status') }}">
+                                @endif
+                                @if(request('student_type'))
+                                    <input type="hidden" name="student_type" value="{{ request('student_type') }}">
+                                @endif
+                                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                <input type="text" name="search" value="{{ request('search') }}" 
+                                    placeholder="Search interns..." 
+                                    @input.debounce.500ms="$refs.form.submit()"
+                                    x-init="$el.focus(); $el.setSelectionRange($el.value.length, $el.value.length);"
+                                    class="pl-9 pr-4 py-2.5 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder-slate-400 font-medium text-slate-700 dark:text-slate-300">
+                            </form>
                         </div>
                     </div>
 
@@ -204,9 +221,9 @@
                                                             <div class="flex flex-col">
                                                                 @if(!$isExpired)
                                                                     <div class="text-[11px] font-black {{ $remainingDays > 10 ? 'text-slate-800 dark:text-slate-200' : 'text-orange-600 dark:text-orange-400' }} leading-none transition-colors">
-                                                                        @if($diff->y > 0) {{ $diff->y }}y @endif
-                                                                        @if($diff->m > 0) {{ $diff->m }}m @endif
-                                                                        @if($diff->d > 0) {{ $diff->d }}d @endif
+                                                                        @if($diff->y > 0) {{ $diff->y }} tahun @endif
+                                                                        @if($diff->m > 0) {{ $diff->m }} bulan @endif
+                                                                        @if($diff->d > 0) {{ $diff->d }} hari @elseif($remainingDays > 0 && $diff->y == 0 && $diff->m == 0) {{ $remainingDays }} hari @endif
                                                                     </div>
                                                                     <div class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1">
                                                                         Ends {{ $endDate->format('d M') }}

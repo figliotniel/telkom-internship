@@ -90,7 +90,7 @@ Route::prefix('mentor')->middleware(['auth', 'verified'])->group(function () {
 
     // Action Approve/Reject Logbook
     Route::patch('/logbooks/mass-approve', [MentorController::class , 'massApproveLogbooks'])->name('mentor.logbook.massApprove');
-    Route::patch('/logbook/{id}/update', [MentorController::class , 'updateLogbook'])->name('mentor.logbook.update');
+    Route::patch('/logbook/{id}/update', [MentorController::class , 'evaluateLogbook'])->name('mentor.logbook.update');
 
     // Halaman Approval
     Route::get('/approvals', [MentorController::class , 'approvals'])->name('mentor.approvals.index');

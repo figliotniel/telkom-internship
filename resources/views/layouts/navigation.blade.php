@@ -117,7 +117,7 @@
 
                         <div class="overflow-y-auto flex-1">
                             @forelse(Auth::user()->unreadNotifications as $notification)
-                                <div class="px-4 py-3 border-b border-gray-50 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors {{ loop->last ? 'border-b-0' : '' }}">
+                                <div class="px-4 py-3 border-b border-gray-50 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors {{ $loop->last ? 'border-b-0' : '' }}">
                                     <div class="flex items-start gap-3">
                                         <div class="p-2 rounded-full {{ $notification->data['icon'] === 'check-circle' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400' }}">
                                             @if($notification->data['icon'] === 'check-circle')
@@ -232,7 +232,7 @@
 
                         <div class="overflow-y-auto flex-1 max-h-[60vh]">
                             @forelse(Auth::user()->unreadNotifications as $notification)
-                                <div class="px-4 py-3 border-b border-gray-50 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors {{ loop->last ? 'border-b-0' : '' }}">
+                                <div class="px-4 py-3 border-b border-gray-50 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors {{ $loop->last ? 'border-b-0' : '' }}">
                                     <div class="flex items-start gap-3">
                                         <div class="p-2 rounded-full {{ $notification->data['icon'] === 'check-circle' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-500/20 dark:text-emerald-400' : 'bg-amber-100 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400' }}">
                                             @if($notification->data['icon'] === 'check-circle')
