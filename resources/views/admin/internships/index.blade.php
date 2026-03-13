@@ -45,7 +45,7 @@
                             <a href="{{ route('admin.internships.index', ['status' => 'active']) }}" 
                                class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center whitespace-nowrap
                                {{ $status === 'active' ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-500/20 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent' }}">
-                                Active
+                                Aktif
                                 <span class="ml-2 py-0.5 px-2.5 rounded-full text-[10px] font-black shadow-sm
                                     {{ $status === 'active' ? 'bg-white dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
                                     {{ $activeCount }}
@@ -56,7 +56,7 @@
                             <a href="{{ route('admin.internships.index', ['status' => 'finished']) }}" 
                                class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center whitespace-nowrap
                                {{ $status === 'finished' ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-700 dark:text-blue-400 border border-blue-100 dark:border-blue-500/20 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent' }}">
-                                Finished
+                                Selesai
                                 <span class="ml-2 py-0.5 px-2.5 rounded-full text-[10px] font-black shadow-sm
                                     {{ $status === 'finished' ? 'bg-white dark:bg-blue-500/20 text-blue-600 dark:text-blue-300' : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400' }}">
                                     {{ $finishedCount }}
@@ -108,7 +108,7 @@
                                 @endif
                                 <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                                 <input type="text" name="search" value="{{ request('search') }}" 
-                                    placeholder="Search interns..." 
+                                    placeholder="Cari Intern..." 
                                     @input.debounce.500ms="$refs.form.submit()"
                                     x-init="$el.focus(); $el.setSelectionRange($el.value.length, $el.value.length);"
                                     class="pl-9 pr-4 py-2.5 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all placeholder-slate-400 font-medium text-slate-700 dark:text-slate-300">
@@ -264,7 +264,7 @@
                                                             </div>
                                                             <div class="flex items-center gap-1 mt-0.5">
                                                                 <div class="w-3 h-[1px] bg-slate-200 dark:bg-slate-700"></div>
-                                                                <div class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Until</div>
+                                                                <div class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Sampai</div>
                                                                 <div class="w-3 h-[1px] bg-slate-200 dark:bg-slate-700"></div>
                                                             </div>
                                                             <div class="text-[11px] font-black text-slate-500 dark:text-slate-400 tracking-tight transition-colors">
@@ -307,7 +307,7 @@
                                                                 </button>
                                                             @else
                                                                 <span class="inline-flex items-center px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest font-black bg-slate-100 dark:bg-slate-800/50 text-slate-400 dark:text-slate-600 border border-slate-200 dark:border-slate-800/50">
-                                                                    Wait for Upload
+                                                                    Menunggu Aktivasi
                                                                 </span>
                                                             @endif
                                                     @endif
