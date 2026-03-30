@@ -54,11 +54,14 @@ class AdminController extends Controller
         // Count pending applicants (Combined Pending + Onboarding)
         $pendingApplicants = Internship::whereIn('status', ['pending', 'onboarding'])->count();
 
+        // Ambil data mentor untuk ditampilkan di modal "Tambah Mentor"
+        $mentorsList = User::where('role', 'mentor')->with('mentorProfile')->latest()->get();
+
         return view('admin.dashboard', compact(
             'totalStudents', 'totalMentors', 'activeInternships',
             'recentInternships', 'pendingExtensions',
             'studentGrowth', 'mentorGrowth', 'internshipGrowth',
-            'pendingApplicants', 'finishedInternsCount'
+            'pendingApplicants', 'finishedInternsCount', 'mentorsList'
         ));
     }
 
@@ -361,7 +364,6 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'nik' => 'required|string|unique:mentor_profiles',
             'position' => 'required|string|max:255',
         ]);
 
@@ -373,14 +375,13 @@ class AdminController extends Controller
             'role' => 'mentor',
         ]);
 
-        // 2. Create Mentor Profile
+        // 2. Create Mentor Profile (without NIK)
         \App\Models\MentorProfile::create([
             'user_id' => $user->id,
-            'nik' => $request->nik,
             'position' => $request->position,
         ]);
 
-        return redirect()->route('admin.users.index', ['role' => 'mentor'])
+        return redirect()->back()
             ->with('success', 'Mentor baru berhasil ditambahkan!');
     }
 
