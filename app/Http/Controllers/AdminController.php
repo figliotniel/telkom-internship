@@ -63,12 +63,95 @@ class AdminController extends Controller
     }
 
     /**
+     * Master Data Divisi: List.
+     */
+    public function divisions()
+    {
+        $divisions = Division::withCount(['internships' => function($query) {
+             $query->whereIn('status', ['active', 'pending', 'onboarding']);
+        }])->get();
+        
+        // Mentors for assigning to divisions
+        $mentors = User::where('role', 'mentor')->get();
+
+        return view('admin.divisions.index', compact('divisions', 'mentors'));
+    }
+
+    public function showDivision($id)
+    {
+        $division = Division::with(['internships' => function($query) {
+            $query->with(['student.studentProfile', 'mentor'])->latest();
+        }])->findOrFail($id);
+        
+        $mentors = User::where('role', 'mentor')->get();
+
+        return view('admin.divisions.show', compact('division', 'mentors'));
+    }
+
+    public function storeDivision(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string|max:10|unique:divisions,code',
+            'name' => 'required|string|max:255',
+            'mentor_id' => 'nullable|exists:users,id',
+        ]);
+
+        Division::create([
+            'code' => strtoupper($request->code),
+            'name' => $request->name,
+            'mentor_id' => $request->mentor_id,
+        ]);
+
+        return back()->with('success', 'Data Divisi berhasil ditambahkan.');
+    }
+
+    public function updateDivision(Request $request, $id)
+    {
+        $request->validate([
+            'code' => 'required|string|max:10|unique:divisions,code,' . $id,
+            'name' => 'required|string|max:255',
+            'mentor_id' => 'nullable|exists:users,id',
+        ]);
+
+        $division = Division::findOrFail($id);
+        $old_mentor_id = $division->mentor_id;
+
+        $division->update([
+            'code' => strtoupper($request->code),
+            'name' => $request->name,
+            'mentor_id' => $request->mentor_id,
+        ]);
+
+        // Sinkronisasi otomatis: Jika mentor berubah, update mentor_id untuk intern yang aktif di divisi ini
+        if ($old_mentor_id != $request->mentor_id) {
+            \App\Models\Internship::where('division_id', $division->id)
+                ->whereIn('status', ['active', 'onboarding'])
+                ->update(['mentor_id' => $request->mentor_id]);
+        }
+
+        return back()->with('success', 'Data Divisi berhasil diperbarui.');
+    }
+
+    public function destroyDivision($id)
+    {
+        $division = Division::findOrFail($id);
+        
+        $hasInterns = Internship::where('division_id', $id)->exists();
+        if ($hasInterns) {
+            return back()->with('error', 'Gagal menghapus! Divisi ini masih terhubung dengan data magang.');
+        }
+
+        $division->delete();
+        return back()->with('success', 'Data Divisi berhasil dihapus.');
+    }
+
+    /**
      * Form Setup Magang: Admin memilih Student, Mentor, dan Divisi.
      */
     public function createInternship()
     {
-        // Ambil semua divisi (divisi jumlahnya sedikit, aman di-load semua)
-        $divisions = Division::all();
+        // Ambil semua divisi beserta kepala mentornya
+        $divisions = Division::with('mentor')->get();
 
         return view('admin.internships.create', compact('divisions'));
     }
@@ -137,7 +220,6 @@ class AdminController extends Controller
     {
         $request->validate([
             'student_id' => 'required|exists:users,id',
-            'mentor_id' => 'required|exists:users,id',
             'division_id' => 'required|exists:divisions,id',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after:start_date',
@@ -152,11 +234,17 @@ class AdminController extends Controller
             return back()->with('error', 'Mahasiswa ini sudah memiliki program magang aktif!');
         }
 
+        // Ambil ID mentor dari kepala divisi yang dipilih
+        $division = Division::findOrFail($request->division_id);
+
+        if (!$division->mentor_id) {
+            return back()->with('error', 'Divisi yang dipilih belum memiliki Kepala Mentor. Silakan assign mentor ke divisi ini terlebih dahulu di Master Divisi.');
+        }
 
         // Simpan
         Internship::create([
             'student_id' => $request->student_id,
-            'mentor_id' => $request->mentor_id,
+            'mentor_id' => $division->mentor_id,
             'division_id' => $request->division_id,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
@@ -429,9 +517,13 @@ class AdminController extends Controller
 
         $request->validate([
             'division_id' => 'required|exists:divisions,id',
-            'mentor_id' => 'required|exists:users,id',
         ]);
 
+        $division = Division::findOrFail($request->division_id);
+
+        if (!$division->mentor_id) {
+            return back()->with('error', 'Divisi yang dipilih belum memiliki Kepala Mentor. Silakan assign mentor ke divisi ini terlebih dahulu di Master Divisi.');
+        }
 
         // Hardcoded Link (per user request)
         $paktaLink = 'https://docs.google.com/document/d/1MYswMj78AfqPH9yBIeH8U9VBA5jDaRguTzwQX-9ARe8/edit?tab=t.0';
@@ -447,7 +539,7 @@ class AdminController extends Controller
         $internship->update([
             'status' => 'onboarding',
             'division_id' => $request->division_id,
-            'mentor_id' => $request->mentor_id,
+            'mentor_id' => $division->mentor_id,
         ]);
 
         try {

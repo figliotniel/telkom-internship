@@ -10,4 +10,14 @@ class Division extends Model
     use HasFactory;
 
     protected $guarded = ['id'];
+
+    public function internships()
+    {
+        return $this->hasMany(Internship::class);
+    }
+
+    public function mentor()
+    {
+        return $this->belongsTo(User::class, 'mentor_id');
+    }
 }

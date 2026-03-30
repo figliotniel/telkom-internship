@@ -116,6 +116,13 @@ Route::prefix('admin')->middleware(['auth', 'verified', 'admin'])->group(functio
             Route::get('/internship/create', 'createInternship')->name('admin.internship.create');
             Route::post('/internship', 'storeInternship')->name('admin.internship.store');
 
+            // Master Divisi
+            Route::get('/divisions', 'divisions')->name('admin.divisions.index');
+            Route::post('/divisions', 'storeDivision')->name('admin.divisions.store');
+            Route::get('/divisions/{id}', 'showDivision')->name('admin.divisions.show');
+            Route::put('/divisions/{id}', 'updateDivision')->name('admin.divisions.update');
+            Route::delete('/divisions/{id}', 'destroyDivision')->name('admin.divisions.destroy');
+
             // Data User & Mentor
             Route::get('/users', 'users')->name('admin.users.index');
             Route::get('/mentors/create', 'createMentor')->name('admin.mentors.create');

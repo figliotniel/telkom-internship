@@ -82,30 +82,15 @@
                                             </p>
                                         </div>
 
-                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div class="grid grid-cols-1 gap-6">
                                             {{-- Division Selection --}}
                                             <div class="space-y-1.5">
-                                                <label for="division_id_review" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Pilih Divisi</label>
-                                                <select name="division_id" id="division_id_review" required class="block w-full px-4 py-2.5 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:border-red-500 focus:ring-red-500 sm:text-sm font-bold transition-all">
+                                                <label for="division_id_review" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Pilih Penempatan Divisi</label>
+                                                <select name="division_id" id="division_id_review" required class="block w-full px-4 py-3 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:border-red-500 focus:ring-red-500 sm:text-sm font-bold transition-all shadow-sm">
                                                     <option value="">-- Pilih Divisi --</option>
                                                     @if(isset($divisions))
                                                         @foreach($divisions as $division)
-                                                            <option value="{{ $division->id }}">{{ $division->name }}</option>
-                                                        @endforeach
-                                                    @endif
-                                                </select>
-                                            </div>
-
-                                            {{-- Mentor Selection --}}
-                                            <div class="space-y-1.5">
-                                                <label for="mentor_id_review" class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Pilih Mentor</label>
-                                                <select name="mentor_id" id="mentor_id_review" required class="block w-full px-4 py-2.5 rounded-xl border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 focus:border-red-500 focus:ring-red-500 sm:text-sm font-bold transition-all">
-                                                    <option value="">-- Pilih Mentor --</option>
-                                                    @if(isset($mentors))
-                                                        @foreach($mentors as $mentor)
-                                                            <option value="{{ $mentor->id }}">
-                                                                {{ $mentor->name }}
-                                                            </option>
+                                                            <option value="{{ $division->id }}">{{ $division->name }} {{ $division->mentor ? '(Mentor: ' . $division->mentor->name . ')' : '(Peringatan: Tanpa Kepala Mentor)' }}</option>
                                                         @endforeach
                                                     @endif
                                                 </select>

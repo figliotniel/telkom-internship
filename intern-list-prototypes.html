@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intern List Prototypes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-slate-200 p-8 min-h-screen">
+
+    <div class="max-w-7xl mx-auto space-y-16">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-2">Alternatif Tampilan Daftar Intern</h1>
+            <p class="text-slate-400">Berikut adalah dua opsi desain bergaya modern untuk menggantikan tampilan tabel tradisional pada halaman Detail Divisi.</p>
+        </div>
+
+        <!-- OPSI A: GRID CARDS -->
+        <section>
+            <div class="mb-6 flex flex-col gap-2">
+                <h2 class="text-2xl font-bold text-indigo-400 flex items-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    Opsi A: Grid Cards Layout
+                </h2>
+                <p class="text-sm text-slate-400">Tampilan berbasis kartu yang menonjolkan visual profil. Sangat elegan dan interaktif, cocok jika divisi tidak memiliki ratusan anggota sekaligus.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Card 1 (Active) -->
+                <div class="bg-[#151f32] border border-slate-800/80 rounded-2xl p-6 relative overflow-hidden group hover:border-slate-700 hover:shadow-xl hover:shadow-indigo-900/10 transition-all duration-300 hover:-translate-y-1">
+                    <div class="absolute top-0 right-0 p-5">
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-6 mt-1">
+                        <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center font-bold text-xl text-slate-300 ring-1 ring-white/5 shadow-inner">
+                            A
+                            <span class="absolute -bottom-1 -right-1 block h-3.5 w-3.5 rounded-full ring-4 ring-[#151f32] bg-emerald-500"></span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg leading-tight group-hover:text-indigo-400 transition-colors">Active Intern 16</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">active16@student.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3.5 bg-slate-900/50 rounded-xl p-4 border border-slate-800/50">
+                        <div class="flex items-center text-sm">
+                            <div class="w-6 h-6 rounded bg-slate-800 flex items-center justify-center mr-3 text-slate-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            </div>
+                            <span class="text-slate-300">Mentor: <span class="font-bold text-slate-100">Mentor 1</span></span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <div class="w-6 h-6 rounded bg-slate-800 flex items-center justify-center mr-3 text-slate-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <span class="text-slate-300 font-medium">09 Feb - 09 May 2026</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5 pt-0 flex justify-end">
+                        <button class="text-xs font-bold text-slate-400 group-hover:text-indigo-400 flex items-center gap-1 transition-colors">
+                            Lihat Profil
+                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2 (Finished) -->
+                <div class="bg-[#151f32] border border-slate-800/80 rounded-2xl p-6 relative overflow-hidden group hover:border-slate-700 hover:shadow-xl hover:shadow-blue-900/10 transition-all duration-300 hover:-translate-y-1 opacity-80 hover:opacity-100">
+                    <div class="absolute top-0 right-0 p-5">
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20">FINISHED</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-6 mt-1">
+                        <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center font-bold text-xl text-slate-300 ring-1 ring-white/5 shadow-inner">
+                            F
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg leading-tight group-hover:text-blue-400 transition-colors">Finished Intern 3</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">finished3@student.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3.5 bg-slate-900/50 rounded-xl p-4 border border-slate-800/50">
+                        <div class="flex items-center text-sm">
+                            <div class="w-6 h-6 rounded bg-slate-800 flex items-center justify-center mr-3 text-slate-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            </div>
+                            <span class="text-slate-300">Mentor: <span class="font-bold text-slate-100">Mentor 3</span></span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <div class="w-6 h-6 rounded bg-slate-800 flex items-center justify-center mr-3 text-slate-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <span class="text-slate-300 font-medium">09 Nov - 04 Mar 2026</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5 pt-0 flex justify-end">
+                        <button class="text-xs font-bold text-slate-400 group-hover:text-blue-400 flex items-center gap-1 transition-colors">
+                            Lihat Profil
+                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                 <!-- Card 3 (Onboarding) -->
+                 <div class="bg-[#151f32] border border-slate-800/80 rounded-2xl p-6 relative overflow-hidden group hover:border-slate-700 hover:shadow-xl hover:shadow-amber-900/10 transition-all duration-300 hover:-translate-y-1">
+                    <div class="absolute top-0 right-0 p-5">
+                        <span class="px-2.5 py-1 rounded-md text-[10px] font-bold tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/20">ONBOARDING</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-6 mt-1">
+                        <div class="relative w-14 h-14 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center font-bold text-xl text-slate-300 ring-1 ring-white/5 shadow-inner">
+                            O
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-white text-lg leading-tight group-hover:text-amber-400 transition-colors">Onboarding Intern 4</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">onboarding4@student.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-3.5 bg-slate-900/50 rounded-xl p-4 border border-slate-800/50">
+                        <div class="flex items-center text-sm">
+                            <div class="w-6 h-6 rounded bg-slate-800 flex items-center justify-center mr-3 text-slate-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                            </div>
+                            <span class="text-slate-300">Mentor: <span class="font-bold text-slate-100">Mentor 1</span></span>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <div class="w-6 h-6 rounded bg-slate-800 flex items-center justify-center mr-3 text-slate-400">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            </div>
+                            <span class="text-slate-300 font-medium">11 Mar - 11 Jun 2026</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-5 pt-0 flex justify-end">
+                        <button class="text-xs font-bold text-slate-400 group-hover:text-amber-400 flex items-center gap-1 transition-colors">
+                            Lihat Profil
+                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- OPSI B: MODERN LIST VIEW -->
+        <section class="mt-16">
+            <div class="mb-6 flex flex-col gap-2">
+                <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                    Opsi B: Modern Stacked List
+                </h2>
+                <p class="text-sm text-slate-400">Alternatif dari tabel yang jauh lebih bersih. Menampilkan data dalam baris-baris kartu dinamis (*list group*) yang sangat responsif.</p>
+            </div>
+
+            <div class="bg-[#151f32] border border-slate-800/80 rounded-2xl overflow-hidden shadow-lg shadow-black/20">
+                <div class="divide-y divide-slate-800/60">
+                    
+                    <!-- Row 1 -->
+                    <div class="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:bg-slate-800/40 transition-colors group cursor-pointer relative">
+                        <!-- Active Indicator side bar -->
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-emerald-500 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        
+                        <!-- Name & Avatar -->
+                        <div class="flex items-center gap-4 min-w-[300px]">
+                            <div class="relative w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center font-bold text-slate-300 ring-4 ring-[#151f32] z-10">
+                                A
+                                <span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-[#151f32] bg-emerald-500"></span>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white text-base leading-tight group-hover:text-emerald-400 transition-colors">Active Intern 16</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">active16@student.com</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Mentor -->
+                        <div class="flex-1 min-w-[150px] hidden md:block">
+                            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                Mentor Pembimbing
+                            </p>
+                            <span class="text-sm text-slate-200 font-semibold bg-slate-900/50 px-3 py-1.5 rounded-lg border border-slate-800">Mentor 1</span>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="flex-1 min-w-[200px] hidden lg:block">
+                            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                Periode Magang
+                            </p>
+                            <span class="text-sm text-slate-300 font-medium">09 Feb - 09 May 2026</span>
+                        </div>
+
+                        <!-- Status & Action -->
+                        <div class="flex items-center gap-4 sm:ml-auto w-full sm:w-auto justify-between sm:justify-end mt-2 sm:mt-0">
+                            <span class="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ACTIVE</span>
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 group-hover:text-white group-hover:bg-emerald-500/20 transition-colors">
+                                <svg class="w-5 h-5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2 -->
+                    <div class="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:bg-slate-800/40 transition-colors group cursor-pointer relative opacity-80 hover:opacity-100">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-500 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        
+                        <div class="flex items-center gap-4 min-w-[300px]">
+                            <div class="relative w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center font-bold text-slate-300 ring-4 ring-[#151f32] z-10">
+                                F
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white text-base leading-tight group-hover:text-blue-400 transition-colors">Finished Intern 3</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">finished3@student.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex-1 min-w-[150px] hidden md:block">
+                            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                Mentor Pembimbing
+                            </p>
+                            <span class="text-sm text-slate-300 font-medium">Mentor 3</span>
+                        </div>
+
+                        <div class="flex-1 min-w-[200px] hidden lg:block">
+                            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                Periode Magang
+                            </p>
+                            <span class="text-sm text-slate-400 font-medium">09 Nov - 04 Mar 2026</span>
+                        </div>
+
+                        <div class="flex items-center gap-4 sm:ml-auto w-full sm:w-auto justify-between sm:justify-end mt-2 sm:mt-0">
+                            <span class="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20">FINISHED</span>
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 group-hover:text-white group-hover:bg-blue-500/20 transition-colors">
+                                <svg class="w-5 h-5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3 -->
+                    <div class="p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 hover:bg-slate-800/40 transition-colors group cursor-pointer relative">
+                        <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        
+                        <div class="flex items-center gap-4 min-w-[300px]">
+                            <div class="relative w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center font-bold text-slate-300 ring-4 ring-[#151f32] z-10">
+                                O
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-white text-base leading-tight group-hover:text-amber-400 transition-colors">Onboarding Intern 4</h3>
+                                <p class="text-xs text-slate-400 mt-0.5">onboarding4@student.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex-1 min-w-[150px] hidden md:block">
+                            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                                Mentor Pembimbing
+                            </p>
+                            <span class="text-sm text-slate-300 font-medium">Mentor 1</span>
+                        </div>
+
+                        <div class="flex-1 min-w-[200px] hidden lg:block">
+                            <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                Periode Magang
+                            </p>
+                            <span class="text-sm text-slate-300 font-medium">11 Mar - 11 Jun 2026</span>
+                        </div>
+
+                        <div class="flex items-center gap-4 sm:ml-auto w-full sm:w-auto justify-between sm:justify-end mt-2 sm:mt-0">
+                            <span class="px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest bg-amber-500/10 text-amber-500 border border-amber-500/20">ONBOARDING</span>
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 group-hover:text-white group-hover:bg-amber-500/20 transition-colors">
+                                <svg class="w-5 h-5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </div>
+</body>
+</html>
