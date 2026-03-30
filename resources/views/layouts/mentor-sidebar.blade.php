@@ -32,7 +32,7 @@
             <a href="{{ route('mentor.approvals.index') }}" class="flex items-center justify-between px-3 py-2.5 rounded-lg font-semibold transition-all {{ request()->routeIs('mentor.approvals*') ? 'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 border border-red-100 dark:border-red-500/20 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 group' }}">
                 <div class="flex items-center gap-3">
                     <svg class="w-5 h-5 {{ request()->routeIs('mentor.approvals*') ? 'opacity-80' : 'text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Approvals
+                    Persetujuan
                 </div>
                 @if($pendingCount > 0)
                     <span class="bg-amber-500/20 text-amber-500 dark:text-amber-400 text-[10px] font-black px-2 py-0.5 rounded-md">{{ $pendingCount }}</span>

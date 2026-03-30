@@ -34,6 +34,42 @@
         <style>
             body { font-family: 'Inter', sans-serif; }
             [x-cloak] { display: none !important; }
+
+            /* SOFT LIGHT MODE (EYE-CARE) GLOBAL ENHANCEMENTS */
+            /* Mengubah warna putih murni dan hitam pekat menjadi warna yang lebih ramah mata (kalem) */
+            html:not(.dark) body, 
+            html:not(.dark) main, 
+            html:not(.dark) .bg-\[\#f8fafc\],
+            html:not(.dark) .bg-slate-50 {
+                background-color: #F7F8FA !important; /* Latar utama yang lebih teduh dari slate-50 */
+            }
+
+            html:not(.dark) .bg-white {
+                background-color: #FCFDFD !important; /* Off-white lembut menghilangkan pantulan cahaya menyilaukan */
+            }
+
+            html:not(.dark) .text-slate-800,
+            html:not(.dark) .text-slate-900,
+            html:not(.dark) .text-gray-900,
+            html:not(.dark) .text-black {
+                color: #334155 !important; /* Teks diredupkan ke Slate-700 (abu-abu tua) untuk menurunkan kontras layar */
+            }
+
+            html:not(.dark) .border-slate-100,
+            html:not(.dark) .border-slate-200 {
+                border-color: #EEF2F6 !important; /* Melunakkan garis tepi */
+            }
+            
+            /* (Opsional) Efek Sepia Lembut (Saringan Cahaya Biru) Khusus Layar Terang */
+            html:not(.dark) body::after {
+                content: '';
+                position: fixed;
+                inset: 0;
+                background-color: rgba(255, 249, 240, 0.6); /* Tint Krem Kertas yang sangat lembut */
+                pointer-events: none; /* Tidak mengganggu klik mouse */
+                z-index: 99999;
+                mix-blend-mode: multiply; /* Melebur warna putih menjadi warna krem, persis mode layar HP Eye-Care */
+            }
         </style>
     </head>
     <body 

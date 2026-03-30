@@ -63,84 +63,116 @@
                                             Setujui Sekarang
                                         </button>
                                     </div>
-                                    <div class="hidden md:block text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]" x-show="selectedIds.length === 0">
-                                        Pilih Logbook untuk Setujui
+                                        <!-- Select All moved here -->
+                                        <label class="hidden md:flex items-center gap-3 cursor-pointer group/selectall px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-all border border-transparent hover:border-slate-200 dark:hover:border-slate-700" x-show="selectedIds.length === 0">
+                                            <input type="checkbox" id="selectAll" @change="selectAll($event)" class="w-5 h-5 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-red-600 focus:ring-red-500 focus:ring-offset-white dark:focus:ring-offset-slate-900 transition-all cursor-pointer shadow-sm">
+                                            <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] group-hover/selectall:text-slate-600 dark:group-hover/selectall:text-slate-300 transition-colors">Pilih Semua</span>
+                                        </label>
                                     </div>
                                 </div>
-                            </div>
 
-                            <div class="overflow-x-auto">
-                                <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
-                                    <thead class="bg-gray-50 dark:bg-slate-950/50 transition-colors">
-                                        <tr>
-                                            <th scope="col" class="px-4 py-4 w-10 text-center">
-                                                <input type="checkbox" id="selectAll" @change="selectAll($event)" class="w-5 h-5 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-red-600 focus:ring-red-500 focus:ring-offset-white dark:focus:ring-offset-slate-900 transition-all cursor-pointer shadow-sm">
-                                            </th>
-                                            <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Intern</th>
-                                            <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Tanggal Aktivitas</th>
-                                            <th scope="col" class="px-4 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Judul Laporan</th>
-                                            <th scope="col" class="px-4 py-4 text-center text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Aksi</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800 transition-colors">
-                                        @foreach($pendingLogbooks as $logbook)
-                                            <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                                <td class="px-4 py-4 whitespace-nowrap text-center">
-                                                    <input type="checkbox"
-                                                           name="logbook_ids[]"
-                                                           value="{{ $logbook->id }}"
-                                                           @change="if($el.checked) { if(!selectedIds.includes('{{ $logbook->id }}')) selectedIds.push('{{ $logbook->id }}') } else { selectedIds = selectedIds.filter(id => id !== '{{ $logbook->id }}') }"
-                                                           x-model="selectedIds"
-                                                           class="logbook-checkbox w-5 h-5 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-red-600 focus:ring-red-500 focus:ring-offset-white dark:focus:ring-offset-slate-900 transition-all cursor-pointer shadow-sm">
-                                                </td>
-                                                <td class="px-4 py-4 whitespace-nowrap">
-                                                    <div class="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">{{ $logbook->internship->student->name }}</div>
-                                                    <div class="text-xs font-bold uppercase tracking-widest mt-0.5 transition-colors text-slate-500 dark:text-slate-500">{{ $logbook->internship->division->name ?? '-' }}</div>
-                                                </td>
-                                                <td class="px-4 py-4 whitespace-nowrap">
-                                                    <div class="flex flex-col">
-                                                        <span class="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors">{{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('d F Y') }}</span>
-                                                        <span class="text-xs text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widers mt-0.5 transition-colors">{{ \Carbon\Carbon::parse($logbook->date)->diffForHumans() }}</span>
+                            <!-- Modern Stacked List for Logbooks -->
+                            <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-2xl overflow-hidden shadow-sm mt-4">
+                                <div class="divide-y divide-slate-100 dark:divide-slate-800/60">
+                                    @foreach($pendingLogbooks as $logbook)
+                                        <div class="p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group relative {{ session('selected') == $logbook->id ? 'bg-red-50/50' : '' }}">
+                                            
+                                            <!-- Checkbox Selection -->
+                                            <div class="flex-shrink-0 pt-1 lg:pt-0">
+                                                <input type="checkbox"
+                                                       name="logbook_ids[]"
+                                                       value="{{ $logbook->id }}"
+                                                       @change="if($el.checked) { if(!selectedIds.includes('{{ $logbook->id }}')) selectedIds.push('{{ $logbook->id }}') } else { selectedIds = selectedIds.filter(id => id !== '{{ $logbook->id }}') }"
+                                                       x-model="selectedIds"
+                                                       class="logbook-checkbox w-5 h-5 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-red-600 focus:ring-red-500 focus:ring-offset-white dark:focus:ring-offset-slate-900 transition-all cursor-pointer shadow-sm hover:scale-110">
+                                            </div>
+
+                                            <!-- Group 1: Student Identity -->
+                                            <div class="flex items-center gap-4 min-w-[240px] z-10">
+                                                <div class="relative flex-shrink-0 cursor-help" title="Internship: {{ $logbook->internship->division->name ?? 'Unknown Div' }}">
+                                                    <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center font-black text-slate-500 dark:text-slate-300 text-lg shadow-inner ring-2 ring-white dark:ring-slate-900 group-hover:scale-105 transition-transform border border-slate-200/50 dark:border-slate-600">
+                                                        {{ strtoupper(substr($logbook->internship->student->name, 0, 1)) }}
                                                     </div>
-                                                </td>
-                                                <td class="px-4 py-4 whitespace-normal break-words min-w-[200px] max-w-sm">
-                                                    <div class="flex flex-col gap-1.5">
-                                                        <span class="text-sm font-bold text-slate-700 dark:text-slate-300 transition-colors w-full" title="{{ $logbook->title }}">
-                                                            {{ $logbook->title ?? '-' }}
+                                                </div>
+                                                <div class="min-w-0 pr-2">
+                                                    <h3 class="font-bold text-slate-800 dark:text-white text-[13px] sm:text-sm leading-tight group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors truncate" title="{{ $logbook->internship->student->name }}">
+                                                        {{ $logbook->internship->student->name }}
+                                                    </h3>
+                                                    <div class="flex items-center gap-1.5 mt-0.5">
+                                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></span>
+                                                        <span class="text-[10px] sm:text-[11px] uppercase tracking-widest font-black text-slate-500 dark:text-slate-500 truncate">
+                                                            {{ $logbook->internship->division->name ?? 'No Div' }}
                                                         </span>
                                                     </div>
-                                                </td>
-                                                <td class="px-4 py-4 whitespace-nowrap text-center">
-                                                    <div class="flex items-center justify-center gap-3">
-                                                        {{-- Approve Button --}}
-                                                        <button type="button"
-                                                                onclick="approveLogbook({{ $logbook->id }})"
-                                                                class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/20 active:scale-95">
-                                                            Setujui
-                                                        </button>
-    
-                                                        {{-- Detail Button --}}
-                                                         <button type="button"
-                                                                 @click="showModal = true; selectedLogbook = {
-                                                                    name: '{{ addslashes($logbook->internship->student->name) }}',
-                                                                    title: '{{ addslashes($logbook->title) }}',
-                                                                    date: '{{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('d F Y') }}',
-                                                                    activity: {{ json_encode($logbook->activity) }},
-                                                                    evidence: {{ $logbook->evidence ? "'" . Storage::url($logbook->evidence) . "'" : 'null' }}
-                                                                 }"
-                                                                 class="p-2.5 text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 bg-slate-50 dark:bg-slate-800 rounded-xl transition-all shadow-sm active:scale-95"
-                                                                 title="Lihat Detail Aktivitas">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                                </svg>
-                                                         </button>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Group 2: Contextual Details -->
+                                            <div class="flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-start lg:justify-start gap-4 lg:gap-8 w-full lg:w-auto">
+                                                
+                                                <!-- Date & Time -->
+                                                <div class="min-w-[130px] flex flex-col text-left">
+                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                                        Tgl Laporan
+                                                    </p>
+                                                    <div class="text-[13px] font-black text-slate-700 dark:text-slate-200 leading-tight">
+                                                        {{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('d M Y') }}
                                                     </div>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
+                                                    <div class="text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-0.5">
+                                                        {{ \Carbon\Carbon::parse($logbook->date)->diffForHumans() }}
+                                                    </div>
+                                                </div>
+
+                                                <!-- Logbook Title -->
+                                                <div class="min-w-0 flex-1 relative text-left w-full max-w-[400px]">
+                                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                                        Judul Laporan
+                                                    </p>
+                                                    <span class="text-[13px] font-bold text-slate-700 dark:text-slate-300 transition-colors w-full line-clamp-2" title="{{ $logbook->title }}">
+                                                        {{ $logbook->title ?? '-' }}
+                                                    </span>
+                                                    @if($logbook->evidence)
+                                                        <span class="inline-flex mt-1 items-center gap-1 text-[9px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 rounded-md">
+                                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                                                            Ada Lampiran
+                                                        </span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Group 3: Action Buttons -->
+                                            <div class="flex items-center justify-end gap-2 w-full lg:w-auto mt-4 lg:mt-0 pt-2 lg:pt-0 border-t border-slate-100 dark:border-slate-800 lg:border-t-0">
+                                                {{-- Detail Modal Button --}}
+                                                <button type="button"
+                                                        @click="showModal = true; selectedLogbook = {
+                                                        name: '{{ addslashes($logbook->internship->student->name) }}',
+                                                        title: '{{ addslashes($logbook->title) }}',
+                                                        date: '{{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('d F Y') }}',
+                                                        activity: {{ json_encode($logbook->activity) }},
+                                                        evidence: {{ $logbook->evidence ? "'" . Storage::url($logbook->evidence) . "'" : 'null' }}
+                                                        }"
+                                                        class="p-2 text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 bg-slate-50 dark:bg-slate-800 border border-transparent hover:border-red-200 dark:hover:border-red-500/30 rounded-xl transition-all shadow-sm active:scale-95"
+                                                        title="Lihat Detail Aktivitas">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-5 h-5">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                </button>
+
+                                                {{-- Approve Action Button --}}
+                                                <button type="button"
+                                                        onclick="approveLogbook({{ $logbook->id }})"
+                                                        class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center gap-1.5 whitespace-nowrap">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                                    Setujui
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    @endforeach
+                                </div>
                             </div>
                         <div class="mt-8 px-4">
                             {{ $pendingLogbooks->links() }}
