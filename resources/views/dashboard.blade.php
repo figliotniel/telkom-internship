@@ -135,41 +135,87 @@
             
             <!-- KPI Bento Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 mt-2">
-                <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200/60 dark:border-slate-800 hover:-translate-y-1 transition-transform duration-300">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-500 rounded-2xl flex items-center justify-center">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                        </div>
-                        <span class="px-2 py-0.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[9px] font-bold rounded-lg uppercase tracking-widest">Hadir</span>
-                    </div>
-                    <p class="text-3xl font-black text-slate-800 dark:text-slate-100 mb-1">{{ str_pad($totalPresent, 2, '0', STR_PAD_LEFT) }}</p>
-                    <p class="text-xs text-slate-400 font-semibold">Total Kehadiran</p>
-                </div>
-
-                <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200/60 dark:border-slate-800 hover:-translate-y-1 transition-transform duration-300">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="w-12 h-12 bg-amber-50 dark:bg-amber-500/10 text-amber-500 rounded-2xl flex items-center justify-center">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        </div>
-                        <span class="px-2 py-0.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[9px] font-bold rounded-lg uppercase tracking-widest">Izin</span>
-                    </div>
-                    <p class="text-3xl font-black text-slate-800 dark:text-slate-100 mb-1">{{ str_pad($totalPermit + $totalSick, 2, '0', STR_PAD_LEFT) }}</p>
-                    <p class="text-xs text-slate-400 font-semibold">Izin / Sakit / Cuti</p>
-                </div>
-
-                <div class="bg-white dark:bg-slate-900 rounded-3xl p-5 md:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200/60 dark:border-slate-800 hover:-translate-y-1 transition-transform duration-300">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="w-12 h-12 bg-blue-50 dark:bg-blue-500/10 text-blue-500 rounded-2xl flex items-center justify-center">
-                            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                        </div>
-                        @php
-                            $validLogbooks = \App\Models\DailyLogbook::where('internship_id', $internship->id)->where('status', 'approved')->count();
-                        @endphp
-                        <span class="px-2 py-0.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-500 dark:text-slate-400 text-[9px] font-bold rounded-lg uppercase tracking-widest">Logbook</span>
+                
+                <!-- Kehadiran -->
+                <div class="relative bg-emerald-50/50 dark:bg-[#0d1424] rounded-[2rem] p-7 border border-emerald-100/80 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.02)] dark:shadow-xl overflow-hidden group hover:bg-emerald-50 dark:hover:bg-[#0d1424] hover:dark:border-emerald-500/30 transition-colors duration-500">
+                    <div class="absolute right-[-5%] dark:right-[-10%] top-[-10%] text-emerald-100 dark:text-emerald-500 opacity-60 dark:opacity-5 group-hover:dark:opacity-10 group-hover:rotate-12 transition-all duration-700 transform scale-[2.2] dark:scale-[2]">
+                        <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                     </div>
                     
-                    <p class="text-3xl font-black text-slate-800 dark:text-slate-100 mb-1">{{ str_pad($validLogbooks, 2, '0', STR_PAD_LEFT) }}</p>
-                    <p class="text-xs text-slate-400 font-semibold">Logbook Diterima</p>
+                    <div class="relative z-10 flex flex-col justify-between h-full space-y-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-[10px] font-bold text-emerald-600/70 dark:text-slate-400 uppercase tracking-widest mb-1">Total Kehadiran</p>
+                                <h3 class="text-4xl font-light text-emerald-950 dark:text-white tracking-wide">{{ str_pad($totalPresent, 2, '0', STR_PAD_LEFT) }} <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400 px-2 py-1 bg-white/60 dark:bg-emerald-500/10 rounded-lg ml-1 shadow-sm dark:shadow-none backdrop-blur-sm">HARI</span></h3>
+                            </div>
+                            <div class="w-10 h-10 rounded-full border border-emerald-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-sm dark:shadow-inner group-hover:scale-110 dark:group-hover:scale-100 group-hover:dark:bg-emerald-500/10 group-hover:dark:border-emerald-500/30 transition-all">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full bg-emerald-100 dark:bg-slate-800/80 rounded-full h-1.5 overflow-hidden border border-transparent">
+                            @php
+                                $totalWorkingDays = isset($totalWorkingDays) && $totalWorkingDays > 0 ? $totalWorkingDays : 1;
+                                $presentPercentage = min(100, ($totalPresent / $totalWorkingDays) * 100);
+                            @endphp
+                            <div class="bg-gradient-to-r from-emerald-500 to-emerald-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.5)]" style="width: {{ $presentPercentage > 0 ? max(2, $presentPercentage) : 0 }}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Izin / Sakit -->
+                <div class="relative bg-amber-50/50 dark:bg-[#0d1424] rounded-[2rem] p-7 border border-amber-100/80 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.02)] dark:shadow-xl overflow-hidden group hover:bg-amber-50 dark:hover:bg-[#0d1424] hover:dark:border-amber-500/30 transition-colors duration-500">
+                    <div class="absolute right-[-5%] dark:right-[-10%] top-[-20%] text-amber-100 dark:text-amber-500 opacity-60 dark:opacity-5 group-hover:dark:opacity-10 group-hover:rotate-12 transition-all duration-700 transform scale-[2.2] dark:scale-[2]">
+                        <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    
+                    <div class="relative z-10 flex flex-col justify-between h-full space-y-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-[10px] font-bold text-amber-600/70 dark:text-slate-400 uppercase tracking-widest mb-1">Izin / Sakit / Cuti</p>
+                                <h3 class="text-4xl font-light text-amber-950 dark:text-white tracking-wide">{{ str_pad($totalPermit + $totalSick, 2, '0', STR_PAD_LEFT) }} <span class="text-[11px] font-bold text-amber-700 dark:text-amber-400 px-2 py-1 bg-white/60 dark:bg-amber-500/10 rounded-lg ml-1 shadow-sm dark:shadow-none backdrop-blur-sm">KALI</span></h3>
+                            </div>
+                            <div class="w-10 h-10 rounded-full border border-amber-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 flex items-center justify-center text-amber-500 dark:text-amber-400 shadow-sm dark:shadow-inner group-hover:scale-110 dark:group-hover:scale-100 group-hover:dark:bg-amber-500/10 group-hover:dark:border-amber-500/30 transition-all">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full bg-amber-100 dark:bg-slate-800/80 rounded-full h-1.5 overflow-hidden border border-transparent">
+                            @php
+                                $leavePercentage = min(100, (($totalPermit + $totalSick) / max(1, $totalWorkingDays)) * 100);
+                            @endphp
+                            <div class="bg-gradient-to-r from-amber-500 to-amber-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)]" style="width: {{ $leavePercentage > 0 ? max(2, $leavePercentage) : 0 }}%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logbook -->
+                <div class="relative bg-blue-50/50 dark:bg-[#0d1424] rounded-[2rem] p-7 border border-blue-100/80 dark:border-slate-800 shadow-[0_8px_30px_rgb(0,0,0,0.02)] dark:shadow-xl overflow-hidden group hover:bg-blue-50 dark:hover:bg-[#0d1424] hover:dark:border-blue-500/30 transition-colors duration-500">
+                    <div class="absolute right-[-5%] dark:right-[-10%] top-[-10%] text-blue-100 dark:text-blue-500 opacity-60 dark:opacity-5 group-hover:dark:opacity-10 group-hover:-rotate-12 transition-all duration-700 transform scale-[2.2] dark:scale-[2]">
+                        <svg class="w-full h-full" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    </div>
+                    
+                    @php
+                        $validLogbooks = \App\Models\DailyLogbook::where('internship_id', $internship->id)->where('status', 'approved')->count();
+                    @endphp
+                    <div class="relative z-10 flex flex-col justify-between h-full space-y-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-[10px] font-bold text-blue-600/70 dark:text-slate-400 uppercase tracking-widest mb-1">Logbook Diterima</p>
+                                <h3 class="text-4xl font-light text-blue-950 dark:text-white tracking-wide">{{ str_pad($validLogbooks, 2, '0', STR_PAD_LEFT) }} <span class="text-[11px] font-bold text-blue-700 dark:text-blue-400 px-2 py-1 bg-white/60 dark:bg-blue-500/10 rounded-lg ml-1 shadow-sm dark:shadow-none backdrop-blur-sm">DATA</span></h3>
+                            </div>
+                            <div class="w-10 h-10 rounded-full border border-blue-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 flex items-center justify-center text-blue-500 dark:text-blue-400 shadow-sm dark:shadow-inner group-hover:scale-110 dark:group-hover:scale-100 group-hover:dark:bg-blue-500/10 group-hover:dark:border-blue-500/30 transition-all">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+                            </div>
+                        </div>
+                        
+                        <div class="w-full bg-blue-100 dark:bg-slate-800/80 rounded-full h-1.5 overflow-hidden border border-transparent">
+                            @php
+                                $logbookPercentage = min(100, ($validLogbooks / max(1, $totalWorkingDays)) * 100);
+                            @endphp
+                            <div class="bg-gradient-to-r from-blue-500 to-blue-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" style="width: {{ $logbookPercentage > 0 ? max(2, $logbookPercentage) : 0 }}%"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
     @else
@@ -302,7 +348,8 @@
                 </div> {{-- End Left Column --}}
 
                 {{-- Right Column: Absensi & Mentor --}}
-                <div class="space-y-6">
+                <div class="space-y-6 relative">
+                    <div class="sticky top-6 space-y-6">
                     {{-- Absensi Card --}}
                     @if($internship->status !== 'finished')
                     <div class="bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-900 dark:to-slate-950 rounded-3xl shadow-xl dark:shadow-slate-900/20 overflow-hidden text-white relative transition-all duration-300 border border-slate-700/50 dark:border-slate-800 mb-6">
@@ -523,34 +570,13 @@
                             </div>
                         </div>
                     @endif
+                    </div>
                 </div> {{-- End Right Column --}}
 
             </div> {{-- End Grid --}}
         </div> {{-- End Max Width Container --}}
     </div> {{-- End Padding Wrapper --}}
 
-    <!-- FOOTER TELKOM -->
-    <footer class="mt-12 md:mt-24 bg-white dark:bg-[#0a0f1c] border-t border-slate-200 dark:border-slate-800 pt-10 pb-6 px-6 lg:px-12 transition-colors">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center md:items-start justify-between gap-10 md:gap-16">
-            <!-- Left: Logo -->
-            <div class="shrink-0 flex justify-center md:justify-start w-full md:w-auto mt-4 md:mt-0">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/Telkom_Indonesia_2013.svg" class="h-16 md:h-20 dark:brightness-0 dark:invert opacity-90 object-contain transition-all" alt="Telkom Indonesia">
-            </div>
-
-            <!-- Divider (desktop only) -->
-            <div class="hidden md:block w-px h-32 bg-slate-200 dark:bg-slate-800 shrink-0"></div>
-
-            <!-- Right: Info -->
-            <div class="flex-1 text-center md:text-left text-slate-600 dark:text-slate-400 text-sm leading-relaxed max-w-lg mx-auto md:mx-0">
-                <h4 class="text-slate-800 dark:text-white font-bold text-base mb-2">Telkom Witel Jateng Utara</h4>
-                <p class="mb-4 text-slate-500 dark:text-slate-400">
-                    Jl. Pahlawan No.10, Pleburan, Kec. Semarang Selatan,<br>
-                    Kota Semarang, Jawa Tengah 50249.
-                </p>
-                <p class="mb-6 text-slate-500 dark:text-slate-400">Phone: <span class="font-bold text-slate-800 dark:text-white">(024) 8302006</span></p>
-            </div>
-        </div>
-    </footer>
 
     {{-- MODALS --}}
 
