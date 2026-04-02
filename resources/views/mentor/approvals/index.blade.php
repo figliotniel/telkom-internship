@@ -9,6 +9,12 @@
             const checkboxes = document.querySelectorAll('.logbook-checkbox');
             this.selectedIds = event.target.checked ? Array.from(checkboxes).map(cb => cb.value) : [];
             checkboxes.forEach(cb => cb.checked = event.target.checked);
+        },
+        unselectAll() {
+            this.selectedIds = [];
+            document.querySelectorAll('.logbook-checkbox').forEach(cb => cb.checked = false);
+            const selectAllCb = document.getElementById('selectAll');
+            if (selectAllCb) selectAllCb.checked = false;
         }
     }">
     <x-slot name="header">
@@ -57,19 +63,27 @@
                                             <p class="text-sm font-black text-emerald-700 dark:text-emerald-400 tracking-tight leading-none"><span x-text="selectedIds.length"></span> Aktivitas Terpilih</p>
                                             <p class="text-[9px] text-emerald-600/60 dark:text-emerald-400/50 uppercase tracking-widest font-black mt-1">Siap divalidasi massal</p>
                                         </div>
-                                        <button type="button"
-                                                @click="confirmMassApprove()"
-                                                class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white px-6 py-2 rounded-xl text-xs font-black transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2">
-                                            Setujui Sekarang
-                                        </button>
+                                        <div class="flex items-center gap-2">
+                                            <button type="button"
+                                                    @click="unselectAll()"
+                                                    class="bg-white/60 hover:bg-white active:bg-slate-100 dark:bg-slate-800/60 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-sm flex items-center gap-1 active:scale-95">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                                Batal Pilih
+                                            </button>
+                                            <button type="button"
+                                                    @click="confirmMassApprove()"
+                                                    class="bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-500/20 flex items-center gap-2">
+                                                Setujui Sekarang
+                                            </button>
+                                        </div>
                                     </div>
-                                        <!-- Select All moved here -->
-                                        <label class="hidden md:flex items-center gap-3 cursor-pointer group/selectall px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-all border border-transparent hover:border-slate-200 dark:hover:border-slate-700" x-show="selectedIds.length === 0">
-                                            <input type="checkbox" id="selectAll" @change="selectAll($event)" class="w-5 h-5 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-red-600 focus:ring-red-500 focus:ring-offset-white dark:focus:ring-offset-slate-900 transition-all cursor-pointer shadow-sm">
-                                            <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] group-hover/selectall:text-slate-600 dark:group-hover/selectall:text-slate-300 transition-colors">Pilih Semua</span>
-                                        </label>
-                                    </div>
+                                    <!-- Select All moved here -->
+                                    <label class="hidden md:flex items-center gap-3 cursor-pointer group/selectall px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-all border border-transparent hover:border-slate-200 dark:hover:border-slate-700" x-show="selectedIds.length === 0">
+                                        <input type="checkbox" id="selectAll" @change="selectAll($event)" class="w-5 h-5 rounded-lg border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-red-600 focus:ring-red-500 focus:ring-offset-white dark:focus:ring-offset-slate-900 transition-all cursor-pointer shadow-sm">
+                                        <span class="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em] group-hover/selectall:text-slate-600 dark:group-hover/selectall:text-slate-300 transition-colors">Pilih Semua</span>
+                                    </label>
                                 </div>
+                            </div>
 
                             <!-- Modern Stacked List for Logbooks -->
                             <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-2xl overflow-hidden shadow-sm mt-4">
