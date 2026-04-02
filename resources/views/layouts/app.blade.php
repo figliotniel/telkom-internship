@@ -87,20 +87,24 @@
         }"
         class="font-sans antialiased text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-950 transition-colors duration-300"
     >
-        @if(auth()->check() && in_array(auth()->user()->role, ['admin', 'mentor']))
+        @if(auth()->check() && in_array(auth()->user()->role, ['admin', 'mentor', 'student']))
             {{-- Unified Layout: Sidebar + Topbar --}}
             <div class="flex h-screen overflow-hidden text-slate-800 dark:text-slate-200 antialiased bg-[#f8fafc] dark:bg-slate-950">
                 @if(auth()->user()->role === 'admin')
                     @include('layouts.admin-sidebar')
-                @else
+                @elseif(auth()->user()->role === 'mentor')
                     @include('layouts.mentor-sidebar')
+                @elseif(auth()->user()->role === 'student')
+                    @include('layouts.intern-sidebar')
                 @endif
                 
                 <div class="flex-1 flex flex-col h-screen overflow-hidden relative">
                     @if(auth()->user()->role === 'admin')
                         @include('layouts.admin-topbar')
-                    @else
+                    @elseif(auth()->user()->role === 'mentor')
                         @include('layouts.mentor-topbar')
+                    @elseif(auth()->user()->role === 'student')
+                        @include('layouts.intern-topbar')
                     @endif
                     
                     <main class="flex-1 overflow-x-hidden overflow-y-auto bg-[#f8fafc] dark:bg-slate-950 transition-colors duration-300 flex flex-col justify-between">
