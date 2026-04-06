@@ -146,6 +146,70 @@
         <!-- Trix Editor JS -->
         <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
 
+        <!-- Global SweetAlert Flash Messages -->
+        @if(session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session("success") }}',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg',
+                        title: 'text-slate-800 dark:text-slate-100',
+                        htmlContainer: 'text-slate-500 dark:text-slate-400'
+                    }
+                });
+            });
+        </script>
+        @endif
+
+        @if(session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Waduh...',
+                    text: '{{ session("error") }}',
+                    buttonsStyling: false,
+                    customClass: {
+                        popup: 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-xl',
+                        title: 'text-slate-800 dark:text-slate-100 font-bold',
+                        htmlContainer: 'text-slate-500 dark:text-slate-400',
+                        confirmButton: 'px-6 py-2.5 mx-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all',
+                    }
+                });
+            });
+        </script>
+        @endif
+
+        @if($errors->any() && !request()->routeIs('dashboard'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Cek Kembali Input Anda',
+                    text: '{{ $errors->first() }}',
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 4000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-lg',
+                        title: 'text-slate-800 dark:text-slate-100',
+                        htmlContainer: 'text-slate-500 dark:text-slate-400'
+                    }
+                });
+            });
+        </script>
+        @endif
+
         @stack('scripts')
     </body>
 </html>

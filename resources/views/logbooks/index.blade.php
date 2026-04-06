@@ -60,80 +60,101 @@
                             @endif
                         </div>
     
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
-                                <thead class="bg-gray-50 dark:bg-slate-950/50 transition-colors">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Tanggal</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Judul</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Aktivitas</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Bukti</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800 transition-colors">
-                                    @forelse($logbooks as $logbook)
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                                                <span class="font-bold">{{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}</span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                                                <span class="font-bold">{{ $logbook->title ?? '-' }}</span>
-                                            </td>
-                                            <td class="px-6 py-4 text-sm text-slate-700 dark:text-slate-300 transition-colors max-w-sm">
-                                                <div class="line-clamp-2" title="{{ strip_tags($logbook->activity) }}">
-                                                    {{ Str::limit(strip_tags($logbook->activity), 80) }}
+                        <div class="relative pl-8 md:pl-0 max-w-4xl mt-4">
+                            @if($logbooks->count() > 0)
+                                <!-- Timeline Line -->
+                                <div class="absolute left-[39px] md:left-[39px] top-6 bottom-0 w-0.5 bg-gradient-to-b from-cyan-500 via-cyan-500/50 dark:via-cyan-600/30 to-transparent"></div>
+                            @endif
+                
+                            @forelse($logbooks as $loopIndex => $logbook)
+                                <!-- Timelime Item -->
+                                <div class="relative mb-8 pl-12 flex items-start group {{ $loopIndex == $logbooks->count() - 1 ? 'mb-2' : '' }}">
+                                    <!-- Timeline Node -->
+                                    @if($loopIndex == 0 && request()->get('page', 1) == 1)
+                                        <!-- Latest Item Node -->
+                                        <div class="absolute left-8 w-6 h-6 rounded-full bg-white dark:bg-[#0f172a] border-4 border-cyan-500 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.4)] dark:shadow-[0_0_15px_rgba(34,211,238,0.6)] z-10 transition-transform group-hover:scale-125">
+                                            <div class="w-1.5 h-1.5 bg-cyan-500 dark:bg-cyan-400 rounded-full animate-pulse"></div>
+                                        </div>
+                                    @else
+                                        <!-- Past Item Node -->
+                                        <div class="absolute left-8 w-6 h-6 rounded-full bg-slate-50 dark:bg-[#0f172a] border-[3px] border-slate-300 dark:border-slate-600 flex items-center justify-center z-10 transition-transform group-hover:scale-125 group-hover:border-cyan-400"></div>
+                                    @endif
+                                    
+                                    <!-- Card -->
+                                    <div class="rounded-xl p-5 sm:p-6 w-full relative overflow-hidden bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-[0_4px_20px_-10px_rgba(0,0,0,0.5)] hover:-translate-y-1 hover:border-cyan-300 dark:hover:border-cyan-500/50 hover:shadow-lg dark:hover:shadow-[0_10px_30px_-10px_rgba(34,211,238,0.25)] transition-all duration-300 backdrop-blur-md">
+                                        
+                                        @if($loopIndex == 0 && request()->get('page', 1) == 1)
+                                            <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-200/50 dark:bg-cyan-500/10 rounded-full blur-3xl z-0 pointer-events-none"></div>
+                                        @endif
+                    
+                                        <div class="relative z-10">
+                                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 gap-2">
+                                                <div>
+                                                    @if(\Carbon\Carbon::parse($logbook->date)->isToday())
+                                                        <span class="inline-block px-3 py-1 rounded-full bg-cyan-100 dark:bg-cyan-500/20 text-cyan-700 dark:text-cyan-400 text-[10px] font-bold uppercase tracking-wider mb-2 border border-cyan-200 dark:border-cyan-500/20">Hari ini</span>
+                                                    @else
+                                                        <span class="inline-block text-slate-500 dark:text-slate-400 text-xs font-bold tracking-wider mb-2 block">{{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}</span>
+                                                    @endif
+                                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">{{ $logbook->title ?? '-' }}</h3>
                                                 </div>
-                                                <div class="flex items-center gap-3 mt-2">
+                                                <div class="self-start">
+                                                    <x-status-badge :status="$logbook->status" />
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed max-w-none" title="{{ strip_tags($logbook->activity) }}">
+                                                {{ Str::limit(strip_tags($logbook->activity), 180) }}
+                                            </div>
+                                            
+                                            <!-- Actions & Evidence Footer -->
+                                            <div class="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 flex flex-wrap items-center justify-between gap-4">
+                                                <div class="flex flex-wrap items-center gap-3">
                                                     <button 
                                                         @click="showModal = true; modalContent = {{ json_encode($logbook->activity) }}; modalDate = '{{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}'; modalTitle = '{{ addslashes($logbook->title) }}'"
-                                                        class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-xs font-bold inline-flex items-center gap-1 transition-colors">
-                                                        Baca
+                                                        class="text-cyan-600 dark:text-cyan-400 hover:text-cyan-700 dark:hover:text-cyan-300 text-xs font-bold inline-flex items-center gap-1 transition-colors bg-cyan-50 dark:bg-cyan-500/10 px-3 py-1.5 rounded-lg border border-cyan-100 dark:border-cyan-500/20 shadow-sm">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                                                        Baca Penuh
                                                     </button>
                                                     
-                                                    @if(in_array($logbook->status, ['pending', 'rejected']))
-                                                        <span class="text-slate-300 dark:text-slate-700 text-xs">|</span>
-                                                        <a href="{{ route('logbooks.edit', $logbook->id) }}" class="text-amber-500 hover:text-amber-600 dark:hover:text-amber-400 text-xs font-bold transition-colors">Edit</a>
+                                                    @if($logbook->evidence)
+                                                        @php
+                                                            $ext = strtolower(pathinfo($logbook->evidence, PATHINFO_EXTENSION));
+                                                            $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
+                                                        @endphp
+                                                        <button type="button" @click="showEvidenceModal = true; evidenceUrl = '{{ Storage::url($logbook->evidence) }}'; isImage = {{ $isImage ? 'true' : 'false' }}" class="text-slate-600 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 text-xs font-medium inline-flex items-center gap-1 transition-colors">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" /></svg>
+                                                            Lihat Bukti
+                                                        </button>
+                                                    @endif
+                                                </div>
+                    
+                                                @if(in_array($logbook->status, ['pending', 'rejected']))
+                                                    <div class="flex items-center gap-3">
+                                                        <a href="{{ route('logbooks.edit', $logbook->id) }}" class="text-amber-600 hover:text-amber-700 dark:text-amber-500 dark:hover:text-amber-400 text-xs font-bold transition-colors">Edit</a>
                                                         <span class="text-slate-300 dark:text-slate-700 text-xs">|</span>
                                                         <form action="{{ route('logbooks.destroy', $logbook->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus catatan logbook ini? Tindakan ini tidak dapat dibatalkan.');">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="text-slate-500 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300 text-xs font-bold transition-colors">Hapus</button>
+                                                            <button type="submit" class="text-slate-500 hover:text-red-600 dark:text-slate-400 dark:hover:text-red-400 text-xs font-bold transition-colors">Hapus</button>
                                                         </form>
-                                                    @endif
-                                                </div>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                                                @if($logbook->evidence)
-                                                    @php
-                                                        $ext = strtolower(pathinfo($logbook->evidence, PATHINFO_EXTENSION));
-                                                        $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp']);
-                                                    @endphp
-                                                    <button type="button" @click="showEvidenceModal = true; evidenceUrl = '{{ Storage::url($logbook->evidence) }}'; isImage = {{ $isImage ? 'true' : 'false' }}" class="text-red-600 dark:text-red-400 hover:underline font-medium focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 dark:focus:ring-offset-slate-900 rounded px-1 transition-all">Lihat Bukti</button>
-                                                @else
-                                                    <span class="text-slate-400 dark:text-slate-500">-</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                                                <x-status-badge :status="$logbook->status" />
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-slate-400 min-h-[160px]">
-                                                <div class="flex flex-col items-center justify-center h-full gap-2">
-                                                    <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-2 transition-colors shadow-inner">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-slate-300 dark:text-slate-600 transition-colors">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
-                                                        </svg>
                                                     </div>
-                                                    <p class="text-base font-bold text-slate-500 dark:text-slate-500 transition-colors">Belum ada aktivitas yang dicatat.</p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="px-6 py-12 text-center text-gray-500 dark:text-slate-400 w-full mt-2 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                                    <div class="flex flex-col items-center justify-center h-full gap-2">
+                                        <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] flex items-center justify-center mb-2 transition-colors shadow-inner">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-slate-300 dark:text-slate-600 transition-colors">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                                            </svg>
+                                        </div>
+                                        <p class="text-base font-bold text-slate-500 dark:text-slate-500 transition-colors">Belum ada aktivitas yang dicatat.</p>
+                                    </div>
+                                </div>
+                            @endforelse
                         </div>
     
                         <div class="mt-4">
@@ -152,68 +173,67 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Daftar izin yang telah Anda ajukan</p>
                         </div>
     
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
-                                <thead class="bg-gray-50 dark:bg-slate-950/50 transition-colors">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Tanggal</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Jenis Izin</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Waktu</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Alasan</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800 transition-colors">
-                                    @forelse($permissions as $permit)
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                                                <span class="font-bold">{{ \Carbon\Carbon::parse($permit->date)->format('d M Y') }}</span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                                                @if($permit->permit_type == 'full')
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-500/20 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50">
-                                                        Full Day
-                                                    </span>
-                                                @elseif($permit->permit_type == 'temporary')
-                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-500/20 text-purple-800 dark:text-purple-300 border border-purple-200 dark:border-purple-800/50">
-                                                        Sementara
-                                                    </span>
-                                                @else
-                                                    <span class="text-slate-500 dark:text-slate-400">-</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors font-mono">
-                                                @if($permit->permit_type == 'temporary' && $permit->permit_start_time)
-                                                    {{ \Carbon\Carbon::parse($permit->permit_start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($permit->permit_end_time)->format('H:i') }}
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors max-w-xs truncate" title="{{ $permit->note }}">
-                                                {{ Str::limit($permit->note, 50) }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
-                                                    Tercatat
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-slate-400 min-h-[160px]">
-                                                <div class="flex flex-col items-center justify-center h-full gap-2">
-                                                    <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-2 transition-colors shadow-inner">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-slate-300 dark:text-slate-600 transition-colors">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                        </svg>
-                                                    </div>
-                                                    <p class="text-base font-bold text-slate-500 dark:text-slate-500 transition-colors">Belum ada riwayat izin.</p>
+                        <div class="relative pl-8 md:pl-0 max-w-4xl mt-4">
+                            @if($permissions->count() > 0)
+                                <!-- Timeline Line -->
+                                <div class="absolute left-[39px] md:left-[39px] top-6 bottom-0 w-0.5 bg-gradient-to-b from-cyan-500 via-cyan-500/50 dark:via-cyan-600/30 to-transparent"></div>
+                            @endif
+                
+                            @forelse($permissions as $loopIndex => $permit)
+                                <!-- Timelime Item -->
+                                <div class="relative mb-8 pl-12 flex items-start group {{ $loopIndex == $permissions->count() - 1 ? 'mb-2' : '' }}">
+                                    <!-- Timeline Node -->
+                                    <div class="absolute left-8 w-6 h-6 rounded-full bg-slate-50 dark:bg-[#0f172a] border-[3px] border-slate-300 dark:border-slate-600 flex items-center justify-center z-10 transition-transform group-hover:scale-125 group-hover:border-cyan-400"></div>
+                                    
+                                    <!-- Card -->
+                                    <div class="rounded-xl p-5 sm:p-6 w-full relative overflow-hidden bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-[0_4px_20px_-10px_rgba(0,0,0,0.5)] hover:-translate-y-1 hover:border-cyan-300 dark:hover:border-cyan-500/50 hover:shadow-lg dark:hover:shadow-[0_10px_30px_-10px_rgba(34,211,238,0.25)] transition-all duration-300 backdrop-blur-md">
+                                        <div class="relative z-10">
+                                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 gap-2">
+                                                <div>
+                                                    <span class="inline-block text-slate-500 dark:text-slate-400 text-xs font-bold tracking-wider mb-2 block">{{ \Carbon\Carbon::parse($permit->date)->format('d M Y') }}</span>
+                                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">
+                                                        @if($permit->permit_type == 'full')
+                                                            Izin Seharian (Full Day)
+                                                        @elseif($permit->permit_type == 'temporary')
+                                                            Izin Sementara
+                                                        @else
+                                                            Izin Lainnya
+                                                        @endif
+                                                    </h3>
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                                                <div class="self-start">
+                                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 shadow-sm">Tercatat</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="text-sm text-slate-600 dark:text-slate-400 mb-4 leading-relaxed max-w-none">
+                                                {{ $permit->note }}
+                                            </div>
+                                            
+                                            <!-- Actions (Time Info) -->
+                                            @if($permit->permit_type == 'temporary' && $permit->permit_start_time)
+                                            <div class="mt-4 pt-4 border-t border-slate-100 dark:border-white/5 flex flex-wrap items-center gap-4">
+                                                <div class="flex items-center gap-2 text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-800">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                                                    {{ \Carbon\Carbon::parse($permit->permit_start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($permit->permit_end_time)->format('H:i') }}
+                                                </div>
+                                            </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="px-6 py-12 text-center text-gray-500 dark:text-slate-400 w-full mt-2 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                                    <div class="flex flex-col items-center justify-center h-full gap-2">
+                                        <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] flex items-center justify-center mb-2 transition-colors shadow-inner">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-slate-300 dark:text-slate-600 transition-colors">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                        <p class="text-base font-bold text-slate-500 dark:text-slate-500 transition-colors">Belum ada riwayat izin yang dicatat.</p>
+                                    </div>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -229,76 +249,82 @@
                             <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Catatan kehadiran check-in dan check-out</p>
                         </div>
     
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
-                                <thead class="bg-gray-50 dark:bg-slate-950/50 transition-colors">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Tanggal</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Waktu Masuk</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Waktu Keluar</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Lokasi</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Status</th>
-                                        <th scope="col" class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Durasi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800 transition-colors">
-                                    @forelse($attendances as $attendance)
-                                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                                                <span class="font-bold">{{ \Carbon\Carbon::parse($attendance->date)->format('d M Y') }}</span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors font-mono">
-                                                {{ $attendance->check_in_time ? \Carbon\Carbon::parse($attendance->check_in_time)->format('H:i:s') : '-' }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors font-mono">
-                                                {{ $attendance->check_out_time ? \Carbon\Carbon::parse($attendance->check_out_time)->format('H:i:s') : '-' }}
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                                                @if($attendance->check_in_lat && $attendance->check_in_long)
-                                                    <a href="https://www.google.com/maps?q={{ $attendance->check_in_lat }},{{ $attendance->check_in_long }}" target="_blank" class="text-blue-600 hover:text-blue-800 dark:hover:text-blue-400 flex items-center gap-1 text-xs font-bold transition-colors">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4">
-                                                            <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.62.829.799 1.654 1.38 2.274 1.766a11.267 11.267 0 00.758.433l.017.007.006.003.002.001.309.066zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
-                                                        </svg>
-                                                        Lihat Peta
-                                                    </a>
-                                                @else
-                                                    <span class="text-slate-400 dark:text-slate-500">-</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50">
-                                                    Hadir
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300 transition-colors">
-                                                @if($attendance->check_in_time && $attendance->check_out_time)
-                                                    @php
-                                                        $start = \Carbon\Carbon::parse($attendance->check_in_time);
-                                                        $end = \Carbon\Carbon::parse($attendance->check_out_time);
-                                                        $diff = $start->diff($end);
-                                                    @endphp
-                                                    <span class="font-bold">{{ $diff->h }} Jam {{ $diff->i }} Menit</span>
-                                                @else
-                                                    <span class="text-slate-400 dark:text-slate-500">-</span>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="px-6 py-12 text-center text-gray-500 dark:text-slate-400 min-h-[160px]">
-                                                <div class="flex flex-col items-center justify-center h-full gap-2">
-                                                    <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800 rounded-[2rem] flex items-center justify-center mb-2 transition-colors shadow-inner">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-slate-300 dark:text-slate-600 transition-colors">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                        </svg>
-                                                    </div>
-                                                    <p class="text-base font-bold text-slate-500 dark:text-slate-500 transition-colors">Belum ada riwayat absensi.</p>
+                        <div class="relative pl-8 md:pl-0 max-w-4xl mt-4">
+                            @if($attendances->count() > 0)
+                                <!-- Timeline Line -->
+                                <div class="absolute left-[39px] md:left-[39px] top-6 bottom-0 w-0.5 bg-gradient-to-b from-cyan-500 via-cyan-500/50 dark:via-cyan-600/30 to-transparent"></div>
+                            @endif
+                
+                            @forelse($attendances as $loopIndex => $attendance)
+                                <!-- Timelime Item -->
+                                <div class="relative mb-8 pl-12 flex items-start group {{ $loopIndex == $attendances->count() - 1 ? 'mb-2' : '' }}">
+                                    <!-- Timeline Node -->
+                                    <div class="absolute left-8 w-6 h-6 rounded-full bg-slate-50 dark:bg-[#0f172a] border-[3px] border-slate-300 dark:border-slate-600 flex items-center justify-center z-10 transition-transform group-hover:scale-125 group-hover:border-cyan-400"></div>
+                                    
+                                    <!-- Card -->
+                                    <div class="rounded-xl p-5 sm:p-6 w-full relative overflow-hidden bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-white/10 shadow-sm dark:shadow-[0_4px_20px_-10px_rgba(0,0,0,0.5)] hover:-translate-y-1 hover:border-cyan-300 dark:hover:border-cyan-500/50 hover:shadow-lg dark:hover:shadow-[0_10px_30px_-10px_rgba(34,211,238,0.25)] transition-all duration-300 backdrop-blur-md">
+                                        <div class="relative z-10">
+                                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 gap-2">
+                                                <div>
+                                                    <span class="inline-block text-slate-500 dark:text-slate-400 text-xs font-bold tracking-wider mb-2 block">{{ \Carbon\Carbon::parse($attendance->date)->format('d M Y') }}</span>
+                                                    <h3 class="text-lg font-bold text-slate-800 dark:text-white">Absensi Kehadiran</h3>
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                                                <div class="self-start flex flex-col items-end gap-1">
+                                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 shadow-sm uppercase tracking-widest">
+                                                        Hadir
+                                                    </span>
+                                                    @if($attendance->check_in_time && $attendance->check_out_time)
+                                                        @php
+                                                            $start = \Carbon\Carbon::parse($attendance->check_in_time);
+                                                            $end = \Carbon\Carbon::parse($attendance->check_out_time);
+                                                            $diff = $start->diff($end);
+                                                        @endphp
+                                                        <span class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider block mt-1">{{ $diff->h }} Jam {{ $diff->i }} Menit</span>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Check In / Check Out Grid -->
+                                            <div class="grid grid-cols-2 gap-4 text-sm mt-5">
+                                                <!-- Check In -->
+                                                <div class="bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-500/20 rounded-xl p-4 transition-colors">
+                                                    <div class="text-[10px] uppercase tracking-widest text-emerald-600 dark:text-emerald-500 mb-1 font-black">Masuk</div>
+                                                    <div class="text-slate-800 dark:text-slate-200 font-mono font-bold text-lg">{{ $attendance->check_in_time ? \Carbon\Carbon::parse($attendance->check_in_time)->format('H:i') : '--:--' }}</div>
+                                                </div>
+                                                
+                                                <!-- Check Out -->
+                                                <div class="bg-rose-50/50 dark:bg-rose-900/10 border border-rose-100 dark:border-rose-500/20 rounded-xl p-4 transition-colors">
+                                                    <div class="text-[10px] uppercase tracking-widest text-rose-600 dark:text-rose-500 mb-1 font-black">Keluar</div>
+                                                    <div class="text-slate-800 dark:text-slate-200 font-mono font-bold text-lg">{{ $attendance->check_out_time ? \Carbon\Carbon::parse($attendance->check_out_time)->format('H:i') : '--:--' }}</div>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- Actions -->
+                                            @if($attendance->check_in_lat && $attendance->check_in_long)
+                                            <div class="mt-5 pt-4 border-t border-slate-100 dark:border-white/5 flex flex-wrap items-center gap-4">
+                                                <a href="https://www.google.com/maps?q={{ $attendance->check_in_lat }},{{ $attendance->check_in_long }}" target="_blank" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-xs font-bold inline-flex items-center gap-1 transition-colors bg-blue-50 dark:bg-blue-500/10 px-3 py-1.5 rounded-lg border border-blue-100 dark:border-blue-500/20 shadow-sm">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5">
+                                                        <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.62.829.799 1.654 1.38 2.274 1.766a11.267 11.267 0 00.758.433l.017.007.006.003.002.001.309.066zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
+                                                    </svg>
+                                                    Lihat Lokasi GPS (Peta)
+                                                </a>
+                                            </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="px-6 py-12 text-center text-gray-500 dark:text-slate-400 w-full mt-2 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl">
+                                    <div class="flex flex-col items-center justify-center h-full gap-2">
+                                        <div class="w-24 h-24 bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] flex items-center justify-center mb-2 transition-colors shadow-inner">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-12 h-12 text-slate-300 dark:text-slate-600 transition-colors">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                        </div>
+                                        <p class="text-base font-bold text-slate-500 dark:text-slate-500 transition-colors">Belum ada riwayat absensi yang dicatat.</p>
+                                    </div>
+                                </div>
+                            @endforelse
                         </div>
                     </div>
                 </div>

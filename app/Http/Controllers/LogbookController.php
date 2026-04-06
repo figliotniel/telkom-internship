@@ -96,9 +96,20 @@ class LogbookController extends Controller
             return back()->with('error', 'Data magang aktif tidak ditemukan. Hubungi admin.');
         }
 
-        // 3. Handle Upload File Bukti (Jika ada)
-        // Check duplicate date (Logic Reset 7 Pagi)
-        $dateCheck = Carbon::now()->hour < 7 ?Carbon::yesterday()->toDateString() : Carbon::today()->toDateString();
+        // 1. Cek batasan submit ketat berdasarkan waktu server (1 aktivitas per window 24 jam, reset jam 07.00 pagi)
+        $now = Carbon::now();
+        $startWindow = $now->hour < 7 ? Carbon::yesterday()->addHours(7) : Carbon::today()->addHours(7);
+        
+        $hasSubmittedInWindow = DailyLogbook::where('internship_id', $internship->id)
+            ->where('created_at', '>=', $startWindow)
+            ->exists();
+
+        if ($hasSubmittedInWindow) {
+            return back()->with('error', 'Limit tercapai! Anda hanya dapat menyimpan logbook satu kali setiap harinya (Reset otomatis pada 07.00 pagi).');
+        }
+
+        // 2. Check duplicate date (Logic Reset 7 Pagi)
+        $dateCheck = $now->hour < 7 ? Carbon::yesterday()->toDateString() : Carbon::today()->toDateString();
 
         // Use provided date if it exists, otherwise use dateCheck (7 AM logic)
         $targetDate = $request->date ?? $dateCheck;
