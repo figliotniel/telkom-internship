@@ -14,13 +14,15 @@ class InternshipActive extends Mailable
     use Queueable, SerializesModels;
 
     public $internship;
+    public $inductionData;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(\App\Models\Internship $internship)
+    public function __construct(\App\Models\Internship $internship, $inductionData)
     {
         $this->internship = $internship;
+        $this->inductionData = $inductionData;
     }
 
     /**
@@ -39,10 +41,13 @@ class InternshipActive extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.internship_active', // Changed to view directly
+            view: 'emails.internship_active',
             with: [
                 'name' => $this->internship->student->name,
                 'startDate' => $this->internship->start_date,
+                'inductionDate' => $this->inductionData['date'],
+                'inductionTime' => $this->inductionData['time'],
+                'location' => $this->inductionData['location'],
             ],
         );
     }

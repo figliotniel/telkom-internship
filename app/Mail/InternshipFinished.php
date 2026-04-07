@@ -13,12 +13,14 @@ class InternshipFinished extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $internship;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(\App\Models\Internship $internship)
     {
-        //
+        $this->internship = $internship;
     }
 
     /**
@@ -27,7 +29,7 @@ class InternshipFinished extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Internship Finished',
+            subject: 'Selamat! Program Magang Anda Telah Selesai',
         );
     }
 
@@ -37,7 +39,10 @@ class InternshipFinished extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.internship_finished',
+            with: [
+                'name' => $this->internship->student->name,
+            ],
         );
     }
 

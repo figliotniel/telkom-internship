@@ -5,91 +5,58 @@
         <!-- Welcome Section -->
         <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-                <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Welcome back, {{ explode(' ', Auth::user()->name)[0] }}! 👋</h2>
-                <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm md:text-base">Here's the summary of your mentees for today, {{ now()->translatedFormat('l, M d') }}.</p>
+                <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Selamat datang kembali, {{ explode(' ', Auth::user()->name)[0] }}! 👋</h2>
+                <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm md:text-base">Berikut adalah ringkasan hari ini untuk peserta bimbingan Anda, {{ now()->translatedFormat('l, d M Y') }}.</p>
             </div>
             
             @if(($pendingLogbooksCount ?? 0) > 0)
             <div class="flex gap-3">
                 <a href="{{ route('mentor.approvals.index') }}" class="px-5 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-all font-semibold text-sm shadow-lg shadow-red-500/30 hover:shadow-red-500/50 active:scale-95 flex items-center gap-2">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    Validate {{ $pendingLogbooksCount }} Logbooks
+                    Validasi {{ $pendingLogbooksCount }} Logbook
                 </a>
             </div>
             @endif
         </div>
 
-        <!-- Premium Stats Grid - STRICT ALIGNMENT grid-cols-1 lg:grid-cols-2 gap-8 -->
+        <!-- Premium Stats Grid - Minimalist Option 1 -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            <!-- Stat 1: Total Interns -->
-            <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-8 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.3)] dark:shadow-none relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 border border-slate-700/50">
-                <div class="absolute -right-10 -top-10 w-48 h-48 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-emerald-500/30 group-hover:scale-110 transition-all duration-500"></div>
-                <div class="absolute right-0 bottom-0 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
-                
-                <div class="relative z-10 flex items-start justify-between">
-                    <div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_10px_rgba(52,211,153,0.8)]"></span>
-                            <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest">Intern Aktif</p>
-                        </div>
-                        <h3 class="text-6xl font-black text-white tracking-tighter">{{ $internships->where('status', 'active')->count() }}</h3>
-                    </div>
-                    <div class="p-4 bg-white/5 backdrop-blur-md rounded-2xl text-white border border-white/10 group-hover:scale-110 transition-transform duration-300 shadow-xl">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    </div>
+            <!-- Card 1: Interns Minimalist -->
+            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-8 group hover:-translate-y-1 transition-all duration-500">
+                <div class="w-20 h-20 rounded-3xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 </div>
-                
-                <div class="mt-8 relative z-10">
-                    <div class="flex items-center gap-3 text-sm">
-                        @if($internships->where('status', 'active')->count() > 0)
-                            <span class="flex items-center text-white font-bold bg-white/10 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10">
-                                Across {{ $internships->where('status', 'active')->pluck('division_id')->unique()->count() }} Divisi
-                            </span>
-                            <a href="{{ route('mentor.students.index', ['status' => 'active']) }}" class="text-slate-400 font-medium hover:text-white transition-colors cursor-pointer flex items-center gap-1 group/link text-xs">
-                                View details <svg class="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </a>
-                        @else
-                            <span class="text-slate-400 font-medium">Belum Ada Intern Aktif.</span>
-                        @endif
+                <div class="space-y-1 text-left">
+                    <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Peserta Aktif</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">
+                            {{ $internships->where('status', 'active')->count() }}
+                        </h3>
+                        <span class="text-xs font-bold text-slate-400 dark:text-slate-500">di {{ $internships->where('status', 'active')->pluck('division_id')->unique()->count() }} Divisi</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Stat 2: Pending Validations -->
-            <div class="bg-gradient-to-br from-red-600 to-red-800 rounded-3xl p-8 shadow-[0_10px_40px_-10px_rgba(220,38,38,0.4)] dark:shadow-none relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 border border-red-500/30">
-                <div class="absolute -left-10 -bottom-10 w-48 h-48 bg-orange-500/30 rounded-full blur-3xl group-hover:bg-orange-500/40 group-hover:scale-110 transition-all duration-500"></div>
-                <div class="absolute right-10 top-10 w-32 h-32 bg-rose-500/20 rounded-full blur-2xl"></div>
-                
-                <div class="relative z-10 flex items-start justify-between">
-                    <div>
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="w-2 h-2 rounded-full {{ ($pendingLogbooksCount ?? 0) > 0 ? 'bg-orange-400 shadow-[0_0_10px_rgba(251,146,60,0.8)]' : 'bg-red-400/50' }}"></span>
-                            <p class="text-[11px] font-black text-red-200 uppercase tracking-widest">Membutuhkan Validasi</p>
-                        </div>
-                        <h3 class="text-6xl font-black text-white tracking-tighter">{{ $pendingLogbooksCount ?? 0 }}</h3>
-                    </div>
-                    <div class="p-4 bg-black/10 backdrop-blur-md rounded-2xl text-white border border-white/20 group-hover:scale-110 transition-transform duration-300 shadow-xl">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    </div>
+            <!-- Card 2: Pending Minimalist -->
+            <div onclick="window.location='{{ route('mentor.approvals.index') }}'" class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-8 group hover:-translate-y-1 transition-all duration-500 cursor-pointer">
+                <div class="w-20 h-20 rounded-3xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 </div>
-                
-                <div class="mt-8 relative z-10">
-                    <div class="flex items-center flex-wrap gap-2 text-sm">
+                <div class="space-y-1 text-left">
+                    <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Perlu Validasi</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">
+                            {{ $pendingLogbooksCount ?? 0 }}
+                        </h3>
                         @if(($pendingLogbooksCount ?? 0) > 0)
-                            <span class="flex items-center text-white font-bold bg-black/20 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10 text-xs shadow-inner">
-                                {{ $pendingLogbooksCount ?? 0 }} Logbooks
-                            </span>
-                            <a href="{{ route('mentor.approvals.index') }}" class="text-red-200 mt-2 sm:mt-0 sm:ml-2 font-medium hover:text-white transition-colors cursor-pointer flex items-center gap-1 group/link text-xs">
-                                Validate now <svg class="w-3.5 h-3.5 opacity-0 -translate-x-2 group-hover/link:opacity-100 group-hover/link:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                            </a>
+                            <span class="text-xs font-bold text-red-500 animate-pulse">Logbook Tertunda</span>
                         @else
-                            <span class="text-red-200 font-medium text-sm normal tracking-wide">All logbooks are validated!</span>
+                            <span class="text-xs font-bold text-emerald-500">Logbook Aman</span>
                         @endif
                     </div>
                 </div>
             </div>
-
         </div>
 
         <!-- Content Grid: Mentees and Pending Logbooks -->
@@ -100,7 +67,7 @@
                 <div class="px-7 py-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-transparent relative z-10 font-sans">
                 <div>
                     <h3 class="text-xl font-extrabold text-slate-800 dark:text-white tracking-tight">Intern Aktif</h3>
-                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">Kelola dan pantau progres dari interns</p>
+                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">Kelola dan pantau progres dari peserta magang</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <div class="relative hidden sm:block">
@@ -208,7 +175,7 @@
                                     @endphp
                                     <div class="flex flex-col gap-1.5 w-full lg:w-32">
                                         <div class="flex items-center justify-between text-[10px] font-bold">
-                                            <span class="text-slate-500 dark:text-slate-400">{{ $approvedLogbooks }} / {{ $totalDates }} Approved</span>
+                                            <span class="text-slate-500 dark:text-slate-400">{{ $approvedLogbooks }} / {{ $totalDates }} Disetujui</span>
                                             <span class="text-{{ $accentColor }}-600 dark:text-{{ $accentColor }}-400">{{ $progress }}%</span>
                                         </div>
                                         <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
@@ -230,14 +197,16 @@
                                     <svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                                 </div>
                                 <div>
-                                    <p class="text-base font-bold text-slate-600 dark:text-slate-300">No assigned interns</p>
-                                    <p class="text-xs font-medium text-slate-400 mt-0.5">You do not have any interns assigned to you currently.</p>
+                                    <p class="text-base font-bold text-slate-600 dark:text-slate-300">Tidak ada peserta bimbingan</p>
+                                    <p class="text-xs font-medium text-slate-400 mt-0.5">Anda saat ini tidak memiliki peserta magang yang ditugaskan.</p>
                                 </div>
                             </div>
                         </div>
                     @endforelse
                 </div>
             </div>
+
+    </div>
 
     </div>
 

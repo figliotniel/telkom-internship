@@ -352,184 +352,131 @@
                     <div class="sticky top-6 space-y-6">
                     {{-- Absensi Card --}}
                     @if($internship->status !== 'finished')
-                    <div class="bg-gradient-to-br from-slate-900 to-slate-800 dark:from-slate-900 dark:to-slate-950 rounded-3xl shadow-xl dark:shadow-slate-900/20 overflow-hidden text-white relative transition-all duration-300 border border-slate-700/50 dark:border-slate-800 mb-6">
-                        <div class="absolute right-0 top-0 w-32 h-32 bg-white/5 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                        <div class="absolute bottom-0 left-0 w-32 h-32 bg-red-500/10 rounded-full blur-2xl -ml-10 -mb-10"></div>
+                    <!-- Typography Minimalist Attendance Card (Opsi 3) -->
+                    <div class="bg-white dark:bg-[#131418] rounded-[2.5rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-200/60 dark:border-slate-800/80 transition-all duration-500 relative flex flex-col mb-6 hover:shadow-xl hover:border-red-100 dark:hover:border-red-900/30">
+                        <div class="flex flex-col h-full">
 
-                        <div class="p-6 relative z-10">
-                            <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
-                                <div>
-                                    <h3 class="text-lg font-black tracking-tight text-white mb-0">Absensi Harian</h3>
-                                    <p class="text-slate-400 text-xs mt-0.5">{{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}</p>
+                            <!-- HEADER -->
+                            <div class="mb-6 flex justify-between items-center">
+                                <div class="w-10 h-10 bg-red-50 dark:bg-[#ed1e28]/10 text-[#ed1e28] dark:text-red-400 rounded-full flex items-center justify-center">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" /></svg>
                                 </div>
-                                <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]"></div>
+                                <span class="px-3 py-1 bg-[#ed1e28] text-white rounded-full text-[10px] font-bold uppercase tracking-widest shadow-sm">Absensi</span>
                             </div>
 
-                            <div class="flex flex-col items-center justify-center py-4 space-y-4">
+                            <!-- TYPOGRAPHY / DATE -->
+                            <div class="mb-10">
+                                <p class="text-slate-400 dark:text-slate-500 text-sm font-semibold mb-1 uppercase tracking-wider">{{ \Carbon\Carbon::now()->translatedFormat('d M Y') }}</p>
+                                
+                                <!-- EXTREME TYPOGRAPHY LOGIC -->
                                 @if(!$todayAttendance)
-                                    <div class="text-center space-y-4 w-full">
-                                        <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-2 animate-pulse">
-                                            <span class="text-3xl">📍</span>
-                                        </div>
-                                        <div>
-                                            <p class="text-indigo-100 text-sm mb-1">Status Kehadiran</p>
-                                            <p class="text-white font-bold text-lg">Belum Check-In</p>
-                                        </div>
-                                        
-                                        {{-- isCheckInTime variable is now passed from DashboardController --}}
-
-                                        @if($isCheckInTime)
-                                            <form action="{{ route('attendance.checkIn') }}" method="POST" id="checkInForm" class="w-full">
-                                                @csrf
-                                                <input type="hidden" name="latitude" id="lat_in">
-                                                <input type="hidden" name="longitude" id="long_in">
-                                                <button type="button" onclick="confirmCheckIn()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-300 transform hover:-translate-y-1">
-                                                   CHECK IN SEKARANG
-                                                </button>
-                                            </form>
-                                        @else
-                                            <div class="w-full bg-slate-800/50 border border-slate-700 text-slate-400 font-bold py-3.5 rounded-xl text-center flex flex-col items-center justify-center gap-1 cursor-not-allowed">
-                                                <span>Check In Ditutup</span>
-                                                <span class="text-xs font-normal text-slate-500">Hanya tersedia pukul 07:00 - 09:00</span>
-                                            </div>
-                                        @endif
-                                        
-                                        <div class="pt-2 flex items-center justify-center gap-4">
-                                            @if($hasTemporaryPermitToday)
-                                                <button type="button" onclick="showDuplicatePermitError()" class="text-sm text-indigo-300/50 cursor-not-allowed pb-1" title="Sudah izin hari ini">
-                                                    Izin Sementara
-                                                </button>
-                                            @else
-                                                <button type="button" @click="$dispatch('open-permission-modal')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
-                                                    Izin Sementara
-                                                </button>
-                                            @endif
-                                            <span class="text-indigo-500/50">•</span>
-                                            <button type="button" @click="$dispatch('open-full-day-permission-modal')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
-                                                Izin Full Day
-                                            </button>
-                                        </div>
-                                    </div>
-
+                                    <h4 class="font-light text-[2.5rem] leading-[1.1] text-slate-900 dark:text-white tracking-tight">Belum<br><span class="font-bold text-[#ed1e28] dark:text-red-500">Check-In</span></h4>
                                 @elseif($todayAttendance->permit_type === 'temporary' && !$todayAttendance->check_in_time)
                                     @php
                                         $permitEndTime = \Carbon\Carbon::parse($todayAttendance->date . ' ' . $todayAttendance->permit_end_time);
                                         $isLocked = \Carbon\Carbon::now()->lt($permitEndTime);
                                     @endphp
-
-                                    <div class="text-center space-y-4 w-full">
-                                        @if($isLocked)
-                                            <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 border border-amber-200">
-                                                <span class="text-3xl">⏳</span>
-                                            </div>
-                                            <div>
-                                                <p class="text-indigo-100 text-sm mb-1">Status Kehadiran</p>
-                                                <p class="text-white font-bold text-lg">Sedang Izin Sementara</p>
-                                                <p class="text-indigo-200 text-xs mt-1">Check-in akan terbuka pukul {{ $permitEndTime->format('H:i') }}</p>
-                                            </div>
-                                        @else
-                                            <div class="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-2 animate-pulse">
-                                                <span class="text-3xl">📍</span>
-                                            </div>
-                                            <div>
-                                                <p class="text-indigo-100 text-sm mb-1">Status Kehadiran</p>
-                                                <p class="text-white font-bold text-lg">Waktu Izin Habis</p>
-                                                <p class="text-emerald-300 text-xs mt-1">Silakan Check-in untuk melanjutkan magang.</p>
-                                            </div>
-                                            
-                                            <form action="{{ route('attendance.checkIn') }}" method="POST" id="checkInForm" class="w-full">
-                                                @csrf
-                                                <input type="hidden" name="latitude" id="lat_in">
-                                                <input type="hidden" name="longitude" id="long_in">
-                                                <button type="button" onclick="confirmCheckIn()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-500/20 transition-all duration-300 transform hover:-translate-y-1">
-                                                   CHECK IN KEMBALI
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
-
+                                    @if($isLocked)
+                                        <h4 class="font-light text-[2.5rem] leading-[1.1] text-slate-900 dark:text-white tracking-tight">Izin<br><span class="font-bold text-amber-500">Sementara</span></h4>
+                                        <p class="text-xs text-slate-500 font-bold mt-2 bg-slate-50 dark:bg-slate-800/50 inline-block px-2 py-1 rounded-md">Buka pukul {{ $permitEndTime->format('H:i') }}</p>
+                                    @else
+                                        <h4 class="font-light text-[2.5rem] leading-[1.1] text-slate-900 dark:text-white tracking-tight">Izin<br><span class="font-bold text-emerald-500">Selesai</span></h4>
+                                    @endif
                                 @elseif($todayAttendance->permit_type === 'full')
-                                     <div class="text-center space-y-4 w-full">
-                                        <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-2 border border-amber-200">
-                                            <span class="text-3xl">📝</span>
-                                        </div>
-                                        <div>
-                                            <p class="text-indigo-100 text-sm mb-1">Status Kehadiran</p>
-                                            <p class="text-white font-bold text-lg">Sedang Izin Full Day</p>
-                                        </div>
-                                    </div>
-
-                                 @elseif(!$todayAttendance->check_out_time)
-                                    <div class="text-center space-y-4 w-full">
-                                        <div class="bg-emerald-500/20 border border-emerald-500/30 rounded-xl p-4 w-full mb-2">
-                                            <p class="text-emerald-200 text-xs uppercase tracking-wide font-bold">Waktu Masuk</p>
-                                            <p class="text-2xl font-mono text-emerald-400 font-bold mt-1">{{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i:s') }}</p>
-                                        </div>
-
-                                        {{-- isCheckOutTime variable is now passed from DashboardController --}}
-
-                                        @if($isCheckOutTime)
-                                            <form action="{{ route('attendance.checkOut') }}" method="POST" id="checkOutForm" class="w-full">
-                                                @csrf
-                                                <button type="button" onclick="confirmCheckOut()" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-rose-500/20 transition-all duration-300 transform hover:-translate-y-1">
-                                                   CHECK OUT PULANG
-                                                </button>
-                                            </form>
-                                        @else
-                                            <div class="w-full bg-slate-800/50 border border-slate-700 text-slate-400 font-bold py-3.5 rounded-xl text-center flex flex-col items-center justify-center gap-1 cursor-not-allowed">
-                                                <span>Belum Waktunya Pulang</span>
-                                                <span class="text-xs font-normal text-slate-500">Check Out tersedia pukul 17:00 - 19:00</span>
-                                            </div>
-                                        @endif
-
-                                        <div class="pt-2 flex items-center justify-center gap-4">
-                                            @if($hasTemporaryPermitToday)
-                                                <button type="button" onclick="showDuplicatePermitError()" class="text-sm text-indigo-300/50 cursor-not-allowed pb-1" title="Sudah izin hari ini">
-                                                    Izin Sementara
-                                                </button>
-                                            @else
-                                                <button type="button" @click="$dispatch('open-permission-modal')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
-                                                    Izin Sementara
-                                                </button>
-                                            @endif
-                                            <span class="text-indigo-500/50">•</span>
-                                            <button type="button" @click="$dispatch('open-full-day-permission-modal')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
-                                                Izin Full Day
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                 @else
-                                    <div class="text-center space-y-4 w-full">
-                                        <div class="w-16 h-16 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg shadow-emerald-500/30">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-8 h-8 text-white">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="text-white font-bold text-lg">Kehadiran Terekam!</p>
-                                            <p class="text-emerald-300 text-sm">Terima kasih atas kerja kerasmu hari ini.</p>
-                                        </div>
-
-                                        <div class="grid grid-cols-2 gap-3 w-full mt-4">
-                                            <div class="bg-white/5 rounded-lg p-3 text-center">
-                                                <p class="text-xs text-indigo-300 uppercase">Masuk</p>
-                                                <p class="font-mono text-sm font-bold text-white">{{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i:s') }}</p>
-                                            </div>
-                                            <div class="bg-white/5 rounded-lg p-3 text-center">
-                                                <p class="text-xs text-indigo-300 uppercase">Keluar</p>
-                                                <p class="font-mono text-sm font-bold text-white">{{ \Carbon\Carbon::parse($todayAttendance->check_out_time)->format('H:i:s') }}</p>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="pt-2 flex items-center justify-center gap-4">
-                                            <button type="button" @click="$dispatch('open-full-day-permission-modal')" class="text-sm text-indigo-300 hover:text-white hover:underline transition-colors pb-1">
-                                                Izin Full Day
-                                            </button>
-                                        </div>
+                                    <h4 class="font-light text-[2.5rem] leading-[1.1] text-slate-900 dark:text-white tracking-tight">Izin<br><span class="font-bold text-indigo-500">Full Day</span></h4>
+                                @elseif(!$todayAttendance->check_out_time)
+                                    <h4 class="font-light text-[2.5rem] leading-[1.1] text-slate-900 dark:text-white tracking-tight">Sedang<br><span class="font-bold text-emerald-500">Hadir</span></h4>
+                                    <p class="text-xs text-slate-500 font-bold mt-2 bg-slate-50 dark:bg-slate-800/50 inline-block px-2 py-1 rounded-md">Masuk: {{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i') }}</p>
+                                @else
+                                    <h4 class="font-light text-[2.5rem] leading-[1.1] text-slate-900 dark:text-white tracking-tight">Selesai<br><span class="font-bold text-slate-500">Hari Ini</span></h4>
+                                    <div class="flex gap-2 text-xs text-slate-500 font-bold mt-2">
+                                        <span class="bg-slate-50 dark:bg-slate-800/50 px-2 py-1 rounded-md">M: {{ \Carbon\Carbon::parse($todayAttendance->check_in_time)->format('H:i') }}</span>
+                                        <span class="bg-slate-50 dark:bg-slate-800/50 px-2 py-1 rounded-md">P: {{ \Carbon\Carbon::parse($todayAttendance->check_out_time)->format('H:i') }}</span>
                                     </div>
                                 @endif
                             </div>
+
+                            <!-- MAIN BUTTON LOGIC -->
+                            @if(!$todayAttendance)
+                                @if($isCheckInTime)
+                                    <form action="{{ route('attendance.checkIn') }}" method="POST" id="checkInForm" class="w-full mt-auto">
+                                        @csrf
+                                        <input type="hidden" name="latitude" id="lat_in">
+                                        <input type="hidden" name="longitude" id="long_in">
+                                        <button type="button" onclick="confirmCheckIn()" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-semibold py-4 rounded-full transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1)] flex justify-between items-center px-6 group">
+                                            <span>Lakukan Presensi</span>
+                                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                        </button>
+                                    </form>
+                                @else
+                                    <div class="w-full mt-auto bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-slate-400 font-semibold py-4 rounded-full text-center flex flex-col justify-center items-center cursor-not-allowed">
+                                        <span class="text-sm">Check-In Ditutup (07:00-09:00)</span>
+                                    </div>
+                                @endif
+                                
+                            @elseif($todayAttendance->permit_type === 'temporary' && !$todayAttendance->check_in_time)
+                                @if(!\Carbon\Carbon::now()->lt(\Carbon\Carbon::parse($todayAttendance->date . ' ' . $todayAttendance->permit_end_time)))
+                                    <form action="{{ route('attendance.checkIn') }}" method="POST" id="checkInForm" class="w-full mt-auto">
+                                        @csrf
+                                        <input type="hidden" name="latitude" id="lat_in">
+                                        <input type="hidden" name="longitude" id="long_in">
+                                        <button type="button" onclick="confirmCheckIn()" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-semibold py-4 rounded-full transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1)] flex justify-between items-center px-6 group">
+                                            <span>Check-In Kembali</span>
+                                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                        </button>
+                                    </form>
+                                @else
+                                    <div class="w-full mt-auto bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/20 text-amber-600 dark:text-amber-400 font-semibold py-4 rounded-full text-center flex flex-col justify-center items-center cursor-not-allowed">
+                                        <span class="text-sm">Dalam Waktu Izin</span>
+                                    </div>
+                                @endif
+                                
+                            @elseif($todayAttendance->permit_type === 'full')
+                                <div class="w-full mt-auto bg-indigo-50 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 text-indigo-600 dark:text-indigo-400 font-semibold py-4 rounded-full text-center flex flex-col justify-center items-center cursor-not-allowed">
+                                    <span class="text-sm">Izin Diberikan</span>
+                                </div>
+                                
+                            @elseif(!$todayAttendance->check_out_time)
+                                @if($isCheckOutTime)
+                                    <form action="{{ route('attendance.checkOut') }}" method="POST" id="checkOutForm" class="w-full mt-auto">
+                                        @csrf
+                                        <button type="button" onclick="confirmCheckOut()" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-semibold py-4 rounded-full transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1)] flex justify-between items-center px-6 group">
+                                            <span>Check-Out Pulang</span>
+                                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                        </button>
+                                    </form>
+                                @else
+                                    <div class="w-full mt-auto bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-slate-400 font-semibold py-4 rounded-full text-center flex flex-col justify-center items-center cursor-not-allowed">
+                                        <span class="text-sm">Belum Waktu Pulang (17:00-19:00)</span>
+                                    </div>
+                                @endif
+                                
+                            @else
+                                <div class="w-full mt-auto bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 text-emerald-600 dark:text-emerald-400 font-semibold py-4 rounded-full text-center flex flex-col justify-center items-center cursor-not-allowed">
+                                    <span class="text-sm">Kehadiran Selesai ✓</span>
+                                </div>
+                            @endif
+
+                            <!-- SECONDARY LINKS LOGIC (Izin) -->
+                            <div class="flex flex-col gap-3 mt-6 border-t border-slate-100 dark:border-slate-800/80 pt-5">
+                                @if((!$todayAttendance || ($todayAttendance && !$todayAttendance->check_out_time)) && (!isset($todayAttendance->permit_type) || $todayAttendance->permit_type !== 'full'))
+                                    
+                                    <button type="button" @click="{{ $hasTemporaryPermitToday ? 'showDuplicatePermitError()' : '$dispatch(\'open-permission-modal\')' }}" class="flex justify-between items-center text-sm font-medium {{ $hasTemporaryPermitToday ? 'text-slate-300 dark:text-slate-700 cursor-not-allowed' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 group/link' }} transition-colors py-1">
+                                        <span>Ajukan Izin Sementara</span>
+                                        @if(!$hasTemporaryPermitToday)
+                                        <svg class="w-3.5 h-3.5 opacity-0 group-hover/link:opacity-100 transform -translate-x-2 group-hover/link:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                                        @endif
+                                    </button>
+                                    
+                                    @if(!$todayAttendance)
+                                    <button type="button" @click="$dispatch('open-full-day-permission-modal')" class="flex justify-between items-center text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group/link py-1">
+                                        <span>Ajukan Izin Seharian</span>
+                                        <svg class="w-3.5 h-3.5 opacity-0 group-hover/link:opacity-100 transform -translate-x-2 group-hover/link:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                                    </button>
+                                    @endif
+                                @endif
+                            </div>
+
                         </div>
                     </div>
                     @endif

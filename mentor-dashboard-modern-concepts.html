@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Mentor Stats - Design References</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .soft-shadow-light { shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05); }
+        .soft-shadow-dark { shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.3); }
+    </style>
+</head>
+<body class="bg-[#fcfdfe] dark:bg-[#020617] p-8 lg:p-24 space-y-32 transition-colors duration-500">
+
+    <!-- Mode Toggle -->
+    <div class="fixed top-10 right-10 z-50">
+        <button onclick="document.documentElement.classList.toggle('dark')" class="px-6 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-xl hover:scale-105 transition-all dark:text-white">
+            Switch View Mode
+        </button>
+    </div>
+
+    <!-- CONCEPT 4: MINIMALIST FLOATING GLASS -->
+    <section class="max-w-5xl mx-auto space-y-12">
+        <div class="space-y-2">
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase tracking-widest">01. Minimalist Floating Glass</h2>
+            <p class="text-sm text-slate-500 font-medium">Fokus pada kejernihan, ruang putih, dan ikonografi yang bersih.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            
+            <!-- Intern Stat -->
+            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-8 group hover:-translate-y-1 transition-all duration-500">
+                <div class="w-20 h-20 rounded-3xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Peserta Aktif</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">7</h3>
+                        <span class="text-xs font-bold text-slate-400">Total Bimbingan</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Validation Stat -->
+            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-8 group hover:-translate-y-1 transition-all duration-500">
+                <div class="w-20 h-20 rounded-3xl bg-[#ed1e28]/5 dark:bg-[#ed1e28]/10 flex items-center justify-center text-[#ed1e28] group-hover:scale-110 transition-transform">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <div class="space-y-1">
+                    <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Perlu Validasi</p>
+                    <div class="flex items-baseline gap-2">
+                        <h3 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">0</h3>
+                        <span class="text-xs font-bold text-emerald-500">Logbook Aman</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONCEPT 5: LINEAR PRO (Corporate Modern) -->
+    <section class="max-w-5xl mx-auto space-y-12">
+        <div class="space-y-2 text-right">
+            <h2 class="text-2xl font-black text-slate-900 dark:text-white tracking-tight uppercase tracking-widest">02. Linear Pro</h2>
+            <p class="text-sm text-slate-500 font-medium">Desain minimalis dengan aksen garis vertikal untuk kesan profesional.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Intern Card -->
+            <div class="relative bg-white dark:bg-slate-900 rounded-3xl p-10 shadow-sm dark:shadow-none border border-slate-100 dark:border-slate-800 transition-all hover:shadow-xl group">
+                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-16 bg-emerald-500 rounded-r-full group-hover:h-24 transition-all duration-500"></div>
+                <div class="flex justify-between items-center">
+                    <div class="space-y-1">
+                        <h4 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">ACTIVE INTERNS</h4>
+                        <p class="text-5xl font-black text-slate-800 dark:text-white tracking-tighter leading-none">07</p>
+                    </div>
+                    <div class="p-5 bg-slate-50 dark:bg-slate-950 rounded-2xl text-slate-400 dark:text-slate-600 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 transition-colors">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                    </div>
+                </div>
+                <div class="mt-8 pt-8 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-slate-400">STATUS: TERKONEKSI</span>
+                    <button class="text-[10px] font-black text-emerald-600 dark:text-emerald-400 uppercase tracking-widest hover:underline">Kelola Data</button>
+                </div>
+            </div>
+
+            <!-- Validation Card -->
+            <div class="relative bg-white dark:bg-slate-900 rounded-3xl p-10 shadow-sm dark:shadow-none border border-slate-100 dark:border-slate-800 transition-all hover:shadow-xl group">
+                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-16 bg-[#ed1e28] rounded-r-full group-hover:h-24 transition-all duration-500"></div>
+                <div class="flex justify-between items-center">
+                    <div class="space-y-1">
+                        <h4 class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.3em]">VALIDATION TASK</h4>
+                        <p class="text-5xl font-black text-slate-800 dark:text-white tracking-tighter leading-none">0</p>
+                    </div>
+                    <div class="p-5 bg-slate-50 dark:bg-slate-950 rounded-2xl text-slate-400 dark:text-slate-600 group-hover:text-[#ed1e28] transition-colors">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    </div>
+                </div>
+                <div class="mt-8 pt-8 border-t border-slate-50 dark:border-slate-800 flex items-center justify-between">
+                    <span class="text-[10px] font-bold text-[#ed1e28] uppercase tracking-widest">PRIORITAS: RENDAH</span>
+                    <button class="text-[10px] font-black text-slate-400 hover:text-slate-900 dark:hover:text-white uppercase tracking-widest hover:underline">Review Semua</button>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CONCEPT 6: SOFT AURA GLOW (Elegant Minimalist) -->
+    <section class="max-w-4xl mx-auto space-y-12">
+        <h2 class="text-xl font-black text-slate-900 dark:text-white uppercase tracking-[0.3em] text-center">03. Soft Aura Glow</h2>
+        <div class="grid grid-cols-1 gap-12">
+             
+            <div class="flex flex-col md:flex-row gap-8">
+                <!-- Intern -->
+                <div class="flex-1 bg-white dark:bg-slate-[#0f172a] rounded-[2.5rem] p-10 flex flex-col items-center text-center shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-50 dark:border-slate-800 relative group overflow-hidden">
+                    <div class="absolute -top-10 -left-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-20 h-20 bg-emerald-50 dark:bg-emerald-500/10 rounded-full flex items-center justify-center text-emerald-500 mb-6">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                    <h3 class="text-6xl font-black text-slate-900 dark:text-white tracking-tighter">7</h3>
+                    <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-2">PESERTA MAGANG AKTIF</p>
+                </div>
+
+                <!-- Pending -->
+                <div class="flex-1 bg-white dark:bg-slate-[#0f172a] rounded-[2.5rem] p-10 flex flex-col items-center text-center shadow-2xl shadow-slate-200/50 dark:shadow-none border border-slate-50 dark:border-slate-800 relative group overflow-hidden">
+                    <div class="absolute -top-10 -left-10 w-32 h-32 bg-[#ed1e28]/10 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="w-20 h-20 bg-[#ed1e28]/5 dark:bg-[#ed1e28]/10 rounded-full flex items-center justify-center text-[#ed1e28] mb-6">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 01-2-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                    </div>
+                    <h3 class="text-6xl font-black text-slate-900 dark:text-white tracking-tighter">0</h3>
+                    <p class="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-2">LOGBOOK MENUNGGU VALIDASI</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+</body>
+</html>

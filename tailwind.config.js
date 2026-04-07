@@ -16,12 +16,25 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             colors: {
+                red: {
+                    50: '#fef2f2',
+                    100: '#fee2e2',
+                    200: '#fecaca',
+                    300: '#fca5a5',
+                    400: '#f87171',
+                    500: '#ed1e28', // Target Telkom Red Core
+                    600: '#d51a23',
+                    700: '#b2161d',
+                    800: '#901217',
+                    900: '#7f1d1d',
+                    950: '#450a0a',
+                },
                 telkom: {
-                    500: '#EE0000',
-                    600: '#ce0024',
-                    700: '#D6001C',
-                    800: '#a0001c',
-                    900: '#b00017',
+                    500: '#ff333a',
+                    600: '#ed1e28', // Core
+                    700: '#d51a23',
+                    800: '#b2161d',
+                    900: '#901217',
                 }
             },
         },

@@ -197,7 +197,7 @@
         .dark trix-toolbar .trix-button::before { filter: brightness(0) invert(1); opacity: 0.8; }
         .dark trix-toolbar .trix-button--active::before { opacity: 1; }
         trix-toolbar .trix-button--active { background-color: #fee2e2; color: #ef4444; }
-        .dark trix-toolbar .trix-button--active { background-color: #991b1b; color: #fca5a5; }
+        .dark trix-toolbar .trix-button--active { background-color: #ed1e28; color: #fca5a5; }
         .trix-button-group--file-tools { display: none !important; }
         trix-editor:empty:before { color: #cbd5e1; }
         

@@ -277,7 +277,7 @@
         }
 
         .dark trix-toolbar .trix-button--active {
-            background-color: #991b1b; /* red-900 */
+            background-color: #ed1e28; /* red-900 */
             color: #fca5a5; /* red-300 */
         }
         

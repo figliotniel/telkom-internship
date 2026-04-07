@@ -81,4 +81,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Internship::class , 'mentor_id');
     }
+
+    public function divisions()
+    {
+        return $this->hasMany(Division::class, 'mentor_id');
+    }
 }

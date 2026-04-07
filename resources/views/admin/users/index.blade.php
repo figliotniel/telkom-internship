@@ -1,262 +1,290 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-bold text-xl text-gray-800 dark:text-slate-200 leading-tight transition-colors hidden">
-            {{ __('Data User') }}
-        </h2>
-    </x-slot>
-
-    <div class="py-12 bg-gray-50 dark:bg-slate-950 min-h-screen transition-colors duration-300">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
+    <div class="py-12 bg-slate-50 dark:bg-slate-950 min-h-screen transition-colors duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
             
-            <!-- Page Title Area -->
-            <div>
-                <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Data User</h2>
-                <p class="text-slate-500 dark:text-slate-400 mt-2 text-sm md:text-base">Manage all registered users, roles, and access across the application.</p>
-            </div>
-
-            <!-- Main Container -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-800 overflow-hidden transition-colors duration-300">
-                <div class="p-8">
-                    
-                    <!-- Controls Row: Tabs & Actions -->
-                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 border-b border-slate-100 dark:border-slate-800 pb-6 mb-6 transition-colors">
-                        
-                        <!-- Premium Tabs -->
-                        <nav class="flex space-x-2 overflow-x-auto w-full lg:w-auto pb-2 lg:pb-0" aria-label="Tabs">
-                            {{-- Semua --}}
-                            <a href="{{ route('admin.users.index') }}" 
-                               class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center whitespace-nowrap {{ !request('role') ? 'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 border border-red-100 dark:border-red-500/20 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent' }}">
-                                Semua
-                                <span class="ml-2 {{ !request('role') ? 'bg-white dark:bg-slate-800 text-red-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500' }} dark:text-red-400 py-0.5 px-2.5 rounded-full text-[10px] font-black shadow-sm dark:border dark:border-slate-700">{{ $totalAll }}</span>
-                            </a>
-
-                            {{-- Intern --}}
-                            <a href="{{ route('admin.users.index', ['role' => 'student']) }}" 
-                               class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center whitespace-nowrap {{ request('role') == 'student' ? 'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 border border-red-100 dark:border-red-500/20 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent' }}">
-                                Intern
-                                <span class="ml-2 {{ request('role') == 'student' ? 'bg-white dark:bg-slate-800 text-red-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500' }} dark:text-red-400 py-0.5 px-2.5 rounded-full text-[10px] font-black shadow-sm dark:border dark:border-slate-700">{{ $totalStudents }}</span>
-                            </a>
-
-                            {{-- Mentor --}}
-                            <a href="{{ route('admin.users.index', ['role' => 'mentor']) }}" 
-                               class="px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center whitespace-nowrap {{ request('role') == 'mentor' ? 'bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400 border border-red-100 dark:border-red-500/20 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 border border-transparent' }}">
-                                Mentor
-                                <span class="ml-2 {{ request('role') == 'mentor' ? 'bg-white dark:bg-slate-800 text-red-600' : 'bg-slate-100 dark:bg-slate-800 text-slate-500' }} dark:text-red-400 py-0.5 px-2.5 rounded-full text-[10px] font-black shadow-sm dark:border dark:border-slate-700">{{ $totalMentors }}</span>
-                            </a>
-                        </nav>
-                        
-                        <!-- Actions & Filters -->
-                        <div class="flex flex-col sm:flex-row flex-wrap items-center justify-end gap-4 w-full lg:w-auto">
-                            {{-- Sub Filter for Interns --}}
-                            @if(request('role') == 'student')
-                                <div class="inline-flex bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-1 shrink-0" role="group">
-                                    <a href="{{ route('admin.users.index', array_merge(request()->query(), ['student_type' => request('student_type') == 'mahasiswa' ? null : 'mahasiswa', 'page' => null])) }}"
-                                        class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all 
-                                        {{ request('student_type') == 'mahasiswa' 
-                                            ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 shadow-sm' 
-                                            : 'text-gray-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400' }}">
-                                        MHS ({{ $studentMahasiswaCount }})
-                                    </a>
-                                    <a href="{{ route('admin.users.index', array_merge(request()->query(), ['student_type' => request('student_type') == 'smk' ? null : 'smk', 'page' => null])) }}" 
-                                        class="px-4 py-1.5 text-xs font-bold rounded-lg transition-all 
-                                        {{ request('student_type') == 'smk' 
-                                            ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 shadow-sm' 
-                                            : 'text-gray-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400' }}">
-                                        SMK ({{ $studentSmkCount }})
-                                    </a>
-                                </div>
-                            @endif
-
-                            <!-- Search -->
-                            <form action="{{ route('admin.users.index') }}" method="GET" class="relative w-full sm:w-64" x-data x-ref="form">
-                                @if(request('role'))
-                                    <input type="hidden" name="role" value="{{ request('role') }}">
-                                @endif
-                                @if(request('student_type'))
-                                    <input type="hidden" name="student_type" value="{{ request('student_type') }}">
-                                @endif
-                                <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                                <input type="text" name="search" value="{{ request('search') }}" 
-                                    placeholder="Search..." 
-                                    @input.debounce.500ms="$refs.form.submit()"
-                                    x-init="$el.focus(); $el.setSelectionRange($el.value.length, $el.value.length);"
-                                    class="pl-9 pr-4 py-2.5 w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all placeholder-slate-400 font-medium text-slate-700 dark:text-slate-300">
-                            </form>
-                        </div>
+            <!-- 1. HUD HEADER SECTION -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-3">
+                        <h1 class="text-3xl font-black tracking-tight text-slate-900 dark:text-white font-jakarta">DATABASE PENGGUNA</h1>
                     </div>
-
-
-                    <!-- Modern Stacked List -->
-                    <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800/80 rounded-2xl overflow-hidden shadow-sm mt-6">
-                        <div class="divide-y divide-slate-100 dark:divide-slate-800/60">
-                            @forelse ($users as $user)
-                                @php
-                                    $roleColors = [
-                                        'admin' => 'from-purple-500/20 to-indigo-500/20 text-purple-600 dark:text-purple-400 ring-purple-100 dark:ring-purple-500/20',
-                                        'mentor' => 'from-blue-500/20 to-cyan-500/20 text-blue-600 dark:text-blue-400 ring-blue-100 dark:ring-blue-500/20',
-                                        'student' => 'from-emerald-400/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400 ring-emerald-100 dark:ring-emerald-500/20',
-                                    ];
-                                    $isSmk = optional($user->studentProfile)->student_type === 'siswa' || optional($user->studentProfile)->education_level === 'SMK';
-                                    if ($user->role === 'student' && $isSmk) {
-                                        $roleColors['student'] = 'from-amber-400/20 to-orange-500/20 text-amber-600 dark:text-amber-400 ring-amber-100 dark:ring-amber-500/20';
-                                    }
-                                    $colorStyles = $roleColors[$user->role] ?? 'from-slate-400/20 to-slate-500/20 text-slate-600 dark:text-slate-400 ring-slate-100 dark:ring-slate-800';
-                                    
-                                    $accentColor = 'slate';
-                                    if ($user->role === 'admin') $accentColor = 'purple';
-                                    elseif ($user->role === 'mentor') $accentColor = 'blue';
-                                    elseif ($user->role === 'student') $accentColor = $isSmk ? 'amber' : 'emerald';
-                                @endphp
-                                
-                                <div class="p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group relative cursor-pointer">
-                                    <!-- Edge Hover Indicator -->
-                                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-{{ $accentColor }}-500 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                                    <!-- Name & Avatar -->
-                                    <div class="flex items-center gap-4 min-w-[280px]">
-                                        <div class="relative flex-shrink-0 z-10">
-                                            <div class="h-12 w-12 rounded-full bg-gradient-to-tr {{ $colorStyles }} flex items-center justify-center font-black text-xl shadow-inner ring-4 ring-white dark:ring-slate-900 group-hover:scale-105 transition-transform">
-                                                {{ strtoupper(substr($user->name, 0, 1)) }}
-                                            </div>
-                                            <span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-slate-900 bg-{{ $accentColor }}-500"></span>
-                                        </div>
-                                        <div class="min-w-0 pr-4">
-                                            <div class="flex items-center gap-2">
-                                                <h3 class="font-bold text-slate-800 dark:text-white text-base leading-tight group-hover:text-{{ $accentColor }}-600 dark:group-hover:text-{{ $accentColor }}-400 transition-colors truncate max-w-[200px]" title="{{ $user->name }}">
-                                                    {{ $user->name }}
-                                                </h3>
-                                                @if($user->role === 'mentor')
-                                                    @php $count = $user->mentoredInternships->count(); @endphp
-                                                    <span class="flex-shrink-0 inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-black {{ $count > 0 ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-400' }} border border-transparent transition-colors">
-                                                        {{ $count }} Intern
-                                                    </span>
-                                                @endif
-                                            </div>
-                                            <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-[200px]" title="{{ $user->email }}">
-                                                {{ $user->email }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Contextual Information -->
-                                    <div class="flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-start lg:justify-end gap-4 lg:gap-8 w-full lg:w-auto mt-2 lg:mt-0">
-                                        @if(request('role') !== 'mentor')
-                                            <!-- Education & Role -->
-                                            <div class="min-w-[150px] hidden md:flex flex-col text-left">
-                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                                                    Pendidikan / Jabatan
-                                                </p>
-                                                <div class="flex items-center gap-2">
-                                                    @if($user->role === 'student')
-                                                        @php
-                                                            $eduLevel = optional($user->studentProfile)->education_level ?? '-';
-                                                            $eduClasses = ($eduLevel === 'SMK' || $eduLevel === 'Siswa')
-                                                                ? 'bg-amber-100/50 dark:bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-500/20' 
-                                                                : 'bg-emerald-100/50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-200 dark:border-emerald-500/20';
-                                                        @endphp
-                                                        <span class="px-2.5 py-1 inline-flex text-[9px] uppercase tracking-widest font-black rounded-lg border {{ $eduClasses }}">
-                                                            {{ $eduLevel }}
-                                                        </span>
-                                                    @endif
-                                                    @php
-                                                        $roleConfig = [
-                                                            'admin' => ['bg' => 'bg-purple-50 dark:bg-purple-500/10', 'text' => 'text-purple-700 dark:text-purple-400', 'border' => 'border-purple-200 dark:border-purple-500/20'],
-                                                            'mentor' => ['bg' => 'bg-blue-50 dark:bg-blue-500/10', 'text' => 'text-blue-700 dark:text-blue-400', 'border' => 'border-blue-200 dark:border-blue-500/20'],
-                                                            'student' => ['bg' => 'bg-slate-50 dark:bg-slate-800/50', 'text' => 'text-slate-600 dark:text-slate-300', 'border' => 'border-slate-200 dark:border-slate-700/50'],
-                                                        ];
-                                                        $config = $roleConfig[$user->role] ?? $roleConfig['student'];
-                                                    @endphp
-                                                    <span class="px-2.5 py-1 inline-flex text-[9px] uppercase tracking-widest font-black rounded-lg border {{ $config['bg'] }} {{ $config['text'] }} {{ $config['border'] }}">
-                                                        {{ $user->role }}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <div class="min-w-[150px] hidden sm:block relative text-left">
-                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                                    Tgl Terdaftar
-                                                </p>
-                                                <div class="text-[13px] font-black text-slate-700 dark:text-slate-200 leading-tight">
-                                                    {{ $user->created_at->format('d M Y') }}
-                                                </div>
-                                                <div class="text-[10px] font-medium text-slate-400 dark:text-slate-500 mt-0.5">
-                                                    {{ $user->created_at->diffForHumans() }}
-                                                </div>
-                                            </div>
-                                        @else
-                                            <!-- Mentored Internships Stack for Mentor -->
-                                            <div class="w-full lg:w-[450px] text-left">
-                                                <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-bold mb-2 flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                                    Intern Diampuh
-                                                </p>
-                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                                    @forelse($user->mentoredInternships as $internship)
-                                                        @if($internship->student)
-                                                            <div class="relative flex items-center gap-2.5 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-xl border border-slate-100 dark:border-slate-700/50 shadow-sm transition-all group/intern overflow-hidden">
-                                                                <div class="relative h-8 w-8 flex-shrink-0 rounded-lg bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center text-slate-600 dark:text-slate-300 font-black text-xs border border-slate-200 dark:border-slate-600">
-                                                                    {{ substr($internship->student->name, 0, 1) }}
-                                                                </div>
-                                                                <div class="relative flex flex-col min-w-0">
-                                                                    <div class="text-[11px] font-black text-slate-700 dark:text-slate-200 truncate leading-tight transition-colors">
-                                                                        {{ $internship->student->name }}
-                                                                    </div>
-                                                                    <div class="flex items-center gap-1.5 mt-1">
-                                                                        @php
-                                                                            $statusConfig = $internship->status === 'active' 
-                                                                                ? ['bg' => 'bg-emerald-500', 'text' => 'text-emerald-600 dark:text-emerald-400', 'label' => 'Active']
-                                                                                : ['bg' => 'bg-amber-500', 'text' => 'text-amber-600 dark:text-amber-400', 'label' => 'Onboarding'];
-                                                                        @endphp
-                                                                        <span class="w-1.5 h-1.5 rounded-full {{ $statusConfig['bg'] }} {{ $internship->status === 'active' ? 'animate-pulse' : '' }}"></span>
-                                                                        <span class="text-[8px] font-bold uppercase tracking-widest {{ $statusConfig['text'] }}">{{ $statusConfig['label'] }}</span>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        @endif
-                                                    @empty
-                                                        <div class="col-span-full py-4 flex items-center justify-center bg-slate-50 dark:bg-slate-800/30 border border-dashed border-slate-200 dark:border-slate-800 rounded-xl">
-                                                            <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Belum Ada Intern</span>
-                                                        </div>
-                                                    @endforelse
-                                                </div>
-                                            </div>
-                                        @endif
-                                        
-                                        <!-- Interactive Button -->
-                                        @if(request('role') !== 'mentor')
-                                        <div class="hidden sm:flex items-center justify-center w-9 h-9 ml-2 rounded-full text-slate-400 group-hover:text-{{ $accentColor }}-500 group-hover:bg-{{ $accentColor }}-50 dark:group-hover:bg-{{ $accentColor }}-500/10 transition-all border border-transparent group-hover:border-{{ $accentColor }}-200 dark:group-hover:border-{{ $accentColor }}-500/20 cursor-pointer">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path></svg>
-                                        </div>
-                                        @endif
-                                    </div>
-                                </div>
-                            @empty
-                                <div class="px-6 py-20 text-center text-slate-500 dark:text-slate-400">
-                                    <div class="flex flex-col items-center justify-center h-full gap-3">
-                                        <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700 rounded-3xl flex items-center justify-center mb-1 shadow-sm">
-                                            <svg class="w-10 h-10 text-slate-300 dark:text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                            </svg>
-                                        </div>
-                                        <div>
-                                            <p class="text-lg font-bold text-slate-600 dark:text-slate-300">Tidak ada data</p>
-                                            <p class="text-sm font-medium text-slate-400 mt-0.5">Tidak ditemukan data filter ini.</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            @endforelse
-                        </div>
+                    <div class="flex items-center gap-4 pl-1">
+                        <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 tracking-[0.2em] uppercase">Status Sistem: <span class="text-emerald-500">Aktif</span></p>
+                        <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
+                        <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 tracking-[0.2em] uppercase">Total Data: <span class="text-slate-900 dark:text-slate-200">{{ $totalAll }}</span></p>
                     </div>
+                </div>
 
-                    
-                    <div class="mt-6">
-                        {{ $users->withQueryString()->links() }}
-                    </div>
-
+                <!-- Global Actions (Export/Import placeholder context) -->
+                <div class="flex items-center gap-3">
+                     <button class="px-5 py-2.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-50 dark:hover:bg-slate-800 transition-all shadow-sm flex items-center gap-2 active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Export Data
+                     </button>
+                     <a href="{{ route('admin.mentors.create') }}" class="px-5 py-2.5 bg-[#ed1e28] text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-[#d61b24] transition-all shadow-lg shadow-red-500/20 flex items-center gap-2 active:scale-95">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                        Mendaftarkan Mentor
+                     </a>
                 </div>
             </div>
+
+            <!-- 2. MAIN HUB CONTAINER -->
+            <div class="bg-white/70 dark:bg-slate-900/50 backdrop-blur-xl rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-2xl shadow-slate-200/50 dark:shadow-none overflow-hidden relative" 
+                 x-data="{ showFilters: false, isLoading: false }"
+                 @submit.document="if($event.target.tagName === 'FORM') isLoading = true">
+                
+                <!-- SCANNING LOADING OVERLAY -->
+                <div x-show="isLoading" 
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     class="absolute inset-0 z-50 bg-white/60 dark:bg-slate-950/60 backdrop-blur-md flex flex-col items-center justify-center space-y-4">
+                    <div class="relative w-20 h-20">
+                        <div class="absolute inset-0 border-4 border-red-500/10 rounded-full"></div>
+                        <div class="absolute inset-0 border-t-4 border-red-500 rounded-full animate-spin"></div>
+                    </div>
+                    <p class="text-[10px] font-black text-[#ed1e28] tracking-[0.3em] uppercase animate-pulse">Memindai Jaringan...</p>
+                </div>
+
+                <!-- TOP BAR: TABS & SEARCH -->
+                <div class="p-8 border-b border-slate-100 dark:border-slate-800 flex flex-col lg:flex-row lg:items-center justify-between gap-8 bg-slate-50/50 dark:bg-slate-900/30">
+                    
+                    <!-- ROLE TABS -->
+                    <div class="flex items-center gap-1.5 p-1.5 bg-slate-100 dark:bg-slate-950/80 rounded-[1.5rem] border border-slate-200/50 dark:border-slate-800/50">
+                        <a href="{{ route('admin.users.index') }}" 
+                           class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all {{ !request('role') ? 'bg-white dark:bg-slate-800 text-[#ed1e28] shadow-md dark:shadow-none border border-slate-200 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                            Semua <span class="ml-1 opacity-50">{{ $totalAll }}</span>
+                        </a>
+                        <a href="{{ route('admin.users.index', ['role' => 'student', 'student_type' => request('student_type'), 'division_id' => request('division_id'), 'sort' => request('sort')]) }}" 
+                           class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all {{ request('role') == 'student' ? 'bg-white dark:bg-slate-800 text-[#ed1e28] shadow-md dark:shadow-none border border-slate-200 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                            Intern <span class="ml-1 opacity-50">{{ $totalStudents }}</span>
+                        </a>
+                        <a href="{{ route('admin.users.index', ['role' => 'mentor', 'division_id' => request('division_id'), 'sort' => request('sort')]) }}" 
+                           class="px-6 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all {{ request('role') == 'mentor' ? 'bg-white dark:bg-slate-800 text-[#ed1e28] shadow-md dark:shadow-none border border-slate-200 dark:border-slate-700' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300' }}">
+                            Mentor <span class="ml-1 opacity-50">{{ $totalMentors }}</span>
+                        </a>
+                    </div>
+
+                    <!-- SEARCH & ADVANCED FILTERS TOGGLE -->
+                    <div class="flex flex-col sm:flex-row items-center gap-4">
+                        <!-- ADVANCED FILTERS TOGGLE -->
+                        <button @click="showFilters = !showFilters" 
+                                :class="showFilters ? 'bg-[#ed1e28] text-white border-[#ed1e28]' : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700'"
+                                class="h-12 px-5 rounded-2xl border text-xs font-black uppercase tracking-widest flex items-center gap-3 transition-all hover:shadow-lg active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                            Filter
+                            <span x-show="!showFilters" class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        </button>
+
+                        <!-- SEARCH SCAN INPUT -->
+                        <form action="{{ route('admin.users.index') }}" method="GET" class="relative group" x-data x-ref="searchForm">
+                             @foreach(request()->except(['search', 'page']) as $key => $value)
+                                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                             @endforeach
+                             <svg class="w-5 h-5 text-slate-400 dark:text-slate-600 absolute left-4 top-1/2 -translate-y-1/2 group-focus-within:text-[#ed1e28] transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                             
+                             <input type="text" name="search" value="{{ request('search') }}" 
+                                    placeholder="Cari Identitas..." 
+                                    @input.debounce.500ms="$refs.searchForm.submit()"
+                                    x-init="$el.focus(); $el.setSelectionRange($el.value.length, $el.value.length)"
+                                    class="w-full sm:w-64 h-12 pl-12 pr-12 bg-slate-100/50 dark:bg-slate-950/50 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-bold text-slate-800 dark:text-slate-200 outline-none focus:ring-4 focus:ring-red-500/10 focus:border-[#ed1e28] transition-all placeholder:text-slate-400 dark:placeholder:text-slate-600">
+                             
+                             @if(request('search'))
+                                <a href="{{ route('admin.users.index', request()->except(['search', 'page'])) }}" 
+                                   class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-red-500 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </a>
+                             @endif
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ADVANCED FILTERS PANEL (Expandable) -->
+                <div x-show="showFilters" 
+                     x-transition:enter="transition ease-out duration-300"
+                     x-transition:enter-start="opacity-0 -translate-y-4"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     class="p-8 border-b border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-950/20">
+                    
+                    <form action="{{ route('admin.users.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        @if(request('role')) <input type="hidden" name="role" value="{{ request('role') }}"> @endif
+                        @if(request('search')) <input type="hidden" name="search" value="{{ request('search') }}"> @endif
+
+                        <!-- Filter Divisi -->
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 pl-1">Divisi Penempatan</label>
+                            <select name="division_id" onchange="this.form.submit()" class="w-full h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-red-500/20 focus:border-[#ed1e28] outline-none transition-all">
+                                <option value="">Semua Divisi</option>
+                                @foreach($divisions as $div)
+                                    <option value="{{ $div->id }}" {{ request('division_id') == $div->id ? 'selected' : '' }}>{{ $div->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <!-- Filter Tipe (Hanya jika role student/semua) -->
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 pl-1">Level Pendidikan</label>
+                            <select name="student_type" onchange="this.form.submit()" class="w-full h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-red-500/20 focus:border-[#ed1e28] outline-none transition-all">
+                                <option value="">Semua Level</option>
+                                <option value="mahasiswa" {{ request('student_type') == 'mahasiswa' ? 'selected' : '' }}>Mahasiswa (S1/D3)</option>
+                                <option value="smk" {{ request('student_type') == 'smk' ? 'selected' : '' }}>Siswa SMK</option>
+                            </select>
+                        </div>
+
+                        <!-- Sort By -->
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 pl-1">Urutkan Berdasarkan</label>
+                            <select name="sort" onchange="this.form.submit()" class="w-full h-11 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-300 focus:ring-2 focus:ring-red-500/20 focus:border-[#ed1e28] outline-none transition-all">
+                                <option value="latest" {{ request('sort') == 'latest' ? 'selected' : '' }}>Terbaru Bergabung</option>
+                                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama Bergabung</option>
+                                <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nama (A-Z)</option>
+                                <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Nama (Z-A)</option>
+                            </select>
+                        </div>
+
+                        <!-- Reset Button -->
+                        <div class="flex items-end">
+                            <a href="{{ route('admin.users.index', ['role' => request('role')]) }}" class="h-11 w-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                                Reset Filter
+                            </a>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- 3. DATA LIST SECTION -->
+                <div class="divide-y divide-slate-100 dark:divide-slate-800/50">
+                    @forelse ($users as $user)
+                        @php
+                            $isSmk = optional($user->studentProfile)->student_type === 'siswa' || optional($user->studentProfile)->education_level === 'SMK';
+                            
+                            $roleConfig = [
+                                'admin' => ['color' => 'purple', 'from' => 'from-purple-500/20', 'text' => 'text-purple-600 dark:text-purple-400', 'bg' => 'bg-purple-50 dark:bg-purple-500/10', 'border' => 'border-purple-100 dark:border-purple-500/20'],
+                                'mentor' => ['color' => 'blue', 'from' => 'from-blue-500/20', 'text' => 'text-blue-600 dark:text-blue-400', 'bg' => 'bg-blue-50 dark:bg-blue-500/10', 'border' => 'border-blue-100 dark:border-blue-500/20'],
+                                'student' => ['color' => $isSmk ? 'orange' : 'emerald', 'from' => $isSmk ? 'from-orange-500/20' : 'from-emerald-500/20', 'text' => $isSmk ? 'text-orange-600 dark:text-orange-400' : 'text-emerald-600 dark:text-emerald-400', 'bg' => $isSmk ? 'bg-orange-50 dark:bg-orange-500/10' : 'bg-emerald-50 dark:bg-emerald-500/10', 'border' => $isSmk ? 'border-orange-100 dark:border-orange-500/20' : 'border-emerald-100 dark:border-emerald-500/20'],
+                            ];
+                            $config = $roleConfig[$user->role] ?? $roleConfig['student'];
+                        @endphp
+                        
+                        <div class="group relative flex flex-col lg:flex-row lg:items-center justify-between p-6 lg:p-8 hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-all duration-300">
+                            <!-- HOVER ACCENT BAR -->
+                            <div class="absolute left-0 top-0 bottom-0 w-1.5 bg-[#ed1e28] translate-x-[-1.5px] opacity-0 group-hover:opacity-100 transition-all duration-300 rounded-r-full"></div>
+
+                            <!-- LEFT: Profile Info -->
+                            <div class="flex items-center gap-6 min-w-0">
+                                <div class="relative shrink-0">
+                                    <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br {{ $config['from'] }} to-transparent border {{ $config['border'] }} flex items-center justify-center text-2xl font-black {{ $config['text'] }} group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-sm">
+                                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-4 border-white dark:border-slate-900 group-hover:animate-pulse shadow-sm"></div>
+                                </div>
+                                <div class="min-w-0 pr-4">
+                                    <h4 class="text-xl font-black text-slate-800 dark:text-white font-jakarta group-hover:text-[#ed1e28] transition-colors truncate max-w-[200px] lg:max-w-none" title="{{ $user->name }}">
+                                        {{ $user->name }}
+                                    </h4>
+                                    <div class="flex items-center gap-3 mt-1.5">
+                                        <p class="text-xs font-bold text-slate-400 dark:text-slate-500 truncate" title="{{ $user->email }}">{{ $user->email }}</p>
+                                        <span class="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
+                                        <span class="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded {{ $config['bg'] }} {{ $config['text'] }} border {{ $config['border'] }}">
+                                            {{ $user->role === 'student' ? ($isSmk ? 'Siswa SMK' : 'Mahasiswa') : $user->role }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- RIGHT: Metadata & Lists -->
+                            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-8 lg:gap-16 mt-6 lg:mt-0 ml-0 lg:ml-auto">
+                                
+                                @if($user->role === 'mentor')
+                                    <!-- Mentor's Intern Stack -->
+                                    <div class="flex flex-col min-w-[200px] cursor-pointer group/stack hover:scale-105 transition-transform"
+                                         @click="$dispatch('open-mentor-interns', { 
+                                            name: '{{ addslashes($user->name) }}', 
+                                            interns: {{ json_encode($user->mentoredInternships) }}
+                                         })">
+                                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Peserta Bimbingan</p>
+                                        <div class="flex items-center gap-2">
+                                            @php $interns = $user->mentoredInternships->take(3); @endphp
+                                            <div class="flex -space-x-3">
+                                                @foreach($interns as $intern)
+                                                    <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-slate-950 flex items-center justify-center text-[10px] font-black text-slate-500 shadow-sm" title="{{ $intern->student->name }}">
+                                                        {{ substr($intern->student->name, 0,1) }}
+                                                    </div>
+                                                @endforeach
+                                                @if($user->mentoredInternships->count() > 3)
+                                                    <div class="w-9 h-9 rounded-xl bg-[#ed1e28] border-2 border-white dark:border-slate-950 flex items-center justify-center text-[10px] font-black text-white shadow-sm">
+                                                        +{{ $user->mentoredInternships->count() - 3 }}
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <span class="text-[11px] font-black text-slate-600 dark:text-slate-400 group-hover/stack:text-[#ed1e28] transition-colors">
+                                                {{ $user->mentoredInternships->count() }} Total
+                                            </span>
+                                        </div>
+                                    </div>
+                                @else
+                                    <!-- Intern Details -->
+                                    <div class="flex flex-col min-w-[140px]">
+                                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Pendidikan</p>
+                                        <div class="text-sm font-black text-slate-700 dark:text-slate-300">
+                                            {{ optional($user->studentProfile)->education_level ?? 'S1/D3' }}
+                                        </div>
+                                        <div class="text-[10px] font-bold text-slate-400 truncate max-w-[120px]">
+                                            {{ optional($user->studentProfile)->university ?? 'Telkom Group' }}
+                                        </div>
+                                    </div>
+                                @endif
+
+                                <!-- Joined Date -->
+                                <div class="flex flex-col min-w-[120px]">
+                                    <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Registered</p>
+                                    <div class="text-sm font-black text-slate-700 dark:text-slate-300">
+                                        {{ $user->created_at->format('d M Y') }}
+                                    </div>
+                                    <p class="text-[10px] font-bold text-slate-400">
+                                        {{ $user->created_at->diffForHumans() }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="p-20 text-center">
+                            <div class="w-24 h-24 bg-slate-50 dark:bg-slate-950/20 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6">
+                                <svg class="w-10 h-10 text-slate-300 dark:text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zM9 7h.01M9 14h.01"></path></svg>
+                            </div>
+                            <h5 class="text-xl font-black text-slate-800 dark:text-slate-200 font-jakarta">DATA IDENTIFIKASI NIHIL</h5>
+                            <p class="text-sm text-slate-400 mt-2">Tidak ditemukan data user dengan filter aktif saat ini.</p>
+                             <a href="{{ route('admin.users.index') }}" class="mt-8 px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-2xl text-xs font-black uppercase tracking-widest inline-block hover:scale-105 transition-transform active:scale-95 shadow-xl">
+                                Reset Scan
+                             </a>
+                        </div>
+                    @endforelse
+                </div>
+
+                <!-- 4. PAGINATION HUB -->
+                @if($users->hasPages())
+                    <div class="p-8 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30">
+                        {{ $users->appends(request()->query())->links() }}
+                    </div>
+                @endif
+            </div>
+
         </div>
+        @include('admin.users.partials.mentor-interns-modal')
     </div>
+
+    <!-- CUSTOM PAGINATION STYLING (HUD STYLE) -->
+    <style>
+        .pagination { display: flex; justify-content: center; gap: 0.5rem; align-items: center; }
+        .page-item { list-style: none; }
+        .page-link { 
+            height: 2.75rem; min-width: 2.75rem; display: flex; align-items: center; justify-content: center;
+            border-radius: 1rem; font-size: 0.75rem; font-weight: 900; letter-spacing: 0.05em;
+            background: white; border: 1px solid #e2e8f0; color: #64748b; transition: all 0.2s;
+        }
+        .dark .page-link { background: #0f172a; border-color: #1e293b; color: #94a3b8; }
+        .page-item.active .page-link { background: #ed1e28; border-color: #ed1e28; color: white; box-shadow: 0 10px 15px -3px rgba(237, 30, 40, 0.2); }
+        .page-link:hover:not(.active) { background: #f8fafc; border-color: #cbd5e1; color: #1e293b; }
+        .dark .page-link:hover:not(.active) { background: #1e293b; border-color: #334155; color: white; }
+        .page-item.disabled .page-link { opacity: 0.4; cursor: not-allowed; }
+    </style>
 </x-app-layout>

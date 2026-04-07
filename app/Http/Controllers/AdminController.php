@@ -21,10 +21,10 @@ class AdminController extends Controller
         $totalMentors = User::where('role', 'mentor')->count();
         $activeInternships = Internship::where('status', 'active')->count();
 
-        // Ambil 15 data magang terbaru untuk ditampilkan di tabel (scrollable)
+        // Ambil 6 data magang terbaru untuk ditampilkan di tabel (scrollable)
         $recentInternships = Internship::with(['student.studentProfile', 'mentor', 'division'])
             ->latest()
-            ->take(15)
+            ->take(6)
             ->get();
 
         // Ambil data perpanjangan magang yang pending
@@ -139,13 +139,18 @@ class AdminController extends Controller
     {
         $division = Division::findOrFail($id);
         
+        // Cek apakah ada intern aktif/pending di divisi ini
         $hasInterns = Internship::where('division_id', $id)->exists();
+        
         if ($hasInterns) {
-            return back()->with('error', 'Gagal menghapus! Divisi ini masih terhubung dengan data magang.');
+            // Jika Anda ingin mengizinkan hapus dengan memutus relasi (set null), 
+            // pastikan kolom division_id di tabel internships bersifat nullable.
+            // Untuk saat ini, kita berikan pesan yang lebih informatif.
+            return back()->with('error', 'Gagal menghapus! Masih ada data intern yang terhubung dengan divisi ' . $division->name . '. Pindahkan data intern terlebih dahulu.');
         }
 
         $division->delete();
-        return back()->with('success', 'Data Divisi berhasil dihapus.');
+        return redirect()->route('admin.divisions.index')->with('success', 'Data Divisi ' . $division->name . ' berhasil dihapus.');
     }
 
     /**
@@ -262,22 +267,25 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $role = $request->query('role');
-        $studentType = $request->query('student_type'); // New filter parameter
-        $search = $request->query('search'); // Search query parameter
+        $studentType = $request->query('student_type'); 
+        $search = $request->query('search'); 
+        $divisionId = $request->query('division_id');
+        $sort = $request->query('sort', 'latest');
 
-        // Base query: Mentors are always shown, but Students (interns) are filtered by active status
+        // All Divisions for Filter
+        $divisions = \App\Models\Division::orderBy('name')->get();
+
+        // Base query: Mentors and Students with active status
         $baseQuery = User::where('role', '!=', 'admin')
             ->where(function ($query) {
-            $query->where('role', 'mentor')
-                ->orWhere(function ($q) {
-                $q->where('role', 'student')
-                    ->whereHas('internship', function ($sub) {
-                    $sub->where('status', 'active');
-                }
-                );
-            }
-            );
-        });
+                $query->where('role', 'mentor')
+                    ->orWhere(function ($q) {
+                        $q->where('role', 'student')
+                            ->whereHas('internship', function ($sub) {
+                                $sub->where('status', 'active');
+                            });
+                    });
+            });
 
         // Global counts for tabs (Before category filters or search)
         $totalAll = $baseQuery->count();
@@ -287,60 +295,92 @@ class AdminController extends Controller
         // Sub-counts for students (Mahasiswa vs SMK)
         $studentMahasiswaCount = (clone $baseQuery)->where('role', 'student')
             ->whereHas('studentProfile', function ($q) {
-            $q->where('student_type', 'mahasiswa')->where(function($sub) {
-                $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
-            });
-        })->count();
+                $q->where('student_type', 'mahasiswa')->where(function($sub) {
+                    $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
+                });
+            })->count();
 
         $studentSmkCount = (clone $baseQuery)->where('role', 'student')
             ->whereHas('studentProfile', function ($q) {
-            $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
-        })->count();
+                $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
+            })->count();
 
-        // Main filter and search query
-        $users = User::with(['studentProfile', 'mentoredInternships' => function ($query) {
-            $query->whereIn('status', ['active', 'onboarding'])->with('student');
+        // Build filtered query
+        $query = User::with(['studentProfile', 'mentorProfile', 'mentoredInternships' => function ($q) {
+            $q->whereIn('status', ['active', 'onboarding'])->with(['student.studentProfile', 'division']);
         }])
-            ->when($search, function ($query, $search) {
-            return $query->where(function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%");
+        ->where('role', '!=', 'admin');
+
+        // Mandatory role-based restriction (Mentors OR Active Interns)
+        $query->where(function ($q) {
+            $q->where('role', 'mentor')
+              ->orWhere(function ($sq) {
+                  $sq->where('role', 'student')
+                     ->whereHas('internship', function ($sub) {
+                         $sub->where('status', 'active');
+                     });
+              });
+        });
+
+        // 1. Search (Name/Email)
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        // 2. Role Filter
+        if ($role) {
+            $query->where('role', $role);
+        }
+
+        // 3. Student Type Filter (SMK vs MHS)
+        if ($role === 'student' && $studentType) {
+            $query->whereHas('studentProfile', function ($q) use ($studentType) {
+                if ($studentType === 'smk') {
+                    $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
+                } elseif ($studentType === 'mahasiswa') {
+                    $q->where('student_type', 'mahasiswa')->where(function($sub) {
+                        $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
+                    });
                 }
-                );
-            })
-            ->when($role, function ($query, $role) {
-            return $query->where('role', $role);
-        })
-            ->when($role === 'student' && $studentType, function ($query) use ($studentType) {
-            return $query->whereHas('studentProfile', function ($q) use ($studentType) {
-                    if ($studentType === 'smk') {
-                        $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
-                    }
-                    elseif ($studentType === 'mahasiswa') {
-                        $q->where('student_type', 'mahasiswa')->where(function($sub) {
-                            $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
-                        });
-                    }
-                }
-                );
-            })
-            ->where('role', '!=', 'admin')
-            ->where(function ($query) {
-            $query->where('role', 'mentor')
-                ->orWhere(function ($q) {
-                $q->where('role', 'student')
-                    ->whereHas('internship', function ($sub) {
-                    $sub->where('status', 'active');
-                }
-                );
-            }
-            );
-        })
-            ->latest()
-            ->paginate(10);
+            });
+        }
+
+        // 4. Division Filter
+        if ($divisionId) {
+            $query->where(function ($q) use ($divisionId) {
+                $q->whereHas('internship', function ($sub) use ($divisionId) {
+                    $sub->where('division_id', $divisionId);
+                })
+                ->orWhereHas('divisions', function ($sub) use ($divisionId) { // Mentors are division leads
+                    $sub->where('id', $divisionId);
+                });
+            });
+        }
+
+        // 5. Sorting
+        switch ($sort) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'name_asc':
+                $query->orderBy('name', 'asc');
+                break;
+            case 'name_desc':
+                $query->orderBy('name', 'desc');
+                break;
+            case 'latest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        $users = $query->paginate(10)->withQueryString();
 
         return view('admin.users.index', compact(
-            'users', 'role', 'studentType',
+            'users', 'role', 'studentType', 'divisionId', 'sort', 'divisions',
             'totalAll', 'totalMentors', 'totalStudents',
             'studentMahasiswaCount', 'studentSmkCount'
         ));
@@ -390,115 +430,109 @@ class AdminController extends Controller
      */
     public function internships(Request $request)
     {
-        $status = $request->query('status', 'pending'); // Default to 'pending' (Applicants)
+        $status = $request->query('status', 'pending'); 
         $studentType = $request->query('student_type');
         $search = $request->query('search');
+        $divisionId = $request->query('division_id');
+        $sort = $request->query('sort', 'latest');
 
-        // Counts for Tabs
-        // Merge Pending and Onboarding into a single count
+        // 1. Tab Counts (Global for status)
         $onboardingCount = Internship::where('status', 'onboarding')->count();
         $pendingCount = Internship::where('status', 'pending')->count() + $onboardingCount;
         $activeCount = Internship::where('status', 'active')->count();
         $finishedCount = Internship::where('status', 'finished')->count();
-
-        // Count Pending Extensions
         $extensionCount = \App\Models\InternshipExtension::where('status', 'pending')->count();
 
-        // Sub-counts for current tab's students (Mahasiswa vs SMK vs Semua)
-        $baseInternshipQuery = Internship::query();
+        // All Divisions and Mentors for Filter / Modal
+        $divisions = Division::orderBy('name')->get();
+        $mentors = User::where('role', 'mentor')->orderBy('name')->get();
+
+        // Build main query
+        $query = Internship::with(['student.studentProfile', 'mentor', 'division', 'documents']);
+
+        // Handle Status
         if ($status === 'extension') {
-            $baseInternshipQuery->whereHas('extensions', function ($q) {
+            $query->whereHas('extensions', function ($q) {
                 $q->where('status', 'pending');
-            });
+            })->with(['extensions' => function ($q) {
+                $q->where('status', 'pending');
+            }]);
         } elseif ($status === 'pending') {
-            $baseInternshipQuery->whereIn('status', ['pending', 'onboarding']);
+            $query->whereIn('status', ['pending', 'onboarding']);
         } else {
-            $baseInternshipQuery->where('status', $status);
+            $query->where('status', $status);
         }
 
-        $totalInterns = (clone $baseInternshipQuery)->count();
-        $internMahasiswaCount = (clone $baseInternshipQuery)->whereHas('student.studentProfile', function ($q) {
+        // 2. Tab Sub-counts (Based on current base status, but before other filters)
+        $totalInterns = (clone $query)->count();
+        $internMahasiswaCount = (clone $query)->whereHas('student.studentProfile', function ($q) {
             $q->where('student_type', 'mahasiswa')->where(function($sub) {
                 $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
             });
         })->count();
-        $internSmkCount = (clone $baseInternshipQuery)->whereHas('student.studentProfile', function ($q) {
+        $internSmkCount = (clone $query)->whereHas('student.studentProfile', function ($q) {
             $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
         })->count();
 
-        // Redirect if trying to view extensions but none exist
+        // 3. Search Filter
+        if ($search) {
+            $query->whereHas('student', function ($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        // 4. Student Type Filter
+        if ($studentType) {
+            $query->whereHas('student.studentProfile', function ($q) use ($studentType) {
+                if ($studentType === 'smk') {
+                    $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
+                } elseif ($studentType === 'mahasiswa') {
+                    $q->where('student_type', 'mahasiswa')->where(function($sub) {
+                        $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
+                    });
+                }
+            });
+        }
+
+        // 5. Division Filter
+        if ($divisionId) {
+            $query->where('division_id', $divisionId);
+        }
+
+        // 6. Sorting
+        switch ($sort) {
+            case 'oldest':
+                $query->oldest();
+                break;
+            case 'name_asc':
+                $query->join('users', 'internships.student_id', '=', 'users.id')
+                      ->orderBy('users.name', 'asc')
+                      ->select('internships.*');
+                break;
+            case 'name_desc':
+                $query->join('users', 'internships.student_id', '=', 'users.id')
+                      ->orderBy('users.name', 'desc')
+                      ->select('internships.*');
+                break;
+            case 'end_date_near':
+                $query->orderBy('end_date', 'asc');
+                break;
+            case 'latest':
+            default:
+                $query->latest();
+                break;
+        }
+
+        $internships = $query->paginate(10)->withQueryString();
+
+        // Redirect if extension empty
         if ($status === 'extension' && $extensionCount === 0) {
             return redirect()->route('admin.internships.index', ['status' => 'pending']);
         }
 
-        // Filter Logic
-        if ($status === 'extension') {
-            $internships = Internship::whereHas('extensions', function ($q) {
-                $q->where('status', 'pending');
-            })
-                ->when($studentType, function ($query) use ($studentType) {
-                return $query->whereHas('student.studentProfile', function ($q) use ($studentType) {
-                        if ($studentType === 'smk') {
-                            $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
-                        }
-                        elseif ($studentType === 'mahasiswa') {
-                            $q->where('student_type', 'mahasiswa')->where(function($sub) {
-                                $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
-                            });
-                        }
-                    }
-                    );
-                })
-                ->with(['student.studentProfile', 'mentor', 'division', 'extensions' => function ($q) {
-                $q->where('status', 'pending');
-            }])
-                ->when($search, function ($query, $search) {
-                    return $query->whereHas('student', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', "%{$search}%")
-                          ->orWhere('email', 'LIKE', "%{$search}%");
-                    });
-                })
-                ->latest()
-                ->paginate(10)
-                ->appends(['status' => $status, 'student_type' => $studentType, 'search' => $search]);
-        }
-        else {
-            $internships = Internship::with(['student.studentProfile', 'mentor', 'division'])
-                ->when($status === 'pending', function ($query) {
-                return $query->whereIn('status', ['pending', 'onboarding']);
-            }, function ($query) use ($status) {
-                return $query->where('status', $status);
-            })
-                ->when($studentType, function ($query) use ($studentType) {
-                return $query->whereHas('student.studentProfile', function ($q) use ($studentType) {
-                        if ($studentType === 'smk') {
-                            $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
-                        }
-                        elseif ($studentType === 'mahasiswa') {
-                            $q->where('student_type', 'mahasiswa')->where(function($sub) {
-                                $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
-                            });
-                        }
-                    }
-                    );
-                })
-                ->when($search, function ($query, $search) {
-                    return $query->whereHas('student', function ($q) use ($search) {
-                        $q->where('name', 'LIKE', "%{$search}%")
-                          ->orWhere('email', 'LIKE', "%{$search}%");
-                    });
-                })
-                ->latest()
-                ->paginate(10)
-                ->appends(['status' => $status, 'student_type' => $studentType, 'search' => $search]);
-        }
-
-        // Pass Divisions and Mentors for Dropdowns in Review Modal
-        $divisions = Division::all();
-        $mentors = User::where('role', 'mentor')->get();
-
         return view('admin.internships.index', compact(
-            'internships', 'status', 'studentType', 'search', 
+            'internships', 'status', 'studentType', 'search', 'divisionId', 'sort',
             'pendingCount', 'onboardingCount', 'activeCount', 'finishedCount', 'extensionCount', 
             'divisions', 'mentors', 'totalInterns', 'internMahasiswaCount', 'internSmkCount'
         ));

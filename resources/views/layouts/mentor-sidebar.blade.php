@@ -1,8 +1,8 @@
-<nav x-data="{ open: false }" class="bg-[#991b1b] dark:bg-slate-900 w-64 border-r border-transparent dark:border-slate-800 hidden lg:flex flex-col z-20 h-screen sticky top-0 shadow-[4px_0_24px_rgba(0,0,0,0.1)] transition-colors duration-300">
+<nav x-data="{ open: false }" class="bg-[#ed1e28] dark:bg-slate-900 w-64 border-r border-transparent dark:border-slate-800 hidden lg:flex flex-col z-20 h-screen sticky top-0 shadow-[4px_0_24px_rgba(0,0,0,0.1)] transition-colors duration-300">
     {{-- Logo Area --}}
     <div class="h-20 flex items-center px-6 border-b border-white/10 dark:border-slate-800 transition-colors duration-300">
         <a href="{{ route('mentor.dashboard') }}" class="flex items-center gap-3 group">
-            <div class="w-10 h-10 bg-white dark:bg-gradient-to-br dark:from-red-500 dark:to-red-700 rounded-xl flex items-center justify-center text-[#991b1b] dark:text-white font-bold text-xl shadow-sm group-hover:scale-105 transition-transform">
+            <div class="w-10 h-10 bg-white dark:bg-gradient-to-br dark:from-red-500 dark:to-red-700 rounded-xl flex items-center justify-center text-[#ed1e28] dark:text-white font-bold text-xl shadow-sm group-hover:scale-105 transition-transform">
                 T
             </div>
             <span class="font-extrabold text-xl tracking-tight text-white transition-colors duration-300">Internship</span>

@@ -31,7 +31,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        Send Certificate
+                        Kirim Sertifikat
                     </button>
                     @endif
                     @if($internship->status !== 'finished')
@@ -187,8 +187,8 @@
                                         $end = \Carbon\Carbon::parse($internship->end_date);
                                         $diff = $start->diff($end);
                                         $durationStr = '';
-                                        if($diff->y > 0) $durationStr .= $diff->y . ' Tahun ';
-                                        if($diff->m > 0) $durationStr .= $diff->m . ' Bulan ';
+                                        if($diff->y > 0) $durationStr .= $diff->y . ' Thn ';
+                                        if($diff->m > 0) $durationStr .= $diff->m . ' Bln ';
                                         if($diff->d > 0) $durationStr .= $diff->d . ' Hari';
                                     @endphp
                                     <span class="bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 text-[10px] px-3 py-1.5 rounded-lg font-black uppercase tracking-widest border border-emerald-200 dark:border-emerald-500/30 shadow-sm transition-colors">
@@ -220,15 +220,15 @@
                                         <div class="flex items-center gap-6">
                                             <div class="w-4 h-4 rounded-full bg-slate-400 dark:bg-slate-700 ring-[6px] ring-white dark:ring-slate-900 shadow-sm -ml-[7px] transition-colors relative z-20"></div>
                                             <div>
-                                                <p class="text-[11px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest transition-colors mb-1">Mulai (Start)</p>
-                                                <p class="text-xl font-black text-slate-800 dark:text-slate-100 transition-colors tracking-tight">{{ \Carbon\Carbon::parse($internship->start_date)->format('d M Y') }}</p>
+                                                <p class="text-[11px] font-black uppercase text-slate-400 dark:text-slate-500 tracking-widest transition-colors mb-1">Tanggal Mulai</p>
+                                                <p class="text-xl font-black text-slate-800 dark:text-slate-100 transition-colors tracking-tight">{{ \Carbon\Carbon::parse($internship->start_date)->translatedFormat('d M Y') }}</p>
                                             </div>
                                         </div>
                                         <div class="flex items-center gap-6">
                                             <div class="w-4 h-4 rounded-full bg-emerald-500 dark:bg-emerald-400 ring-[6px] ring-white dark:ring-slate-900 shadow-sm -ml-[7px] transition-colors relative z-20"></div>
                                             <div>
-                                                <p class="text-[11px] font-black uppercase text-emerald-500 dark:text-emerald-400 tracking-widest transition-colors mb-1">Selesai (End)</p>
-                                                <p class="text-xl font-black text-slate-800 dark:text-slate-100 transition-colors tracking-tight">{{ \Carbon\Carbon::parse($internship->end_date)->format('d M Y') }}</p>
+                                                <p class="text-[11px] font-black uppercase text-emerald-500 dark:text-emerald-400 tracking-widest transition-colors mb-1">Tanggal Selesai</p>
+                                                <p class="text-xl font-black text-slate-800 dark:text-slate-100 transition-colors tracking-tight">{{ \Carbon\Carbon::parse($internship->end_date)->translatedFormat('d M Y') }}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -284,7 +284,7 @@
                                         <div>
                                             <p class="text-sm font-black text-slate-800 dark:text-slate-200 group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">Pakta Integritas</p>
                                             <span class="inline-block mt-1 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-widest bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 transition-colors">
-                                                Verified & Signed
+                                                Terverifikasi & Ditandatangani
                                             </span>
                                         </div>
                                     </div>
@@ -305,7 +305,7 @@
                                         </div>
                                         <div>
                                             <p class="text-sm font-black text-slate-800 dark:text-slate-200 group-hover:text-indigo-700 dark:group-hover:text-indigo-400 transition-colors">{{ $doc->name }}</p>
-                                            <p class="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1 transition-colors">{{ str_replace('_', ' ', $doc->type) }}</p>
+                                            <p class="text-[10px] font-extrabold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-1 transition-colors">{{ ucwords(str_replace('_', ' ', $doc->type === 'laporan_bulanan' ? 'Laporan' : str_replace('sertifikat_kelulusan', 'Sertifikat', $doc->type))) }}</p>
                                         </div>
                                     </div>
                                     <a href="{{ asset('storage/' . $doc->file_path) }}" target="_blank" class="px-5 py-2.5 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 text-[11px] font-extrabold uppercase tracking-wider rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 transition-all shadow-sm active:scale-95">
