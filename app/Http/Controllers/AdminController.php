@@ -58,10 +58,17 @@ class AdminController extends Controller
         $mentorsList = User::where('role', 'mentor')->with('mentorProfile')->latest()->get();
 
         return view('admin.dashboard', compact(
-            'totalStudents', 'totalMentors', 'activeInternships',
-            'recentInternships', 'pendingExtensions',
-            'studentGrowth', 'mentorGrowth', 'internshipGrowth',
-            'pendingApplicants', 'finishedInternsCount', 'mentorsList'
+            'totalStudents',
+            'totalMentors',
+            'activeInternships',
+            'recentInternships',
+            'pendingExtensions',
+            'studentGrowth',
+            'mentorGrowth',
+            'internshipGrowth',
+            'pendingApplicants',
+            'finishedInternsCount',
+            'mentorsList'
         ));
     }
 
@@ -70,10 +77,12 @@ class AdminController extends Controller
      */
     public function divisions()
     {
-        $divisions = Division::withCount(['internships' => function($query) {
-             $query->whereIn('status', ['active', 'pending', 'onboarding']);
-        }])->get();
-        
+        $divisions = Division::withCount([
+            'internships' => function ($query) {
+                $query->whereIn('status', ['active', 'pending', 'onboarding']);
+            }
+        ])->get();
+
         // Mentors for assigning to divisions
         $mentors = User::where('role', 'mentor')->get();
 
@@ -82,10 +91,12 @@ class AdminController extends Controller
 
     public function showDivision($id)
     {
-        $division = Division::with(['internships' => function($query) {
-            $query->with(['student.studentProfile', 'mentor'])->latest();
-        }])->findOrFail($id);
-        
+        $division = Division::with([
+            'internships' => function ($query) {
+                $query->with(['student.studentProfile', 'mentor'])->latest();
+            }
+        ])->findOrFail($id);
+
         $mentors = User::where('role', 'mentor')->get();
 
         return view('admin.divisions.show', compact('division', 'mentors'));
@@ -138,10 +149,10 @@ class AdminController extends Controller
     public function destroyDivision($id)
     {
         $division = Division::findOrFail($id);
-        
+
         // Cek apakah ada intern aktif/pending di divisi ini
         $hasInterns = Internship::where('division_id', $id)->exists();
-        
+
         if ($hasInterns) {
             // Jika Anda ingin mengizinkan hapus dengan memutus relasi (set null), 
             // pastikan kolom division_id di tabel internships bersifat nullable.
@@ -173,14 +184,15 @@ class AdminController extends Controller
 
         $students = User::where('role', 'student')
             ->whereDoesntHave('internship', function ($q) {
-            // Jangan tampilkan mahasiswa yang sudah magang aktif/onboarding
-            $q->whereIn('status', ['active', 'onboarding']);
-        })
+                // Jangan tampilkan mahasiswa yang sudah magang aktif/onboarding
+                $q->whereIn('status', ['active', 'onboarding']);
+            })
             ->when($search, function ($query, $search) {
-            $query->where(function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%");
-                }
+                $query->where(
+                    function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%{$search}%")
+                            ->orWhere('email', 'LIKE', "%{$search}%");
+                    }
                 );
             })
             ->select('id', 'name', 'email')
@@ -200,10 +212,11 @@ class AdminController extends Controller
         $mentors = User::where('role', 'mentor')
             ->with(['mentorProfile', 'activeInternships'])
             ->when($search, function ($query, $search) {
-            $query->where(function ($q) use ($search) {
-                    $q->where('name', 'LIKE', "%{$search}%")
-                        ->orWhere('email', 'LIKE', "%{$search}%");
-                }
+                $query->where(
+                    function ($q) use ($search) {
+                        $q->where('name', 'LIKE', "%{$search}%")
+                            ->orWhere('email', 'LIKE', "%{$search}%");
+                    }
                 );
             })
             ->take(20)
@@ -211,10 +224,10 @@ class AdminController extends Controller
 
         $formattedMentors = $mentors->map(function ($mentor) {
             return [
-            'id' => $mentor->id,
-            'name' => $mentor->name,
-            'email' => $mentor->email,
-            'display_text' => $mentor->name
+                'id' => $mentor->id,
+                'name' => $mentor->name,
+                'email' => $mentor->email,
+                'display_text' => $mentor->name
             ];
         });
 
@@ -267,8 +280,8 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $role = $request->query('role');
-        $studentType = $request->query('student_type'); 
-        $search = $request->query('search'); 
+        $studentType = $request->query('student_type');
+        $search = $request->query('search');
         $divisionId = $request->query('division_id');
         $sort = $request->query('sort', 'latest');
 
@@ -295,7 +308,7 @@ class AdminController extends Controller
         // Sub-counts for students (Mahasiswa vs SMK)
         $studentMahasiswaCount = (clone $baseQuery)->where('role', 'student')
             ->whereHas('studentProfile', function ($q) {
-                $q->where('student_type', 'mahasiswa')->where(function($sub) {
+                $q->where('student_type', 'mahasiswa')->where(function ($sub) {
                     $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
                 });
             })->count();
@@ -306,27 +319,31 @@ class AdminController extends Controller
             })->count();
 
         // Build filtered query
-        $query = User::with(['studentProfile', 'mentorProfile', 'mentoredInternships' => function ($q) {
-            $q->whereIn('status', ['active', 'onboarding'])->with(['student.studentProfile', 'division']);
-        }])
-        ->where('role', '!=', 'admin');
+        $query = User::with([
+            'studentProfile',
+            'mentorProfile',
+            'mentoredInternships' => function ($q) {
+                $q->whereIn('status', ['active', 'onboarding'])->with(['student.studentProfile', 'division']);
+            }
+        ])
+            ->where('role', '!=', 'admin');
 
         // Mandatory role-based restriction (Mentors OR Active Interns)
         $query->where(function ($q) {
             $q->where('role', 'mentor')
-              ->orWhere(function ($sq) {
-                  $sq->where('role', 'student')
-                     ->whereHas('internship', function ($sub) {
-                         $sub->where('status', 'active');
-                     });
-              });
+                ->orWhere(function ($sq) {
+                    $sq->where('role', 'student')
+                        ->whereHas('internship', function ($sub) {
+                            $sub->where('status', 'active');
+                        });
+                });
         });
 
         // 1. Search (Name/Email)
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('email', 'LIKE', "%{$search}%");
+                    ->orWhere('email', 'LIKE', "%{$search}%");
             });
         }
 
@@ -341,7 +358,7 @@ class AdminController extends Controller
                 if ($studentType === 'smk') {
                     $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
                 } elseif ($studentType === 'mahasiswa') {
-                    $q->where('student_type', 'mahasiswa')->where(function($sub) {
+                    $q->where('student_type', 'mahasiswa')->where(function ($sub) {
                         $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
                     });
                 }
@@ -354,9 +371,9 @@ class AdminController extends Controller
                 $q->whereHas('internship', function ($sub) use ($divisionId) {
                     $sub->where('division_id', $divisionId);
                 })
-                ->orWhereHas('divisions', function ($sub) use ($divisionId) { // Mentors are division leads
-                    $sub->where('id', $divisionId);
-                });
+                    ->orWhereHas('divisions', function ($sub) use ($divisionId) { // Mentors are division leads
+                        $sub->where('id', $divisionId);
+                    });
             });
         }
 
@@ -380,9 +397,17 @@ class AdminController extends Controller
         $users = $query->paginate(10)->withQueryString();
 
         return view('admin.users.index', compact(
-            'users', 'role', 'studentType', 'divisionId', 'sort', 'divisions',
-            'totalAll', 'totalMentors', 'totalStudents',
-            'studentMahasiswaCount', 'studentSmkCount'
+            'users',
+            'role',
+            'studentType',
+            'divisionId',
+            'sort',
+            'divisions',
+            'totalAll',
+            'totalMentors',
+            'totalStudents',
+            'studentMahasiswaCount',
+            'studentSmkCount'
         ));
     }
 
@@ -430,7 +455,7 @@ class AdminController extends Controller
      */
     public function internships(Request $request)
     {
-        $status = $request->query('status', 'pending'); 
+        $status = $request->query('status', 'pending');
         $studentType = $request->query('student_type');
         $search = $request->query('search');
         $divisionId = $request->query('division_id');
@@ -454,9 +479,11 @@ class AdminController extends Controller
         if ($status === 'extension') {
             $query->whereHas('extensions', function ($q) {
                 $q->where('status', 'pending');
-            })->with(['extensions' => function ($q) {
-                $q->where('status', 'pending');
-            }]);
+            })->with([
+                        'extensions' => function ($q) {
+                            $q->where('status', 'pending');
+                        }
+                    ]);
         } elseif ($status === 'pending') {
             $query->whereIn('status', ['pending', 'onboarding']);
         } else {
@@ -466,7 +493,7 @@ class AdminController extends Controller
         // 2. Tab Sub-counts (Based on current base status, but before other filters)
         $totalInterns = (clone $query)->count();
         $internMahasiswaCount = (clone $query)->whereHas('student.studentProfile', function ($q) {
-            $q->where('student_type', 'mahasiswa')->where(function($sub) {
+            $q->where('student_type', 'mahasiswa')->where(function ($sub) {
                 $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
             });
         })->count();
@@ -478,7 +505,7 @@ class AdminController extends Controller
         if ($search) {
             $query->whereHas('student', function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
-                  ->orWhere('email', 'LIKE', "%{$search}%");
+                    ->orWhere('email', 'LIKE', "%{$search}%");
             });
         }
 
@@ -488,7 +515,7 @@ class AdminController extends Controller
                 if ($studentType === 'smk') {
                     $q->where('student_type', 'siswa')->orWhere('education_level', 'SMK');
                 } elseif ($studentType === 'mahasiswa') {
-                    $q->where('student_type', 'mahasiswa')->where(function($sub) {
+                    $q->where('student_type', 'mahasiswa')->where(function ($sub) {
                         $sub->where('education_level', '!=', 'SMK')->orWhereNull('education_level');
                     });
                 }
@@ -507,13 +534,13 @@ class AdminController extends Controller
                 break;
             case 'name_asc':
                 $query->join('users', 'internships.student_id', '=', 'users.id')
-                      ->orderBy('users.name', 'asc')
-                      ->select('internships.*');
+                    ->orderBy('users.name', 'asc')
+                    ->select('internships.*');
                 break;
             case 'name_desc':
                 $query->join('users', 'internships.student_id', '=', 'users.id')
-                      ->orderBy('users.name', 'desc')
-                      ->select('internships.*');
+                    ->orderBy('users.name', 'desc')
+                    ->select('internships.*');
                 break;
             case 'end_date_near':
                 $query->orderBy('end_date', 'asc');
@@ -532,9 +559,22 @@ class AdminController extends Controller
         }
 
         return view('admin.internships.index', compact(
-            'internships', 'status', 'studentType', 'search', 'divisionId', 'sort',
-            'pendingCount', 'onboardingCount', 'activeCount', 'finishedCount', 'extensionCount', 
-            'divisions', 'mentors', 'totalInterns', 'internMahasiswaCount', 'internSmkCount'
+            'internships',
+            'status',
+            'studentType',
+            'search',
+            'divisionId',
+            'sort',
+            'pendingCount',
+            'onboardingCount',
+            'activeCount',
+            'finishedCount',
+            'extensionCount',
+            'divisions',
+            'mentors',
+            'totalInterns',
+            'internMahasiswaCount',
+            'internSmkCount'
         ));
     }
 
@@ -582,8 +622,7 @@ class AdminController extends Controller
             if ($internship->student && $internship->student->email) {
                 \Illuminate\Support\Facades\Mail::to($internship->student->email)->queue(new \App\Mail\InternshipApproved($internship));
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Failed to send InternshipApproved email: ' . $e->getMessage());
         }
 
@@ -610,8 +649,7 @@ class AdminController extends Controller
             if ($internship->student && $internship->student->email) {
                 \Illuminate\Support\Facades\Mail::to($internship->student->email)->queue(new \App\Mail\InternshipRejected($internship));
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Failed to send InternshipRejected email: ' . $e->getMessage());
         }
 
@@ -661,8 +699,7 @@ class AdminController extends Controller
                 \Illuminate\Support\Facades\Mail::to($internship->student->email)->queue(new \App\Mail\InternshipActive($internship, $inductionData));
                 $message .= ' Email notifikasi telah antre dikirim.';
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Failed to send InternshipActive email: ' . $e->getMessage());
             $message .= ' Namun email gagal dikirim (Cek konfigurasi SMTP Anda).';
         }
@@ -704,8 +741,7 @@ class AdminController extends Controller
             if ($internship->student && $internship->student->email) {
                 \Illuminate\Support\Facades\Mail::to($internship->student->email)->queue(new \App\Mail\InternshipFinished($internship));
             }
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             \Illuminate\Support\Facades\Log::error('Failed to send InternshipFinished email: ' . $e->getMessage());
         }
 
@@ -786,16 +822,16 @@ class AdminController extends Controller
         ]);
 
         \App\Models\Attendance::updateOrCreate(
-        [
-            'internship_id' => $request->internship_id,
-            'date' => $request->date,
-        ],
-        [
-            'status' => $request->status,
-            'check_in_time' => $request->check_in_time,
-            'check_out_time' => $request->check_out_time,
-            'note' => $request->note
-        ]
+            [
+                'internship_id' => $request->internship_id,
+                'date' => $request->date,
+            ],
+            [
+                'status' => $request->status,
+                'check_in_time' => $request->check_in_time,
+                'check_out_time' => $request->check_out_time,
+                'note' => $request->note
+            ]
         );
 
         return back()->with('success', 'Kehadiran berhasil diedit.');

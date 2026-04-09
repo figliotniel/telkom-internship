@@ -19,42 +19,56 @@
             @endif
         </div>
 
-        <!-- Premium Stats Grid - Minimalist Option 1 -->
+        <!-- Premium Stats Grid -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            <!-- Card 1: Interns Minimalist -->
-            <div class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-8 group hover:-translate-y-1 transition-all duration-500">
-                <div class="w-20 h-20 rounded-3xl bg-emerald-50 dark:bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400 group-hover:scale-110 transition-transform">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-                </div>
-                <div class="space-y-1 text-left">
-                    <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Peserta Aktif</p>
-                    <div class="flex items-baseline gap-2">
-                        <h3 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">
-                            {{ $internships->where('status', 'active')->count() }}
-                        </h3>
-                        <span class="text-xs font-bold text-slate-400 dark:text-slate-500">di {{ $internships->where('status', 'active')->pluck('division_id')->unique()->count() }} Divisi</span>
+            <!-- Card 1: Peserta Aktif (Emerald Theme) -->
+            <div class="flex flex-col group p-6 rounded-[2rem] border transition-all duration-500 hover:scale-[1.03] hover-glint glass-card-light dark:bg-slate-900 border-emerald-500/30 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div class="flex items-start justify-between mb-2">
+                    <div class="relative z-10 text-left">
+                        <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Peserta Aktif</p>
+                        <h3 class="text-4xl font-black text-slate-800 dark:text-white tracking-tight">{{ $internships->where('status', 'active')->count() }}</h3>
                     </div>
+                    <div class="p-4 bg-emerald-500/10 dark:bg-emerald-500/10 rounded-2xl text-emerald-600 dark:text-emerald-400 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 border border-emerald-500/20 relative z-10 shadow-sm">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </div>
+                </div>
+                
+                <div class="mt-4 flex items-center relative z-10">
+                    <span class="flex items-center text-emerald-600 dark:text-emerald-400 font-black bg-emerald-500/10 px-3 py-1 rounded-lg text-[10px] border border-emerald-500/20 shadow-sm uppercase tracking-wider">
+                        di {{ $internships->where('status', 'active')->pluck('division_id')->unique()->count() }} Divisi
+                    </span>
                 </div>
             </div>
 
-            <!-- Card 2: Pending Minimalist -->
-            <div onclick="window.location='{{ route('mentor.approvals.index') }}'" class="bg-white dark:bg-slate-900 rounded-[2rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex items-center gap-8 group hover:-translate-y-1 transition-all duration-500 cursor-pointer">
-                <div class="w-20 h-20 rounded-3xl bg-red-50 dark:bg-red-500/10 flex items-center justify-center text-red-600 dark:text-red-400 group-hover:scale-110 transition-transform">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                </div>
-                <div class="space-y-1 text-left">
-                    <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.2em]">Perlu Validasi</p>
-                    <div class="flex items-baseline gap-2">
-                        <h3 class="text-5xl font-black text-slate-900 dark:text-white tracking-tighter">
-                            {{ $pendingLogbooksCount ?? 0 }}
-                        </h3>
-                        @if(($pendingLogbooksCount ?? 0) > 0)
-                            <span class="text-xs font-bold text-red-500 animate-pulse">Logbook Tertunda</span>
-                        @else
-                            <span class="text-xs font-bold text-emerald-500">Logbook Aman</span>
-                        @endif
+            <!-- Card 2: Perlu Validasi (Red Theme) -->
+            <div onclick="window.location='{{ route('mentor.approvals.index') }}'" class="flex flex-col group p-6 rounded-[2rem] border transition-all duration-500 hover:scale-[1.03] hover-glint glass-card-light dark:bg-slate-900 border-red-500/30 relative overflow-hidden cursor-pointer">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-400 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div class="flex items-start justify-between mb-2">
+                    <div class="relative z-10 text-left">
+                        <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Perlu Validasi</p>
+                        <h3 class="text-4xl font-black text-slate-800 dark:text-white tracking-tight">{{ $pendingLogbooksCount ?? 0 }}</h3>
                     </div>
+                    <div class="p-4 bg-red-500/10 dark:bg-red-500/10 rounded-2xl text-[#ed1e28] dark:text-red-400 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500 border border-red-500/20 relative z-10 shadow-sm">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                </div>
+                
+                <div class="mt-4 flex items-center relative z-10">
+                    @if(($pendingLogbooksCount ?? 0) > 0)
+                        <span class="flex items-center text-[#ed1e28] dark:text-red-400 font-black bg-red-500/10 px-3 py-1 rounded-lg text-[10px] border border-red-500/20 shadow-sm uppercase tracking-wider">
+                            <div class="w-1.5 h-1.5 rounded-full bg-[#ed1e28] animate-pulse mr-2 shadow-[0_0_8px_#ed1e28]"></div>
+                            Logbook Tertunda
+                        </span>
+                    @else
+                        <span class="flex items-center text-emerald-600 dark:text-emerald-400 font-black bg-emerald-500/10 px-3 py-1 rounded-lg text-[10px] border border-emerald-500/20 shadow-sm uppercase tracking-wider">
+                            <svg class="w-3.5 h-3.5 mr-1 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                            Logbook Aman
+                        </span>
+                    @endif
                 </div>
             </div>
         </div>
@@ -63,10 +77,10 @@
         <div class="grid grid-cols-1 gap-8 items-start" x-data="{ searchQuery: '' }">
             
             <!-- Left: Mentees List (Full width) -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-800 overflow-hidden h-[540px] flex flex-col group/mentees transition-all duration-300 hover:shadow-xl">
+            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col group/mentees transition-all duration-300 hover:shadow-xl">
                 <div class="px-7 py-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-transparent relative z-10 font-sans">
                 <div>
-                    <h3 class="text-xl font-extrabold text-slate-800 dark:text-white tracking-tight">Intern Aktif</h3>
+                    <h3 class="text-xl font-extrabold text-slate-800 dark:text-white tracking-tight">List Intern</h3>
                     <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">Kelola dan pantau progres dari peserta magang</p>
                 </div>
                 <div class="flex items-center gap-3">
@@ -211,4 +225,54 @@
     </div>
 
     </div>
+
+    @push('styles')
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+
+        /* Premium Glint & Glass Effects */
+        .glass-card-light {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+        
+        .hover-glint {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hover-glint::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255, 255, 255, 0) 0%,
+                rgba(255, 255, 255, 0) 40%,
+                rgba(255, 255, 255, 0.4) 50%,
+                rgba(255, 255, 255, 0) 60%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            transform: rotate(45deg);
+            transition: all 0.7s;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .hover-glint:hover::after {
+            left: 100%;
+            top: 100%;
+            opacity: 1;
+        }
+    </style>
+    @endpush
 </x-app-layout>
