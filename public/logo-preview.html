@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logo Design References</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 flex flex-col min-h-screen">
+    
+    <!-- Navbar / Controls -->
+    <div class="bg-white px-8 py-5 shadow-sm flex items-center justify-between sticky top-0 z-50">
+        <div>
+            <h1 class="text-xl font-black text-slate-800">Logo Design References</h1>
+            <p class="text-sm text-slate-500">Pilih referensi logo yang paling cocok untuk dashboard admin.</p>
+        </div>
+        <button id="themeToggle" class="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20 active:scale-95">
+            Toggle Dark/Light Mode
+        </button>
+    </div>
+
+    <!-- Presentation Grid -->
+    <div class="flex-1 p-8 grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-7xl mx-auto w-full">
+        
+
+        <!-- ============================================== -->
+        <!-- VARIATION 1: Modern Glow & Indicator           -->
+        <!-- ============================================== -->
+        <div class="flex flex-col rounded-3xl overflow-hidden shadow-xl border border-slate-200">
+            <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-widest">Desain 1: Modern Glow</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 flex-1">
+                <!-- Light Mode Context -->
+                <div class="bg-[#ed1e28] flex items-center justify-center p-12">
+                    <!-- LOGO START -->
+                    <a href="#" class="flex items-center gap-3.5 group">
+                        <div class="relative w-11 h-11 flex items-center justify-center">
+                            <div class="absolute inset-0 bg-white/30 rounded-xl blur-md group-hover:blur-xl transition-all duration-300"></div>
+                            <div class="relative w-full h-full bg-white rounded-xl overflow-hidden flex items-center justify-center shadow-lg group-hover:-translate-y-1 transition-all duration-300">
+                                <img src="images/icon-telkom.png" alt="Telkom Logo" class="w-full h-full object-contain p-1.5 drop-shadow-sm">
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-white rounded-full border-[3px] border-[#ed1e28] group-hover:animate-pulse"></div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-extrabold text-2xl tracking-tight text-white leading-none">Magang<span class="text-white/60">.</span></span>
+                            <span class="text-[9px] font-bold text-white/70 tracking-[0.2em] uppercase mt-1">Monitoring System</span>
+                        </div>
+                    </a>
+                    <!-- LOGO END -->
+                </div>
+                
+                <!-- Dark Mode Context -->
+                <div class="bg-slate-900 flex items-center justify-center p-12 relative border-l border-white/5">
+                    <!-- LOGO START -->
+                    <a href="#" class="flex items-center gap-3.5 group">
+                        <div class="relative w-11 h-11 flex items-center justify-center">
+                            <div class="absolute inset-0 bg-red-500/20 rounded-xl blur-md group-hover:blur-xl transition-all duration-300"></div>
+                            <div class="relative w-full h-full bg-gradient-to-br from-red-500 to-red-700 rounded-xl overflow-hidden border border-red-400/30 flex items-center justify-center shadow-lg group-hover:-translate-y-1 transition-all duration-300">
+                                <img src="images/icon-telkom-white.png" alt="Telkom Logo" class="w-full h-full object-contain p-1.5 drop-shadow-md">
+                            </div>
+                            <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-red-400 rounded-full border-[3px] border-slate-900 group-hover:animate-pulse"></div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-extrabold text-2xl tracking-tight text-white leading-none">Magang<span class="text-red-400">.</span></span>
+                            <span class="text-[9px] font-bold text-red-500/80 tracking-[0.2em] uppercase mt-1">Monitoring System</span>
+                        </div>
+                    </a>
+                    <!-- LOGO END -->
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ============================================== -->
+        <!-- VARIATION 2: The Geometric Abstract            -->
+        <!-- ============================================== -->
+        <div class="flex flex-col rounded-3xl overflow-hidden shadow-xl border border-slate-200">
+            <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-widest">Desain 2: Abstract Geometric</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 flex-1">
+                <!-- Light Mode Context -->
+                <div class="bg-[#ed1e28] flex items-center justify-center p-12">
+                    <!-- LOGO START -->
+                    <a href="#" class="flex items-center gap-3 group">
+                        <div class="relative w-10 h-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute left-1.5 top-1.5 w-7 h-2 bg-white rounded-full"></div>
+                            <div class="absolute left-4 top-1.5 w-2 h-7 bg-white rounded-full"></div>
+                            <div class="absolute right-1 bottom-1 w-2.5 h-2.5 bg-red-200 rounded-full animate-pulse shadow-sm"></div>
+                        </div>
+                        <span class="font-black text-2xl tracking-tighter text-white uppercase italic">MAGANG</span>
+                    </a>
+                    <!-- LOGO END -->
+                </div>
+                
+                <!-- Dark Mode Context -->
+                <div class="bg-slate-900 flex items-center justify-center p-12 relative border-l border-white/5">
+                    <!-- LOGO START -->
+                    <a href="#" class="flex items-center gap-3 group">
+                        <div class="relative w-10 h-10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute left-1.5 top-1.5 w-7 h-2 bg-red-500 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]"></div>
+                            <div class="absolute left-4 top-1.5 w-2 h-7 bg-red-500 rounded-full shadow-[0_0_15px_rgba(239,68,68,0.5)]"></div>
+                            <div class="absolute right-1 bottom-1 w-2.5 h-2.5 bg-white rounded-full animate-pulse shadow-sm"></div>
+                        </div>
+                        <span class="font-black text-2xl tracking-tighter text-white uppercase italic">MAGANG</span>
+                    </a>
+                    <!-- LOGO END -->
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ============================================== -->
+        <!-- VARIATION 3: The Code Bracket Matrix           -->
+        <!-- ============================================== -->
+        <div class="flex flex-col rounded-3xl overflow-hidden shadow-xl border border-slate-200">
+            <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-widest">Desain 3: Tech Bracket</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 flex-1">
+                <!-- Light Mode Context -->
+                <div class="bg-[#ed1e28] flex items-center justify-center p-12">
+                    <!-- LOGO START -->
+                    <a href="#" class="flex items-center gap-3.5 group">
+                        <div class="relative w-11 h-11 bg-white/10 rounded-xl flex items-center justify-center border border-white/30 backdrop-blur-md group-hover:bg-white/20 transition-all duration-300">
+                            <span class="text-white font-mono font-bold text-xl">&lt;T/&gt;</span>
+                            <div class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-white shadow-sm"></span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-black text-xl tracking-widest text-white uppercase">MAGANG</span>
+                            <span class="text-[8px] font-mono text-white/50 tracking-[0.3em]">APP_VERSION: 3.0</span>
+                        </div>
+                    </a>
+                    <!-- LOGO END -->
+                </div>
+                
+                <!-- Dark Mode Context -->
+                <div class="bg-slate-900 flex items-center justify-center p-12 relative border-l border-white/5">
+                    <!-- LOGO START -->
+                    <a href="#" class="flex items-center gap-3.5 group">
+                        <div class="relative w-11 h-11 bg-red-500/10 rounded-xl flex items-center justify-center border border-red-500/30 backdrop-blur-md group-hover:bg-red-500/20 transition-all duration-300 shadow-[0_0_20px_rgba(239,68,68,0.1)]">
+                            <span class="text-red-500 font-mono font-bold text-xl">&lt;T/&gt;</span>
+                            <div class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 shadow-sm"></span>
+                            </div>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-black text-xl tracking-widest text-white uppercase">MAGANG</span>
+                            <span class="text-[8px] font-mono text-red-500/50 tracking-[0.3em]">APP_VERSION: 3.0</span>
+                        </div>
+                    </a>
+                    <!-- LOGO END -->
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ============================================== -->
+        <!-- VARIATION 4: Minimalist Shield                 -->
+        <!-- ============================================== -->
+        <div class="flex flex-col rounded-3xl overflow-hidden shadow-xl border border-slate-200">
+            <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-widest">Desain 4: Minimalist Shield</h2>
+            </div>
+            
+            <div class="grid grid-cols-2 flex-1">
+                <!-- Light Mode Context -->
+                <div class="bg-[#ed1e28] flex items-center justify-center p-12">
+                    <!-- LOGO START -->
+                    <a href="#" class="flex items-center gap-3 group">
+                        <div class="relative flex items-center justify-center">
+                            <!-- Shield vector -->
+                            <svg class="w-10 h-10 text-white drop-shadow-md group-hover:scale-105 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            <!-- Inner letter -->
+                            <span class="absolute text-[#ed1e28] font-black text-lg mb-1 mr-0.5 z-10">T</span>
+                        </div>
+                        <span class="font-semibold text-xl text-white tracking-wide border-l border-white/20 pl-3 ml-1">Portal Magang</span>
+                    </a>
+                    <!-- LOGO END -->
+                </div>
+                
+                <!-- Dark Mode Context -->
+                <div class="bg-slate-900 flex items-center justify-center p-12 relative border-l border-white/5">
+                    <!-- LOGO START -->
+                    <a href="#" class="flex items-center gap-3 group">
+                        <div class="relative flex items-center justify-center">
+                            <!-- Shield vector -->
+                            <svg class="w-10 h-10 text-red-600 drop-shadow-[0_0_15px_rgba(220,38,38,0.4)] group-hover:scale-105 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            <!-- Inner letter -->
+                            <span class="absolute text-white font-black text-lg mb-1 mr-0.5 z-10">T</span>
+                        </div>
+                        <span class="font-semibold text-xl text-white tracking-wide border-l border-slate-700 pl-3 ml-1">Portal Magang</span>
+                    </a>
+                    <!-- LOGO END -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script for testing responsive & dark mode locally -->
+    <script>
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const htmlElements = document.querySelectorAll('html');
+            htmlElements.forEach(html => {
+                if (html.classList.contains('dark')) {
+                    html.classList.remove('dark');
+                } else {
+                    html.classList.add('dark');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

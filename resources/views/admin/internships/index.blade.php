@@ -190,7 +190,7 @@
                                             <img src="{{ asset('storage/' . $intern->student->studentProfile->photo) }}" class="w-full h-full object-cover">
                                         </div>
                                     @else
-                                        <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-{{ $config['theme'] }}-500/20 to-transparent border border-{{ $config['theme'] }}-500/20 flex items-center justify-center text-2xl font-black text-{{ $config['theme'] }}-600 dark:text-{{ $config['theme'] }}-400 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-sm uppercase">
+                                        <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-{{ $config['theme'] }}-500/20 to-transparent flex items-center justify-center text-2xl font-black text-{{ $config['theme'] }}-600 dark:text-{{ $config['theme'] }}-400 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-sm uppercase">
                                             {{ substr($intern->student->name, 0, 1) }}
                                         </div>
                                     @endif
@@ -239,25 +239,25 @@
                                     <div class="flex flex-col min-w-[120px]">
                                         @php
                                             $endDate = \Carbon\Carbon::parse($intern->end_date);
-                                            $daysRemaining = max(0, \Carbon\Carbon::now()->diffInDays($endDate, false));
+                                            $daysRemaining = max(0, (int) \Carbon\Carbon::now()->diffInDays($endDate, false));
                                         @endphp
-                                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Node Expiry</p>
+                                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Tenggat Waktu</p>
                                         <div class="text-sm font-black {{ $daysRemaining <= 10 ? 'text-red-500' : 'text-slate-700 dark:text-slate-300' }}">
                                             {{ $endDate->format('d M Y') }}
                                         </div>
                                         <div class="text-[10px] font-bold text-slate-400">
-                                            {{ $daysRemaining }} Days Remaining
+                                            Sisa {{ $daysRemaining }} Hari
                                         </div>
                                     </div>
                                 @elseif($status == 'extension')
                                     @php $ext = $intern->extensions->first(); @endphp
                                     <div class="flex flex-col min-w-[150px]">
-                                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">New End Date</p>
+                                        <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Tenggat Baru</p>
                                         <div class="text-sm font-black text-indigo-600 dark:text-indigo-400">
                                             {{ \Carbon\Carbon::parse($ext->new_end_date)->format('d M Y') }}
                                         </div>
                                         <div class="text-[10px] font-bold text-slate-400">
-                                            +{{ \Carbon\Carbon::parse($ext->new_start_date)->diffInDays(\Carbon\Carbon::parse($ext->new_end_date)) }} Days
+                                            +{{ (int) \Carbon\Carbon::parse($ext->new_start_date)->diffInDays(\Carbon\Carbon::parse($ext->new_end_date)) }} Hari
                                         </div>
                                     </div>
                                 @else
