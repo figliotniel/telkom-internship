@@ -29,7 +29,7 @@
                 
                 <div class="flex items-start justify-between mb-2">
                     <div class="relative z-10 text-left">
-                        <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Total Siswa/Mahasiswa</p>
+                        <p class="text-[11px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Total Intern</p>
                         <h3 class="text-4xl font-black text-slate-800 dark:text-white tracking-tight">{{ $totalStudents }}</h3>
                     </div>
                     <div class="p-4 bg-red-500/10 dark:bg-red-500/10 rounded-2xl text-[#ed1e28] dark:text-red-400 group-hover:scale-110 group-hover:-rotate-3 transition-transform duration-500 border border-red-500/20 relative z-10 shadow-sm">
@@ -108,15 +108,15 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {{-- Left: Recent Activities (2 columns wide) --}}
-            <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl shadow-[0_2px_20px_-3px_rgba(0,0,0,0.05)] dark:shadow-none border border-slate-100 dark:border-slate-800">
-                <div class="px-7 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-transparent relative z-10">
+            <div class="lg:col-span-2 bg-white dark:bg-slate-900 rounded-2xl shadow-[0_2px_20px_-3px_rgba(0,0,0,0.05)] dark:shadow-none border border-slate-100 dark:border-slate-800 flex flex-col" style="max-height: 554px;">
+                <div class="px-7 py-5 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-transparent relative z-10 shrink-0">
                     <h3 class="text-lg font-bold text-slate-800 dark:text-slate-200">Pendaftaran Magang Terbaru</h3>
                     <a href="{{ route('admin.internships.index') }}" class="text-sm font-semibold text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 flex items-center gap-1 group">
                         Lihat Semua
                         <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </a>
                 </div>
-                <div class="divide-y divide-slate-100/80 dark:divide-slate-800/80 custom-scrollbar">
+                <div class="divide-y divide-slate-100/80 dark:divide-slate-800/80 custom-scrollbar flex-1 overflow-y-auto">
                     @forelse($recentInternships as $internship)
                     <div class="px-7 py-6 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors flex flex-col sm:flex-row sm:items-center justify-between group cursor-pointer {{ $loop->last ? 'rounded-b-2xl' : '' }}" onclick="window.location='{{ route('admin.internships.show', $internship->id) }}'">
                         
@@ -180,7 +180,7 @@
             <!-- Right: Quick Actions / Need Attention (Vertical HUD Sidebar Hub) -->
             <div class="space-y-4 relative">
                 <div class="px-1 py-0.5 flex items-center justify-between">
-                    <h3 class="text-sm font-black text-slate-800 dark:text-slate-200 tracking-tight uppercase">Perlu Perhatian</h3>
+                    <h3 class="text-sm font-black text-slate-800 dark:text-slate-200 tracking-tight uppercase">Penting</h3>
                     <div class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></div>
                 </div>
 
@@ -237,8 +237,8 @@
                     <div class="space-y-0.5">
                         <h3 class="font-black text-base uppercase tracking-tight text-slate-900 dark:text-white group-hover:text-amber-600 transition-colors">Perpanjangan</h3>
                         <p class="text-[10px] font-bold text-slate-500 dark:text-slate-400 leading-relaxed">Permintaan perpanjangan masa magang terdeteksi.</p>
-                        <div class="mt-5 py-2.5 w-full bg-amber-500/10 hover:bg-amber-500 text-amber-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest text-center border border-amber-500/20 hover:border-amber-500 transition-all duration-300 shadow-sm group-hover:shadow-amber-500/20 group-hover:shadow-lg">Tinjau Sekarang</div>
                     </div>
+                    <div class="mt-5 py-2.5 w-full bg-amber-500/10 hover:bg-amber-500 text-amber-600 hover:text-white rounded-xl text-[10px] font-black uppercase tracking-widest text-center border border-amber-500/20 hover:border-amber-500 transition-all duration-300 shadow-sm group-hover:shadow-amber-500/20 group-hover:shadow-lg">Tinjau Sekarang</div>
                 </a>
             </div>
         </div>

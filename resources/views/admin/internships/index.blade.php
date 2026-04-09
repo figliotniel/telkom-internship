@@ -174,6 +174,9 @@
                             
                             $isClickable = in_array($intern->status, ['active', 'finished']);
                             $rowUrl = route('admin.internships.show', $intern->id);
+                            
+                            $colors = ['blue', 'emerald', 'purple', 'amber', 'rose', 'indigo'];
+                            $divTheme = $intern->division_id ? $colors[$intern->division_id % 6] : 'slate';
                         @endphp
                         
                         <div class="group relative flex flex-col lg:flex-row lg:items-center justify-between p-6 lg:p-8 hover:bg-slate-50/80 dark:hover:bg-slate-800/30 transition-all duration-300 {{ $isClickable ? 'cursor-pointer' : '' }}"
@@ -190,11 +193,11 @@
                                             <img src="{{ asset('storage/' . $intern->student->studentProfile->photo) }}" class="w-full h-full object-cover">
                                         </div>
                                     @else
-                                        <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-{{ $config['theme'] }}-500/20 to-transparent flex items-center justify-center text-2xl font-black text-{{ $config['theme'] }}-600 dark:text-{{ $config['theme'] }}-400 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-sm uppercase">
+                                        <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-{{ $divTheme }}-500/20 to-transparent flex items-center justify-center text-2xl font-black text-{{ $divTheme }}-600 dark:text-{{ $divTheme }}-400 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-sm uppercase">
                                             {{ substr($intern->student->name, 0, 1) }}
                                         </div>
                                     @endif
-                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-{{ $config['theme'] }}-500 rounded-full border-4 border-white dark:border-slate-900 group-hover:animate-pulse shadow-sm"></div>
+                                    <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-{{ $config['theme'] }}-500 rounded-full border-4 border-white dark:border-slate-900 group-hover:animate-pulse shadow-sm" title="Status: {{ $config['label'] }}"></div>
                                 </div>
                                 <div class="min-w-0 pr-4">
                                     <h4 class="text-xl font-black text-slate-800 dark:text-white font-jakarta group-hover:text-[#ed1e28] transition-colors truncate max-w-[200px] lg:max-w-none">
@@ -227,9 +230,9 @@
                                     </div>
                                 @elseif($status == 'active')
                                     <!-- Placement & Remaining Time -->
-                                    <div class="flex flex-col min-w-[150px]">
+                                    <div class="flex flex-col min-w-[150px] items-start">
                                         <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 dark:text-slate-600 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">Placement</p>
-                                        <div class="text-sm font-black text-slate-700 dark:text-slate-300 truncate max-w-[140px]">
+                                        <div class="text-[11px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded bg-{{ $divTheme }}-50 dark:bg-{{ $divTheme }}-500/10 text-{{ $divTheme }}-600 dark:text-{{ $divTheme }}-400 border border-{{ $divTheme }}-500/20 mb-1">
                                             {{ $intern->division->code ?? $intern->division->name }}
                                         </div>
                                         <div class="text-[10px] font-bold text-slate-400 truncate max-w-[140px]">

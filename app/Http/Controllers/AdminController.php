@@ -21,10 +21,10 @@ class AdminController extends Controller
         $totalMentors = User::where('role', 'mentor')->count();
         $activeInternships = Internship::where('status', 'active')->count();
 
-        // Ambil 6 data magang terbaru untuk ditampilkan di tabel (scrollable)
+        // Ambil 20 data magang terbaru untuk ditampilkan di tabel (scrollable)
         $recentInternships = Internship::with(['student.studentProfile', 'mentor', 'division'])
             ->latest()
-            ->take(6)
+            ->take(20)
             ->get();
 
         // Ambil data perpanjangan magang yang pending

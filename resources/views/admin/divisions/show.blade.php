@@ -15,12 +15,19 @@
                 <!-- Title Section -->
                 <div class="flex items-center gap-5">
                     @php
-                        $colors = ['red', 'orange', 'emerald', 'blue', 'purple', 'amber', 'cyan'];
-                        $c = $colors[$division->id % count($colors)];
+                        $colorIndex = $division->id % 6;
+                        $colorSchemes = [
+                            ['bg' => 'from-blue-50 to-blue-100 dark:from-blue-500/20 dark:to-cyan-500/10', 'text' => 'text-blue-600 dark:text-blue-400'],
+                            ['bg' => 'from-emerald-50 to-emerald-100 dark:from-emerald-500/20 dark:to-teal-500/10', 'text' => 'text-emerald-600 dark:text-emerald-400'],
+                            ['bg' => 'from-purple-50 to-purple-100 dark:from-purple-500/20 dark:to-fuchsia-500/10', 'text' => 'text-purple-600 dark:text-purple-400'],
+                            ['bg' => 'from-amber-50 to-amber-100 dark:from-amber-500/20 dark:to-orange-500/10', 'text' => 'text-amber-600 dark:text-amber-400'],
+                            ['bg' => 'from-rose-50 to-rose-100 dark:from-rose-500/20 dark:to-pink-500/10', 'text' => 'text-rose-600 dark:text-rose-400'],
+                            ['bg' => 'from-indigo-50 to-indigo-100 dark:from-indigo-500/20 dark:to-blue-500/10', 'text' => 'text-indigo-600 dark:text-indigo-400']
+                        ];
+                        $scheme = $colorSchemes[$colorIndex];
                     @endphp
-                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-{{$c}}-50 to-{{$c}}-100 dark:from-{{$c}}-500/10 dark:to-{{$c}}-500/20 text-{{$c}}-600 dark:text-{{$c}}-400 flex items-center justify-center font-black text-2xl shadow-inner ring-1 ring-white/50 dark:ring-white/5 relative overflow-hidden shrinkage-0">
-                        {{ $division->code ?? substr($division->name, 0, 2) }}
-                        <div class="absolute inset-0 bg-white/20 dark:bg-black/10 transform rotate-45 translate-x-1/2"></div>
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br {{ $scheme['bg'] }} {{ $scheme['text'] }} flex items-center justify-center font-black text-xl shadow-inner ring-1 ring-white/50 dark:ring-white/5 relative overflow-hidden shrink-0">
+                        <span>{{ $division->code ?? substr($division->name, 0, 2) }}</span>
                     </div>
                     <div>
                         <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">{{ $division->name }}</h2>
