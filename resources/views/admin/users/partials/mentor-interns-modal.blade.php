@@ -35,10 +35,17 @@
         <div class="max-h-[60vh] overflow-y-auto p-4 space-y-3 no-scrollbar bg-slate-50/20 dark:bg-slate-950/20">
             <template x-for="intern in interns" :key="intern.id">
                 <div class="flex items-center justify-between p-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 hover:border-[#ed1e28]/30 hover:shadow-lg transition-all group group-hover:-translate-y-1">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm font-black text-[#ed1e28] shadow-inner group-hover:scale-110 transition-transform">
-                            <span x-text="intern.student.name.charAt(0)"></span>
-                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="relative flex-shrink-0">
+                                <template x-if="intern.student.avatar_url">
+                                    <img :src="intern.student.avatar_url" class="w-12 h-12 rounded-2xl object-cover shadow-inner ring-1 ring-slate-100 dark:ring-slate-800 group-hover:scale-110 transition-transform">
+                                </template>
+                                <template x-if="!intern.student.avatar_url">
+                                    <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm font-black text-[#ed1e28] shadow-inner group-hover:scale-110 transition-transform">
+                                        <span x-text="intern.student.name.charAt(0)"></span>
+                                    </div>
+                                </template>
+                            </div>
                         <div>
                             <h4 class="text-sm font-black text-slate-800 dark:text-slate-200" x-text="intern.student.name"></h4>
                             <div class="flex items-center gap-2 mt-1">

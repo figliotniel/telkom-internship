@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desain Riwayat Absensi & Izin</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0', 300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b', 600: '#475569', 700: '#334155', 800: '#1e293b', 900: '#0f172a', 950: '#020617' },
+                        red: { 50: '#fef2f2', 100: '#fee2e2', 200: '#fecaca', 300: '#fca5a5', 400: '#f87171', 500: '#ef4444', 600: '#dc2626', 700: '#b91c1c', 800: '#991b1b', 900: '#7f1d1d' },
+                        amber: { 50: '#fffbeb', 100: '#fef3c7', 200: '#fde68a', 300: '#fcd34d', 400: '#fbbf24', 500: '#f59e0b', 600: '#d97706', 700: '#b45309' },
+                        emerald: { 50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7', 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' },
+                        indigo: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca' }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 dark:bg-[#0B1120] text-slate-900 dark:text-slate-100 min-h-screen transition-colors duration-300" x-data="{ 
+    isDark: true, 
+    activeOption: 1,
+    activeTab: 'izin'
+}" x-init="$watch('isDark', val => { if(val) { document.documentElement.classList.add('dark'); } else { document.documentElement.classList.remove('dark'); } })">
+
+    <!-- Navbar & Controls -->
+    <div class="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <h1 class="font-black text-lg text-slate-800 dark:text-white transition-colors">History Table Concept</h1>
+                
+                <div class="flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+                    <button @click="activeOption = 1" :class="activeOption === 1 ? 'bg-white dark:bg-slate-900 shadow-sm text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all">Opsi 1: Clean Minimalist</button>
+                    <button @click="activeOption = 2" :class="activeOption === 2 ? 'bg-white dark:bg-slate-900 shadow-sm text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all">Opsi 2: Premium Glass</button>
+                    <button @click="activeOption = 3" :class="activeOption === 3 ? 'bg-white dark:bg-slate-900 shadow-sm text-blue-600 dark:text-blue-400' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'" class="px-4 py-1.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all">Opsi 3: Compact Timeline</button>
+                </div>
+            </div>
+
+            <button @click="isDark = !isDark" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                <svg x-show="!isDark" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                <svg x-show="isDark" x-cloak class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="pt-28 pb-20 px-6 max-w-6xl mx-auto">
+        <!-- Mock Tabs Navigation -->
+        <div class="flex p-1.5 bg-slate-200/50 dark:bg-slate-800 rounded-2xl w-max mb-8 border border-slate-200 dark:border-slate-700/50 shadow-inner">
+            <button class="text-slate-500 dark:text-slate-400 px-5 py-2.5 rounded-xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                <span>Logbook</span>
+            </button>
+            <button class="text-slate-500 dark:text-slate-400 px-5 py-2.5 rounded-xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>Absensi</span>
+            </button>
+            <button class="bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-md px-5 py-2.5 rounded-xl font-bold text-[11px] uppercase tracking-widest flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                <span>Cuti/Izin</span>
+                <span class="ml-1 bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 py-0.5 px-2 rounded-lg text-[9px]">2</span>
+            </button>
+        </div>
+
+        <h3 class="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-8 flex items-center gap-3 transition-colors">
+            <span class="w-2.5 h-8 bg-amber-500 rounded-full shadow-lg shadow-amber-500/30"></span>
+            Riwayat Pengajuan Cuti / Izin
+        </h3>
+
+        <!-- =============================================
+             OPSI 1: CLEAN MINIMALIST STACKED LIST
+             ============================================= -->
+        <div x-show="activeOption === 1" x-transition.opacity>
+            <div class="space-y-4">
+                
+                <!-- Card Item 1 -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 transition-colors shadow-sm hover:shadow-md">
+                    <div class="flex flex-col md:flex-row md:items-center gap-6">
+                        <!-- Date Block -->
+                        <div class="shrink-0 w-32 border-l-4 border-amber-500 pl-4">
+                            <span class="block text-sm font-black text-slate-800 dark:text-slate-100">09 Apr 2026</span>
+                            <span class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Thursday</span>
+                        </div>
+                        
+                        <!-- Info Block -->
+                        <div class="grow flex flex-col gap-2 border-t md:border-t-0 md:border-l border-slate-100 dark:border-slate-800 pt-4 md:pt-0 md:pl-6">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border border-amber-200/50 dark:border-amber-500/20">Sementara</span>
+                                <span class="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/50 px-2.5 py-1 rounded-md">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    10:00 - 12:00
+                                </span>
+                            </div>
+                            <h4 class="text-lg font-bold text-slate-700 dark:text-slate-200 mt-1">Izin ke kampus sebentar ambil ijazah</h4>
+                        </div>
+                        
+                        <!-- Status Block -->
+                        <div class="shrink-0 flex items-center md:flex-col md:items-end justify-between border-t md:border-t-0 border-slate-100 dark:border-slate-800 pt-4 md:pt-0">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 hidden md:block">Status Kehadiran</span>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[10px] uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/20">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Absen Terotorisasi
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Item 2 -->
+                <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 transition-colors shadow-sm hover:shadow-md">
+                    <div class="flex flex-col md:flex-row md:items-center gap-6">
+                        <!-- Date Block -->
+                        <div class="shrink-0 w-32 border-l-4 border-slate-300 dark:border-slate-700 pl-4">
+                            <span class="block text-sm font-black text-slate-800 dark:text-slate-100">07 Apr 2026</span>
+                            <span class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Tuesday</span>
+                        </div>
+                        
+                        <!-- Info Block -->
+                        <div class="grow flex flex-col gap-2 border-t md:border-t-0 md:border-l border-slate-100 dark:border-slate-800 pt-4 md:pt-0 md:pl-6">
+                            <div class="flex items-center gap-3">
+                                <span class="bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border border-slate-200 dark:border-slate-700">Penuh (Seharian)</span>
+                                <span class="text-xs font-bold text-slate-500 flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800/30 px-2.5 py-1 rounded-md">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    Seharian Penuh
+                                </span>
+                            </div>
+                            <h4 class="text-lg font-bold text-slate-700 dark:text-slate-200 mt-1">Izin sakit typus</h4>
+                        </div>
+                        
+                        <!-- Status Block -->
+                        <div class="shrink-0 flex items-center md:flex-col md:items-end justify-between border-t md:border-t-0 border-slate-100 dark:border-slate-800 pt-4 md:pt-0">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 hidden md:block">Status Kehadiran</span>
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[10px] uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/20">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Absen Terotorisasi
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- =============================================
+             OPSI 2: PREMIUM GLASSMORPHISM
+             ============================================= -->
+        <div x-show="activeOption === 2" x-transition.opacity style="display: none;">
+            
+            <div class="relative">
+                <!-- Decorative Blur Background -->
+                <div class="absolute top-10 right-20 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute bottom-10 left-10 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+                <div class="space-y-5 relative z-10">
+                    
+                    <!-- Glass Card 1 -->
+                    <div class="group relative bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/60 dark:border-slate-700/50 rounded-[2rem] p-6 pr-8 transition-all duration-300 hover:bg-white dark:hover:bg-slate-900 hover:shadow-xl hover:shadow-amber-500/5 dark:hover:shadow-none hover:border-amber-300 dark:hover:border-amber-500/30 overflow-hidden">
+                        
+                        <!-- Hover Glow Accent -->
+                        <div class="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-amber-500/5 dark:from-amber-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+                        <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10 relative z-10">
+                            <!-- Graphical Date -->
+                            <div class="shrink-0 flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-slate-700/50 shadow-sm text-center">
+                                <div>
+                                    <span class="block text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">09</span>
+                                    <span class="block text-[10px] font-black text-amber-600 dark:text-amber-500 uppercase tracking-widest mt-1">Apr 2026</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Detailed Info -->
+                            <div class="grow w-full text-center lg:text-left">
+                                <div class="flex flex-wrap justify-center lg:justify-start items-center gap-3 mb-3">
+                                    <span class="inline-flex items-center gap-1.5 bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-amber-200 dark:border-amber-500/20">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></div>
+                                        Sementara
+                                    </span>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        Pkl 10:00 - 12:00
+                                    </span>
+                                </div>
+                                <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2 leading-snug">Izin ke kampus sebentar ambil ijazah</h4>
+                            </div>
+
+                            <!-- Right Status -->
+                            <div class="shrink-0 flex items-center justify-center w-full lg:w-48 p-4 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                                <div class="text-center">
+                                    <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-2 text-indigo-600 dark:text-indigo-400">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                    <span class="block text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Absen<br>Terotorisasi</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Glass Card 2 -->
+                    <div class="group relative bg-white/70 dark:bg-slate-900/60 backdrop-blur-xl border border-slate-200/60 dark:border-slate-700/50 rounded-[2rem] p-6 pr-8 transition-all duration-300 hover:bg-white dark:hover:bg-slate-900 hover:shadow-xl hover:border-slate-300 dark:hover:border-slate-600 overflow-hidden">
+                        
+                        <!-- Hover Glow Accent -->
+                        <div class="absolute top-0 right-0 w-64 h-full bg-gradient-to-l from-slate-100 dark:from-slate-800/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+                        <div class="flex flex-col lg:flex-row items-center gap-6 lg:gap-10 relative z-10">
+                            <!-- Graphical Date -->
+                            <div class="shrink-0 flex items-center justify-center w-24 h-24 rounded-2xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-900 border border-slate-200 dark:border-slate-700/50 shadow-sm text-center">
+                                <div class="opacity-80">
+                                    <span class="block text-3xl font-black text-slate-800 dark:text-slate-100 tracking-tighter">07</span>
+                                    <span class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Apr 2026</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Detailed Info -->
+                            <div class="grow w-full text-center lg:text-left">
+                                <div class="flex flex-wrap justify-center lg:justify-start items-center gap-3 mb-3">
+                                    <span class="inline-flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-slate-200 dark:border-slate-700">
+                                        Penuh (Seharian)
+                                    </span>
+                                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        Sepanjang Hari
+                                    </span>
+                                </div>
+                                <h4 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2 leading-snug">Izin sakit typus</h4>
+                            </div>
+
+                            <!-- Right Status -->
+                            <div class="shrink-0 flex items-center justify-center w-full lg:w-48 p-4 bg-slate-50 dark:bg-slate-950/50 rounded-2xl border border-slate-100 dark:border-slate-800/80">
+                                <div class="text-center">
+                                    <div class="w-10 h-10 bg-indigo-50 dark:bg-indigo-500/10 rounded-full flex items-center justify-center mx-auto mb-2 text-indigo-600 dark:text-indigo-400">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                    <span class="block text-[10px] font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">Absen<br>Terotorisasi</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- =============================================
+             OPSI 3: COMPACT TIMELINE TILE
+             ============================================= -->
+        <div x-show="activeOption === 3" x-transition.opacity style="display: none;">
+            <!-- Outer Card replacing the table outer -->
+            <div class="bg-white dark:bg-[#121828] border border-slate-200 dark:border-slate-800/80 rounded-[2rem] p-6 sm:p-10 shadow-sm relative overflow-hidden">
+                
+                <div class="absolute left-[59px] md:left-[67px] top-10 bottom-10 w-[2px] bg-gradient-to-b from-slate-200 via-slate-200 dark:from-slate-800 dark:via-slate-800 to-transparent"></div>
+
+                <ul class="space-y-12 relative z-10">
+                    
+                    <li class="relative flex items-start gap-6 md:gap-8 group">
+                        <!-- Node -->
+                        <div class="shrink-0 relative w-12 h-12 rounded-full border-[3px] border-white dark:border-[#121828] bg-amber-100 dark:bg-amber-500/20 text-amber-500 shadow-sm flex items-center justify-center z-10 mt-1 transition-transform group-hover:scale-110">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        </div>
+
+                        <!-- Content Node -->
+                        <div class="grow bg-slate-50/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 border border-slate-100 dark:border-slate-800 transition-colors p-5 md:p-6 rounded-2xl md:rounded-[1.5rem] shadow-sm">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex px-2.5 py-1 text-[9px] font-black uppercase tracking-widest bg-amber-500 text-white rounded-lg shadow-sm">Sementara</span>
+                                    <span class="text-[11px] font-black text-slate-400 capitalize flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        10:00 - 12:00
+                                    </span>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs font-black text-slate-800 dark:text-slate-200">09 Apr 2026</p>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Kamis</p>
+                                </div>
+                            </div>
+                            
+                            <h4 class="text-base font-bold text-slate-700 dark:text-slate-200 mb-4">Izin ke kampus sebentar ambil ijazah</h4>
+                            
+                            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Keputusan Kehadiran</span>
+                                <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5 uppercase tracking-widest">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    Absen Terotorisasi
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="relative flex items-start gap-6 md:gap-8 group">
+                        <!-- Node -->
+                        <div class="shrink-0 relative w-12 h-12 rounded-full border-[3px] border-white dark:border-[#121828] bg-slate-100 dark:bg-slate-800 text-slate-500 shadow-sm flex items-center justify-center z-10 mt-1 transition-transform group-hover:scale-110">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                        </div>
+
+                        <!-- Content Node -->
+                        <div class="grow bg-slate-50/50 dark:bg-slate-900/50 hover:bg-white dark:hover:bg-slate-900 border border-slate-100 dark:border-slate-800 transition-colors p-5 md:p-6 rounded-2xl md:rounded-[1.5rem] shadow-sm">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex px-2.5 py-1 text-[9px] font-black uppercase tracking-widest bg-slate-500 text-white rounded-lg shadow-sm">Penuh (Seharian)</span>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-xs font-black text-slate-800 dark:text-slate-200">07 Apr 2026</p>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Selasa</p>
+                                </div>
+                            </div>
+                            
+                            <h4 class="text-base font-bold text-slate-700 dark:text-slate-200 mb-4">Izin sakit typus</h4>
+                            
+                            <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Keputusan Kehadiran</span>
+                                <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-400 flex items-center gap-1.5 uppercase tracking-widest">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    Absen Terotorisasi
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+
+
+    </div>
+
+</body>
+</html>

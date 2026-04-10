@@ -1,5 +1,6 @@
 <x-app-layout>
     <div class="py-12" x-data="{ 
+        activeTab: 'logbook',
         showModal: false, 
         showPreview: false,
         showMonthlyReportModal: false,
@@ -67,8 +68,8 @@
 
                 <!-- Photo -->
                 <div class="shrink-0 relative z-10">
-                    @if($internship->student->studentProfile && $internship->student->studentProfile->photo)
-                        <img class="h-32 w-32 rounded-3xl object-cover shadow-lg shadow-red-500/20 dark:shadow-none border-4 border-white dark:border-slate-800 transition-colors" src="{{ asset('storage/' . $internship->student->studentProfile->photo) }}" alt="{{ $internship->student->name }}">
+                    @if($internship->student->avatar_url)
+                        <img class="h-32 w-32 rounded-3xl object-cover shadow-lg shadow-red-500/20 dark:shadow-none border-4 border-white dark:border-slate-800 transition-colors" src="{{ $internship->student->avatar_url }}" alt="{{ $internship->student->name }}">
                     @else
                         <div class="h-32 w-32 rounded-3xl bg-gradient-to-tr from-red-500 to-orange-600 flex items-center justify-center text-white text-5xl font-black shadow-lg shadow-red-500/20 dark:shadow-none border-4 border-white dark:border-slate-800 transition-colors">
                             {{ substr($internship->student->name, 0, 1) }}
@@ -352,106 +353,256 @@
             </div>
             @endif
 
-            {{-- 5. LOGBOOK HISTORY --}}
-            <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 rounded-3xl transition-colors duration-300">
+            {{-- 5. MENU NAVIGASI AKTIVITAS (TABS) --}}
+            <div class="flex p-1.5 bg-slate-100 dark:bg-slate-800/80 rounded-2xl w-full sm:w-max mx-auto sm:mx-0 shadow-inner border border-slate-200 dark:border-slate-700 transition-colors">
+                <button @click="activeTab = 'logbook'"
+                        :class="activeTab === 'logbook' ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-md ring-1 ring-slate-900/5 dark:ring-white/10' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50'"
+                        class="px-5 py-2.5 rounded-xl font-bold text-[11px] uppercase tracking-widest transition-all duration-300 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+                    <span>Logbook</span>
+                    <span class="ml-1 bg-red-100 dark:bg-red-500/20 text-red-600 dark:text-red-400 py-0.5 px-2 rounded-lg text-[9px]">{{ $internship->dailyLogbooks->count() }}</span>
+                </button>
+                <button @click="activeTab = 'absensi'"
+                        :class="activeTab === 'absensi' ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-md ring-1 ring-slate-900/5 dark:ring-white/10' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50'"
+                        class="px-5 py-2.5 rounded-xl font-bold text-[11px] uppercase tracking-widest transition-all duration-300 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <span>Absensi</span>
+                    <span class="ml-1 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 py-0.5 px-2 rounded-lg text-[9px]">{{ tap($internship->attendances->where('status', 'present'))->isNotEmpty() ? $internship->attendances->where('status', 'present')->count() : 0 }}</span>
+                </button>
+                <button @click="activeTab = 'izin'"
+                        :class="activeTab === 'izin' ? 'bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-md ring-1 ring-slate-900/5 dark:ring-white/10' : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200/50 dark:hover:bg-slate-700/50'"
+                        class="px-5 py-2.5 rounded-xl font-bold text-[11px] uppercase tracking-widest transition-all duration-300 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                    <span>Cuti/Izin</span>
+                    <span class="ml-1 bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 py-0.5 px-2 rounded-lg text-[9px]">{{ tap($internship->attendances->where('status', 'permit'))->isNotEmpty() ? $internship->attendances->where('status', 'permit')->count() : 0 }}</span>
+                </button>
+            </div>
+
+            {{-- 6. TAB CONTENT --}}
+            <div class="bg-white dark:bg-slate-900 overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 rounded-3xl transition-colors duration-300 mt-6">
                 <div class="p-8">
-                    <h3 id="logbook-section" class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-3 scroll-mt-24 transition-colors">
-                        <span class="w-2 h-7 bg-red-600 rounded-full shadow-lg shadow-red-500/20"></span>
-                        Riwayat Logbook Harian
-                    </h3>
-                    
-                    <div class="overflow-hidden rounded-2xl border border-slate-100 dark:border-slate-800 transition-colors">
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200 dark:divide-slate-800">
-                            <thead class="bg-gray-50 dark:bg-slate-950/50 transition-colors">
-                                <tr>
-                                    <th scope="col" class="px-6 py-4 text-left text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-32">Tanggal</th>
-                                    <th scope="col" class="px-6 py-4 text-left text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors">Judul Aktivitas</th>
-                                    <th scope="col" class="px-6 py-4 text-center text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-40">Status</th>
-                                    <th scope="col" class="px-6 py-4 text-center text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest transition-colors w-48">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white dark:bg-slate-900 divide-y divide-gray-200 dark:divide-slate-800 transition-colors">
-                                @forelse($internship->dailyLogbooks as $logbook)
-                                <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
-                                    <td class="px-6 py-5 whitespace-nowrap group">
-                                        <div class="flex flex-col">
-                                            <span class="text-xs font-black text-slate-800 dark:text-slate-200 transition-colors">{{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('d M Y') }}</span>
-                                            <span class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mt-0.5">{{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('l') }}</span>
+                
+                    {{-- TAB 1: LOGBOOK --}}
+                    <div x-show="activeTab === 'logbook'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                        <h3 id="logbook-section" class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-3 transition-colors">
+                            <span class="w-2 h-7 bg-red-600 rounded-full shadow-lg shadow-red-500/20"></span>
+                            Riwayat Logbook Harian
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            @forelse($internship->dailyLogbooks as $logbook)
+                            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[1.25rem] p-5 sm:p-6 transition-all shadow-sm hover:shadow-md">
+                                <div class="flex flex-col md:flex-row md:items-center gap-5 sm:gap-6">
+                                    <!-- Date Block -->
+                                    <div class="shrink-0 md:w-32 border-l-4 border-red-500 pl-4">
+                                        <span class="block text-sm font-black text-slate-800 dark:text-slate-100">{{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('d M Y') }}</span>
+                                        <span class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">{{ \Carbon\Carbon::parse($logbook->date)->translatedFormat('l') }}</span>
+                                    </div>
+                                    
+                                    <!-- Info Block -->
+                                    <div class="grow flex flex-col gap-2 border-t md:border-t-0 md:border-l border-slate-100 dark:border-slate-800 pt-4 md:pt-0 md:pl-6">
+                                        <div class="flex items-center gap-3">
+                                            @if(\Carbon\Carbon::parse($logbook->date)->isToday())
+                                                <span class="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-500 px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border border-red-200/50 dark:border-red-500/20">Hari ini</span>
+                                            @endif
+                                            @if($logbook->evidence)
+                                                <a href="{{ Storage::url($logbook->evidence) }}" target="_blank" class="text-[9px] font-black text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-1.5 uppercase tracking-widest bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 px-2.5 py-1 rounded-md">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32a1.5 1.5 0 01-2.121-2.121l10.94-10.94" /></svg>
+                                                    Lihat Bukti
+                                                </a>
+                                            @endif
                                         </div>
-                                    </td>
-                                    <td class="px-6 py-5">
-                                        <div class="flex flex-col gap-1.5">
-                                            <span class="text-sm font-bold text-slate-700 dark:text-slate-200 line-clamp-1 transition-colors">{{ $logbook->title ?? 'Tanpa Judul' }}</span>
-                                            <div class="flex items-center gap-2">
-                                                 <button type="button" 
-                                                    @click="selectedLogbook = { 
-                                                       name: '{{ addslashes($internship->student->name) }}', 
-                                                       title: '{{ addslashes($logbook->title) }}',
-                                                       date: '{{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}', 
-                                                       activity: {{ json_encode($logbook->activity) }},
-                                                       evidence: {{ $logbook->evidence ? "'" . Storage::url($logbook->evidence) . "'" : 'null' }}
-                                                    }; showModal = true"
-                                                    class="text-[9px] font-black text-slate-400 hover:text-red-600 transition-all flex items-center gap-1 uppercase tracking-widest group/btn">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3 group-hover/btn:scale-110 transition-transform"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m5.231 13.481L15 17.25m-4.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9zm3.75 11.625a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" /></svg>
-                                                    Detail Aktivitas
-                                                </button>
-                                                @if($logbook->evidence)
-                                                    <span class="w-1 h-1 rounded-full bg-slate-300"></span>
-                                                    <a href="{{ Storage::url($logbook->evidence) }}" target="_blank" class="text-[9px] font-black text-slate-400 hover:text-blue-600 transition-all flex items-center gap-1 uppercase tracking-widest">
-                                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32a1.5 1.5 0 01-2.121-2.121l10.94-10.94" /></svg>
-                                                         Lihat Bukti
-                                                    </a>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap text-center">
+                                        <h4 class="text-base font-bold text-slate-700 dark:text-slate-200 mt-0.5 line-clamp-1">{{ $logbook->title ?? 'Tanpa Judul' }}</h4>
+                                        <button type="button" @click="selectedLogbook = { name: '{{ addslashes($internship->student->name) }}', title: '{{ addslashes($logbook->title) }}', date: '{{ \Carbon\Carbon::parse($logbook->date)->format('d M Y') }}', activity: {{ json_encode($logbook->activity) }}, evidence: {{ $logbook->evidence ? "'" . Storage::url($logbook->evidence) . "'" : 'null' }} }; showModal = true" class="text-[11px] font-bold text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors self-start flex items-center gap-1 mt-1 bg-slate-50 hover:bg-red-50 dark:bg-slate-800/50 dark:hover:bg-red-500/10 px-3 py-1.5 rounded-lg border border-transparent hover:border-red-200 dark:hover:border-red-500/30">
+                                            Baca Selengkapnya <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" /></svg>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Status Block -->
+                                    <div class="shrink-0 flex items-center md:flex-col md:items-end justify-between border-t md:border-t-0 border-slate-100 dark:border-slate-800 pt-4 md:pt-0">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 hidden md:block">Status & Aksi</span>
                                         @if($logbook->status == 'pending')
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 font-black text-[9px] uppercase tracking-widest border border-amber-100 dark:border-amber-500/20 shadow-sm">
-                                                Pending
-                                            </span>
-                                        @else
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 font-black text-[9px] uppercase tracking-widest border border-emerald-100 dark:border-amber-500/20 shadow-sm">
-                                                Approved
-                                            </span>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-5 whitespace-nowrap text-center">
-                                        @if($logbook->status == 'pending')
-                                            <form action="{{ route('mentor.logbook.update', $logbook->id) }}" method="POST" class="inline">
-                                                @csrf
-                                                @method('PATCH')
-                                                <input type="hidden" name="status" value="approved">
-                                                <button type="button" data-status="approved" class="btn-action bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black px-5 py-2 rounded-xl text-[9px] transition-all shadow-md active:scale-95 hover:bg-emerald-600 dark:hover:bg-emerald-50 hover:text-white dark:hover:text-emerald-600 uppercase tracking-widest border border-slate-900 dark:border-white hover:border-emerald-600">
-                                                    Setujui
-                                                </button>
-                                            </form>
-                                        @else
-                                            <span class="text-[9px] text-slate-400 font-black uppercase tracking-widest py-2 flex items-center justify-center gap-1.5 opacity-60">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-3.5 h-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-                                                Selesai
-                                            </span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="px-6 py-20 text-center">
-                                        <div class="flex flex-col items-center gap-4">
-                                            <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800 rounded-3xl flex items-center justify-center shadow-inner">
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 text-slate-300 dark:text-slate-600">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                </svg>
+                                            <div class="flex items-center md:flex-col md:items-end w-full md:w-auto justify-between md:justify-start gap-3 md:gap-2">
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 font-black text-[9px] uppercase tracking-widest border border-amber-100 dark:border-amber-500/20 shadow-sm">
+                                                    Pending
+                                                </span>
+                                                <form action="{{ route('mentor.logbook.update', $logbook->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <input type="hidden" name="status" value="approved">
+                                                    <button type="button" data-status="approved" class="btn-action bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black px-4 py-1.5 rounded-lg text-[9px] transition-all shadow-md hover:-translate-y-0.5 hover:shadow-lg hover:bg-emerald-600 dark:hover:bg-emerald-500 hover:text-white dark:hover:text-white uppercase tracking-widest border border-slate-900 dark:border-white hover:border-emerald-600 dark:hover:border-emerald-500">
+                                                        Setujui
+                                                    </button>
+                                                </form>
                                             </div>
-                                            <p class="text-sm font-bold text-slate-400 dark:text-slate-500">Belum ada riwayat logbook yang tersedia.</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                                        @else
+                                            <div class="flex items-center md:flex-col md:items-end w-full md:w-auto justify-between md:justify-start gap-3 md:gap-2">
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 font-black text-[9px] uppercase tracking-widest border border-emerald-100 dark:border-emerald-500/20 shadow-sm">
+                                                    Approved
+                                                </span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center">
+                                <div class="flex flex-col items-center gap-4">
+                                    <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-inner">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-slate-300 dark:text-slate-600">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-bold text-slate-400 dark:text-slate-500">Belum ada riwayat logbook yang tersedia.</p>
+                                </div>
+                            </div>
+                            @endforelse
+                        </div>
                     </div>
+                    
+                    {{-- TAB 2: ABSENSI --}}
+                    <div x-show="activeTab === 'absensi'" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-3 transition-colors">
+                            <span class="w-2 h-7 bg-emerald-500 rounded-full shadow-lg shadow-emerald-500/20"></span>
+                            Riwayat Absensi Hadir
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            @php $attendancesList = $internship->attendances->whereIn('status', ['present', 'late']); @endphp
+                            @forelse($attendancesList as $absen)
+                            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[1.25rem] p-5 sm:p-6 transition-all shadow-sm hover:shadow-md">
+                                <div class="flex flex-col md:flex-row md:items-center gap-5 sm:gap-6">
+                                    <!-- Date Block -->
+                                    <div class="shrink-0 md:w-32 border-l-4 {{ $absen->status === 'late' ? 'border-orange-500' : 'border-emerald-500' }} pl-4">
+                                        <span class="block text-sm font-black text-slate-800 dark:text-slate-100">{{ \Carbon\Carbon::parse($absen->date)->translatedFormat('d M Y') }}</span>
+                                        <span class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">{{ \Carbon\Carbon::parse($absen->date)->translatedFormat('l') }}</span>
+                                    </div>
+                                    
+                                    <!-- Info Block -->
+                                    <div class="grow flex flex-col gap-3 border-t md:border-t-0 md:border-l border-slate-100 dark:border-slate-800 pt-4 md:pt-0 md:pl-6">
+                                        <div class="flex items-center gap-3">
+                                            @if($absen->status === 'late')
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-500 font-black text-[9px] uppercase tracking-widest border border-orange-100 dark:border-orange-500/20 shadow-sm">
+                                                    Telat
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-md bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-500 font-black text-[9px] uppercase tracking-widest border border-emerald-100 dark:border-emerald-500/20 shadow-sm">
+                                                    Hadir
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <div class="flex flex-wrap items-center gap-4">
+                                            <div class="flex flex-col">
+                                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Waktu Masuk</span>
+                                                <span class="text-sm font-bold text-slate-800 dark:text-slate-200 font-mono">{{ $absen->check_in_time ? \Carbon\Carbon::parse($absen->check_in_time)->format('H:i') : '--:--' }}</span>
+                                            </div>
+                                            <div class="w-px h-8 bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
+                                            <div class="flex flex-col">
+                                                <span class="text-[9px] font-black text-slate-400 uppercase tracking-widest">Waktu Keluar</span>
+                                                <span class="text-sm font-bold text-slate-800 dark:text-slate-200 font-mono">{{ $absen->check_out_time ? \Carbon\Carbon::parse($absen->check_out_time)->format('H:i') : '--:--' }}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Status Block -->
+                                    <div class="shrink-0 flex items-center md:flex-col md:items-end justify-between border-t md:border-t-0 border-slate-100 dark:border-slate-800 pt-4 md:pt-0">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 hidden md:block">Lokasi & GPS</span>
+                                        @if($absen->check_in_lat && $absen->check_in_long)
+                                            <a href="https://www.google.com/maps?q={{ $absen->check_in_lat }},{{ $absen->check_in_long }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 font-black text-[9px] uppercase tracking-widest border border-blue-100 dark:border-blue-500/20 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors w-full md:w-auto justify-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5">
+                                                    <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.62.829.799 1.654 1.38 2.274 1.766a11.267 11.267 0 00.758.433l.017.007.006.003.002.001.309.066zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" />
+                                                </svg>
+                                                Peta Lokasi
+                                            </a>
+                                        @else
+                                            <span class="inline-flex text-[9px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-800">Tidak ada info GPS</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center">
+                                <div class="flex flex-col items-center gap-4">
+                                    <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-inner">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-slate-300 dark:text-slate-600">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-bold text-slate-400 dark:text-slate-500">Belum ada riwayat absensi kehadiran.</p>
+                                </div>
+                            </div>
+                            @endforelse
+                        </div>
+                    </div>
+                    
+                    {{-- TAB 3: IZIN / CUTI --}}
+                    <div x-show="activeTab === 'izin'" style="display: none;" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-3 transition-colors">
+                            <span class="w-2 h-7 bg-amber-500 rounded-full shadow-lg shadow-amber-500/20"></span>
+                            Riwayat Pengajuan Cuti / Izin
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            @php $permissionsList = $internship->attendances->where('status', 'permit'); @endphp
+                            @forelse($permissionsList as $permit)
+                            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[1.25rem] p-5 sm:p-6 transition-all shadow-sm hover:shadow-md">
+                                <div class="flex flex-col md:flex-row md:items-center gap-5 sm:gap-6">
+                                    <!-- Date Block -->
+                                    <div class="shrink-0 md:w-32 border-l-4 border-amber-500 pl-4">
+                                        <span class="block text-sm font-black text-slate-800 dark:text-slate-100">{{ \Carbon\Carbon::parse($permit->date)->translatedFormat('d M Y') }}</span>
+                                        <span class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">{{ \Carbon\Carbon::parse($permit->date)->translatedFormat('l') }}</span>
+                                    </div>
+                                    
+                                    <!-- Info Block -->
+                                    <div class="grow flex flex-col gap-2 border-t md:border-t-0 md:border-l border-slate-100 dark:border-slate-800 pt-4 md:pt-0 md:pl-6">
+                                        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                                            <span class="inline-flex items-center w-max px-2.5 py-1 rounded-md bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-500 font-black text-[9px] uppercase tracking-widest border border-amber-100 dark:border-amber-500/20 shadow-sm">
+                                                {{ match($permit->permit_type) {
+                                                    'full' => 'Penuh (Seharian)',
+                                                    'half' => 'Setengah Hari',
+                                                    'temporary' => 'Sementara',
+                                                    default => ucfirst($permit->permit_type ?? 'Izin')
+                                                } }}
+                                            </span>
+                                            @if(in_array($permit->permit_type, ['half', 'temporary']))
+                                                <span class="text-xs font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/50 px-2.5 py-1 rounded-md">
+                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                    {{ $permit->permit_start_time ? \Carbon\Carbon::parse($permit->permit_start_time)->format('H:i') : '-' }} - 
+                                                    {{ $permit->permit_end_time ? \Carbon\Carbon::parse($permit->permit_end_time)->format('H:i') : '-' }}
+                                                </span>
+                                            @else
+                                                <span class="text-[10px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1.5 bg-slate-100 dark:bg-slate-800/50 px-2.5 py-1 rounded-md uppercase tracking-widest">
+                                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                                    Seharian Penuh
+                                                </span>
+                                            @endif
+                                        </div>
+                                        <h4 class="text-base font-bold text-slate-700 dark:text-slate-200 mt-1">{{ $permit->note ?? '-' }}</h4>
+                                    </div>
+                                    
+                                    <!-- Status Block -->
+                                    <div class="shrink-0 flex items-center md:flex-col md:items-end justify-between border-t md:border-t-0 border-slate-100 dark:border-slate-800 pt-4 md:pt-0">
+                                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 hidden md:block">Status Kehadiran</span>
+                                        <span class="inline-flex w-full md:w-auto items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-black text-[10px] uppercase tracking-widest border border-indigo-100 dark:border-indigo-500/20">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                            Absen Terotorisasi
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-3xl p-12 text-center">
+                                <div class="flex flex-col items-center gap-4">
+                                    <div class="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center shadow-inner">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 text-slate-300 dark:text-slate-600">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <p class="text-sm font-bold text-slate-400 dark:text-slate-500">Belum ada riwayat permohonan izin/cuti.</p>
+                                </div>
+                            </div>
+                            @endforelse
+                        </div>
                     </div>
                 </div>
             </div>

@@ -77,109 +77,102 @@
         <div class="grid grid-cols-1 gap-8 items-start" x-data="{ searchQuery: '' }">
             
             <!-- Left: Mentees List (Full width) -->
-            <div class="bg-white dark:bg-slate-900 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.02)] border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col group/mentees transition-all duration-300 hover:shadow-xl">
-                <div class="px-7 py-6 border-b border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 bg-transparent relative z-10 font-sans">
-                <div>
-                    <h3 class="text-xl font-extrabold text-slate-800 dark:text-white tracking-tight">List Intern</h3>
-                    <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">Kelola dan pantau progres dari peserta magang</p>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div class="relative hidden sm:block">
-                        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        <input type="text" x-model="searchQuery" placeholder="Cari Intern..." class="pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg text-sm focus:ring-2 focus:ring-red-500/20 focus:border-red-500 outline-none transition-all dark:text-white w-full sm:w-64">
+            <div class="bg-white dark:bg-[#0B1120] rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 dark:border-slate-800 overflow-hidden flex flex-col group/mentees transition-all duration-300">
+                
+                <!-- Header Component -->
+                <div class="px-8 py-7 border-b border-slate-100 dark:border-slate-800 flex flex-col md:flex-row md:justify-between md:items-center gap-6 bg-transparent relative z-10 font-sans">
+                    <div>
+                        <h3 class="text-xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-3">
+                            List Intern
+                            <span class="px-2.5 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-bold border border-amber-500/20">{{ $internships->count() }}</span>
+                        </h3>
+                        <p class="text-sm font-medium text-slate-500 dark:text-slate-400 mt-1">Kelola dan pantau progres dari peserta magang</p>
                     </div>
-                    <a href="{{ route('mentor.students.index') }}" class="p-2 border border-slate-200 dark:border-slate-800 rounded-lg text-slate-500 hover:text-red-600 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" title="View all Interns">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                    </a>
+                    <div class="flex items-center gap-3">
+                        <div class="relative w-full md:w-auto">
+                            <svg class="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <input type="text" x-model="searchQuery" placeholder="Cari Intern..." class="pl-11 pr-4 py-2.5 bg-slate-50 dark:bg-[#1E293B]/50 border border-slate-200 dark:border-slate-700/50 rounded-xl text-sm font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500/50 outline-none transition-all text-slate-800 dark:text-white w-full md:w-64 placeholder-slate-400 shadow-inner">
+                        </div>
+                        <a href="{{ route('mentor.students.index') }}" class="p-2.5 border border-slate-200 dark:border-slate-700/50 bg-slate-50 dark:bg-[#1E293B]/50 rounded-xl text-slate-400 hover:text-amber-500 dark:hover:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all shadow-sm group" title="Filter / View All">
+                            <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                        </a>
+                    </div>
                 </div>
-            </div>
             
-            <div class="overflow-y-auto flex-1 custom-scrollbar mt-2">
-                <div class="divide-y divide-slate-100 dark:divide-slate-800/60">
-                    @forelse($internships as $internship)
-                        @php
-                            $isSmk = optional(optional($internship->student)->studentProfile)->student_type === 'siswa' || optional(optional($internship->student)->studentProfile)->education_level === 'SMK';
-                            $colorStyles = $isSmk ? 'from-amber-400/20 to-orange-500/20 text-amber-600 dark:text-amber-400 ring-amber-100 dark:ring-amber-500/20' : 'from-emerald-400/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400 ring-emerald-100 dark:ring-emerald-500/20';
-                            $accentColor = $isSmk ? 'amber' : 'emerald';
-                        @endphp
+                <div class="overflow-y-auto flex-1 custom-scrollbar p-3">
+                    <div class="flex flex-col gap-1.5">
+                        @forelse($internships as $internship)
+                            @php
+                                $isSmk = optional(optional($internship->student)->studentProfile)->student_type === 'siswa' || optional(optional($internship->student)->studentProfile)->education_level === 'SMK';
+                                $accentColor = $isSmk ? 'amber' : 'emerald';
+                            @endphp
 
-                        <div x-show="!searchQuery || '{{ strtolower(optional($internship->student)->name ?? '') }}'.includes(searchQuery.toLowerCase())" 
-                             onclick="window.location='{{ route('mentor.students.show', $internship->id) }}'" 
-                             class="p-5 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors group relative cursor-pointer">
-                            
-                            <!-- Edge Hover Indicator -->
-                            <div class="absolute left-0 top-0 bottom-0 w-1 bg-{{ $accentColor }}-500 rounded-r-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                            <!-- Name & Avatar -->
-                            <div class="flex items-center gap-4 min-w-[280px] z-10 w-full lg:w-auto">
-                                <div class="relative flex-shrink-0">
-                                    @if(optional(optional($internship->student)->studentProfile)->photo)
-                                        <img class="h-12 w-12 rounded-full object-cover shadow-inner ring-4 ring-white dark:ring-slate-900 group-hover:scale-105 transition-transform" 
-                                             src="{{ asset('storage/' . $internship->student->studentProfile->photo) }}" 
-                                             alt="{{ optional($internship->student)->name }}">
-                                    @else
-                                        <div class="h-12 w-12 rounded-full bg-gradient-to-tr {{ $colorStyles }} flex items-center justify-center font-black text-xl shadow-inner ring-4 ring-white dark:ring-slate-900 group-hover:scale-105 transition-transform">
-                                            {{ strtoupper(substr(optional($internship->student)->name ?? 'U', 0, 1)) }}
-                                        </div>
-                                    @endif
-                                    
-                                    @if($internship->status == 'active')
-                                        <span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-slate-900 bg-emerald-500"></span>
-                                    @endif
-                                </div>
-                                <div class="min-w-0 pr-4">
-                                    <h3 class="font-bold text-slate-800 dark:text-white text-base leading-tight group-hover:text-{{ $accentColor }}-600 dark:group-hover:text-{{ $accentColor }}-400 transition-colors truncate" title="{{ optional($internship->student)->name }}">
-                                        {{ optional($internship->student)->name ?? 'Unknown Student' }}
-                                    </h3>
-                                    <p class="text-[11px] font-medium text-slate-500 dark:text-slate-400 mt-0.5 truncate" title="{{ optional(optional($internship->student)->studentProfile)->university ?? 'Universitas Tidak Diketahui' }}">
-                                        {{ optional(optional($internship->student)->studentProfile)->university ?? 'Universitas Tidak Diketahui' }}
-                                    </p>
-                                </div>
-                            </div>
-                            
-                            <!-- Contextual Information -->
-                            <div class="flex-1 flex flex-col sm:flex-row items-start sm:items-center justify-start lg:justify-end gap-4 lg:gap-8 w-full lg:w-auto mt-2 lg:mt-0">
+                            <div x-show="!searchQuery || '{{ strtolower(optional($internship->student)->name ?? '') }}'.includes(searchQuery.toLowerCase())" 
+                                onclick="window.location='{{ route('mentor.students.show', $internship->id) }}'" 
+                                class="p-4 mx-2 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 lg:gap-6 bg-transparent hover:bg-white dark:hover:bg-slate-800/60 rounded-[1.25rem] transition-all duration-300 group cursor-pointer border border-transparent hover:border-{{ $accentColor }}-200/50 dark:hover:border-slate-700/60 hover:shadow-[0_12px_40px_-10px_rgb(0,0,0,0.1)] dark:hover:shadow-none hover:-translate-y-0.5 relative z-10 overflow-hidden">
                                 
-                                <!-- Division -->
-                                <div class="min-w-[120px] hidden sm:block relative text-left">
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                                        Divisi
-                                    </p>
-                                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-colors">
+                                <!-- Light Mode Hover Effect Layer -->
+                                <div class="absolute inset-0 bg-gradient-to-r from-{{ $accentColor }}-50/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10 rounded-[1.25rem] dark:hidden"></div>
+                                <div class="absolute left-0 top-1/2 -translate-y-1/2 h-0 w-[4px] bg-gradient-to-b from-{{ $accentColor }}-400 to-{{ $accentColor }}-600 rounded-r-full group-hover:h-3/5 transition-all duration-500 opacity-0 group-hover:opacity-100 dark:hidden"></div>
+                                
+                                <!-- Container Kiri: Avatar & Nama -->
+                                <div class="flex items-center gap-4 lg:gap-5 w-full lg:w-[35%] min-w-[260px]">
+                                    <div class="relative flex-shrink-0">
+                                        @if($internship->student->avatar_url)
+                                            <img class="h-[52px] w-[52px] rounded-full object-cover shadow-inner ring-1 ring-slate-200 dark:ring-slate-700/50 group-hover:scale-105 group-hover:ring-{{ $accentColor }}-500/50 transition-all duration-300" 
+                                                 src="{{ $internship->student->avatar_url }}" 
+                                                 alt="{{ optional($internship->student)->name }}">
+                                        @else
+                                            <div class="h-[52px] w-[52px] rounded-full bg-slate-100 dark:bg-[#1E293B] flex items-center justify-center font-black text-xl text-{{ $accentColor }}-600 dark:text-{{ $accentColor }}-500 border border-slate-200 dark:border-slate-700/80 shadow-inner group-hover:scale-105 group-hover:border-{{ $accentColor }}-500/50 transition-all duration-300">
+                                                {{ strtoupper(substr(optional($internship->student)->name ?? 'U', 0, 1)) }}
+                                            </div>
+                                        @endif
+                                        
+                                        @if($internship->status == 'active')
+                                            <div class="absolute bottom-0 right-0.5 flex h-3.5 w-3.5 items-center justify-center">
+                                                <span class="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping"></span>
+                                                <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500 ring-[2.5px] ring-white dark:ring-[#0B1120] shadow-[0_0_10px_rgba(16,185,129,0.8)]"></span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="min-w-0 pr-2">
+                                        <h3 class="font-bold text-slate-800 dark:text-gray-100 text-[15px] leading-tight group-hover:text-{{ $accentColor }}-600 dark:group-hover:text-{{ $accentColor }}-400 transition-colors truncate" title="{{ optional($internship->student)->name }}">
+                                            {{ optional($internship->student)->name ?? 'Unknown Student' }}
+                                        </h3>
+                                        <p class="text-[12px] font-medium text-slate-500 dark:text-slate-400 mt-1 truncate" title="{{ optional(optional($internship->student)->studentProfile)->university ?? 'Universitas Tidak Diketahui' }}">
+                                            {{ optional(optional($internship->student)->studentProfile)->university ?? 'Universitas Tidak Diketahui' }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <!-- Container Tengah: Divisi -->
+                                <div class="w-full lg:w-[25%] hidden md:block">
+                                    <span class="inline-flex py-1.5 px-3 rounded-lg text-[9px] font-black uppercase tracking-widest bg-slate-50 dark:bg-[#151E32] text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60 shadow-sm leading-snug lg:leading-tight max-w-[200px] xl:max-w-[90%] text-left line-clamp-2">
                                         {{ optional($internship->division)->name ?? 'No Divisi' }}
                                     </span>
                                 </div>
 
-                                <!-- Status -->
-                                <div class="min-w-[100px] hidden md:block relative text-left">
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        Status
-                                    </p>
+                                <!-- Container Tengah: Status -->
+                                <div class="w-full lg:w-[15%] hidden lg:flex items-center">
                                     @if($internship->status == 'active')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800/50 uppercase tracking-widest">
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-extrabold bg-emerald-50 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 uppercase tracking-widest shadow-sm">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)]"></span>
-                                            Aktif
+                                            AKTIF
                                         </span>
                                     @elseif($internship->status == 'finished')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 uppercase tracking-widest">
-                                            Selesai
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-extrabold bg-slate-100 dark:bg-slate-800/80 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 uppercase tracking-widest shadow-sm">
+                                            SELESAI
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-[10px] font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-800/50 uppercase tracking-widest animate-pulse">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            {{ $internship->status }}
+                                        <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[10px] font-extrabold bg-amber-50 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30 uppercase tracking-widest shadow-sm">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)] animate-pulse"></span>
+                                            {{ strtoupper($internship->status) }}
                                         </span>
                                     @endif
                                 </div>
 
-                                <!-- Logbooks -->
-                                <div class="min-w-[130px] hidden sm:block relative text-right lg:text-left">
-                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-bold mb-1.5 flex items-center lg:justify-start justify-end gap-1 opacity-100 lg:opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                        Logbooks
-                                    </p>
+                                <!-- Container Kanan: Progres -->
+                                <div class="w-full lg:w-[25%] flex items-center justify-end gap-5 border-t border-slate-100 dark:border-slate-800/60 lg:border-t-0 pt-4 lg:pt-0">
                                     @php
                                         $startDate = $internship->start_date ? \Carbon\Carbon::parse($internship->start_date) : null;
                                         $endDate = $internship->end_date ? \Carbon\Carbon::parse($internship->end_date) : now();
@@ -187,44 +180,45 @@
                                         $approvedLogbooks = $internship->dailyLogbooks()->where('status', 'approved')->count();
                                         $progress = $totalDates > 0 ? min(100, round(($approvedLogbooks / $totalDates) * 100)) : 0;
                                     @endphp
-                                    <div class="flex flex-col gap-1.5 w-full lg:w-32">
-                                        <div class="flex items-center justify-between text-[10px] font-bold">
-                                            <span class="text-slate-500 dark:text-slate-400">{{ $approvedLogbooks }} / {{ $totalDates }} Disetujui</span>
-                                            <span class="text-{{ $accentColor }}-600 dark:text-{{ $accentColor }}-400">{{ $progress }}%</span>
+                                    <div class="flex flex-col gap-1.5 w-full max-w-[14rem]">
+                                        <div class="flex items-center justify-between text-[11px] font-bold">
+                                            <span class="text-slate-500 dark:text-slate-400 font-medium">{{ $approvedLogbooks }} / {{ $totalDates }} Disetujui</span>
+                                            <span class="text-{{ $accentColor }}-600 dark:text-{{ $accentColor }}-500">{{ $progress }}%</span>
                                         </div>
-                                        <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                                            <div class="bg-{{ $accentColor }}-500 h-1.5 rounded-full transition-all duration-500" style="width: {{ $progress }}%"></div>
+                                        <div class="w-full bg-slate-100 dark:bg-[#1E293B]/70 rounded-full h-1.5 overflow-hidden border border-slate-200 dark:border-slate-700/50 shadow-inner">
+                                            <div class="bg-{{ $accentColor }}-500 dark:bg-{{ $accentColor }}-500 h-full rounded-full transition-all duration-700 relative" style="width: {{ $progress }}%">
+                                                <div class="absolute inset-0 bg-gradient-to-r from-transparent to-white/20"></div>
+                                                <div class="absolute right-0 top-0 h-full w-2 bg-white/40 blur-[1px]"></div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                
-                                <!-- Interactive Icon -->
-                                <div class="hidden sm:flex items-center justify-center w-9 h-9 ml-2 rounded-full text-slate-400 group-hover:text-{{ $accentColor }}-500 group-hover:bg-{{ $accentColor }}-50 dark:group-hover:bg-{{ $accentColor }}-500/10 transition-all border border-transparent group-hover:border-{{ $accentColor }}-200 dark:group-hover:border-{{ $accentColor }}-500/20">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"></path></svg>
+                                    <div class="w-8 h-8 rounded-full border border-transparent group-hover:bg-slate-100 dark:group-hover:bg-[#1E293B]/80 group-hover:border-slate-200 dark:group-hover:border-slate-700/80 flex items-center justify-center transition-all duration-300 flex-shrink-0 hidden sm:flex">
+                                        <svg class="w-4 h-4 text-slate-400 group-hover:text-{{ $accentColor }}-600 dark:group-hover:text-{{ $accentColor }}-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @empty
-                        <div class="px-6 py-16 text-center text-slate-500 dark:text-slate-400">
-                            <div class="flex flex-col items-center justify-center gap-3">
-                                <div class="w-20 h-20 bg-slate-50 dark:bg-slate-800/50 rounded-3xl border border-slate-100 dark:border-slate-800 flex items-center justify-center shadow-inner mb-1">
-                                    <svg class="w-10 h-10 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                </div>
-                                <div>
-                                    <p class="text-base font-bold text-slate-600 dark:text-slate-300">Tidak ada peserta bimbingan</p>
-                                    <p class="text-xs font-medium text-slate-400 mt-0.5">Anda saat ini tidak memiliki peserta magang yang ditugaskan.</p>
+                        @empty
+                            <div class="px-6 py-24 text-center text-slate-500 dark:text-slate-400 bg-slate-50/50 dark:bg-slate-800/20 rounded-2xl border border-dashed border-slate-200 dark:border-slate-700/50 m-2">
+                                <div class="flex flex-col items-center justify-center gap-4">
+                                    <div class="w-24 h-24 bg-white dark:bg-slate-800/80 rounded-[2rem] border border-slate-100 dark:border-slate-700/50 flex items-center justify-center shadow-sm mb-1 group-hover:scale-105 transition-transform duration-500">
+                                        <svg class="w-12 h-12 text-slate-300 dark:text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    </div>
+                                    <div>
+                                        <p class="text-lg font-black text-slate-700 dark:text-slate-200 tracking-tight">Belum Ada Peserta</p>
+                                        <p class="text-sm font-medium text-slate-400 mt-1 max-w-sm mx-auto leading-relaxed">Anda saat ini tidak memiliki peserta magang yang ditugaskan. Setelah admin menugaskan, intern akan otomatis muncul di sini.</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    @endforelse
+                        @endforelse
+                    </div>
                 </div>
+
             </div>
 
     </div>
 
     </div>
 
-    </div>
 
     @push('styles')
     <style>

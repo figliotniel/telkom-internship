@@ -77,7 +77,7 @@
                     <div class="w-full md:w-auto shrink-0 flex flex-col md:flex-row items-center gap-6 md:gap-10 relative z-20 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 p-6 md:p-8 rounded-[2rem] shadow-xl dark:shadow-2xl transition-colors duration-300">
                         <!-- Circular Progress -->
                         <div class="relative w-36 h-36 flex-shrink-0">
-                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                            <svg class="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
                                 <circle cx="50" cy="50" r="45" fill="none" class="stroke-slate-200 dark:stroke-white/10 transition-colors duration-300" stroke-width="6" />
                                 <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6" stroke-dasharray="282.6" stroke-dashoffset="{{ 282.6 - (282.6 * $progressPercent / 100) }}" stroke-linecap="round" class="text-emerald-500 dark:text-emerald-400 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)] dark:drop-shadow-[0_0_8px_rgba(52,211,153,0.8)] transition-all duration-1000 ease-out" />
                             </svg>
@@ -766,48 +766,6 @@
             }
         });
 
-        // Time Pickers
-        flatpickr("#start_time", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true,
-            disableMobile: true,
-            inline: true,
-            onReady: function(selectedDates, dateStr, instance) {
-                instance.calendarContainer.classList.add('theme-time-grid');
-                if(instance.calendarContainer.querySelector('.flatpickr-time')) {
-                    instance.calendarContainer.querySelector('.flatpickr-time').style.borderTop = 'none';
-                }
-                
-                // Explicitly limit input to 2 chars max
-                const hourInput = instance.calendarContainer.querySelector('.flatpickr-hour');
-                const minInput = instance.calendarContainer.querySelector('.flatpickr-minute');
-                if (hourInput) hourInput.setAttribute('maxlength', '2');
-                if (minInput) minInput.setAttribute('maxlength', '2');
-            }
-        });
-
-        flatpickr("#end_time", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true,
-            disableMobile: true,
-            inline: true,
-            onReady: function(selectedDates, dateStr, instance) {
-                instance.calendarContainer.classList.add('theme-time-grid');
-                if(instance.calendarContainer.querySelector('.flatpickr-time')) {
-                    instance.calendarContainer.querySelector('.flatpickr-time').style.borderTop = 'none';
-                }
-                
-                // Explicitly limit input to 2 chars max
-                const hourInput = instance.calendarContainer.querySelector('.flatpickr-hour');
-                const minInput = instance.calendarContainer.querySelector('.flatpickr-minute');
-                if (hourInput) hourInput.setAttribute('maxlength', '2');
-                if (minInput) minInput.setAttribute('maxlength', '2');
-            }
-        });
 
         // Inline Range Calendar for Full Day Permission Modal
         const msPerDay = 1000 * 60 * 60 * 24;

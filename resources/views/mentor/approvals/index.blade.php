@@ -104,9 +104,13 @@
                                             <!-- Group 1: Student Identity -->
                                             <div class="flex items-center gap-4 min-w-[240px] z-10">
                                                 <div class="relative flex-shrink-0 cursor-help" title="Internship: {{ $logbook->internship->division->name ?? 'Unknown Div' }}">
-                                                    <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center font-black text-slate-500 dark:text-slate-300 text-lg shadow-inner ring-2 ring-white dark:ring-slate-900 group-hover:scale-105 transition-transform border border-slate-200/50 dark:border-slate-600">
-                                                        {{ strtoupper(substr($logbook->internship->student->name, 0, 1)) }}
-                                                    </div>
+                                                    @if($logbook->internship->student->avatar_url)
+                                                        <img src="{{ $logbook->internship->student->avatar_url }}" class="h-10 w-10 rounded-full object-cover shadow-inner ring-2 ring-white dark:ring-slate-900 group-hover:scale-105 transition-transform border border-slate-200/50 dark:border-slate-600">
+                                                    @else
+                                                        <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 flex items-center justify-center font-black text-slate-500 dark:text-slate-300 text-lg shadow-inner ring-2 ring-white dark:ring-slate-900 group-hover:scale-105 transition-transform border border-slate-200/50 dark:border-slate-600">
+                                                            {{ strtoupper(substr($logbook->internship->student->name, 0, 1)) }}
+                                                        </div>
+                                                    @endif
                                                 </div>
                                                 <div class="min-w-0 pr-2">
                                                     <h3 class="font-bold text-slate-800 dark:text-white text-[13px] sm:text-sm leading-tight group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors truncate" title="{{ $logbook->internship->student->name }}">

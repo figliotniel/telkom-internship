@@ -36,9 +36,9 @@ class LogbookController extends Controller
             ->latest()
             ->get();
 
-        // Fetch Attendance History (Present)
+        // Fetch Attendance History (Present or Late)
         $attendances = Attendance::where('internship_id', $internship->id)
-            ->where('status', 'present')
+            ->whereIn('status', ['present', 'late'])
             ->latest()
             ->get();
 
@@ -166,8 +166,14 @@ class LogbookController extends Controller
     /**
      * Memperbarui data logbook ke database.
      */
-    public function update(StoreLogbookRequest $request, $id)
+    public function update(Request $request, $id)
     {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'activity' => 'required|string',
+            'evidence' => 'nullable|file|mimes:jpg,png,pdf,jpeg|max:5120',
+        ]);
+
         $internship = Internship::where('student_id', Auth::id())->first();
 
         if (!$internship) {
@@ -209,28 +215,7 @@ class LogbookController extends Controller
      */
     public function destroy($id)
     {
-        $internship = Internship::where('student_id', Auth::id())->first();
-
-        if (!$internship) {
-            return redirect()->route('dashboard')->with('error', 'Data magang tidak ditemukan.');
-        }
-
-        $logbook = DailyLogbook::where('id', $id)
-            ->where('internship_id', $internship->id)
-            ->firstOrFail();
-
-        if ($logbook->status === 'approved') {
-            return redirect()->route('logbooks.index')->with('error', 'Logbook yang sudah disetujui tidak dapat dihapus.');
-        }
-
-        // Hapus evidence jika ada
-        if ($logbook->evidence && Storage::disk('public')->exists($logbook->evidence)) {
-            Storage::disk('public')->delete($logbook->evidence);
-        }
-
-        $logbook->delete();
-
-        return redirect()->route('logbooks.index')->with('success', 'Logbook berhasil dihapus!');
+        return redirect()->route('logbooks.index')->with('error', 'Logbook yang sudah dicatat tidak dapat dihapus.');
     }
 
     /**

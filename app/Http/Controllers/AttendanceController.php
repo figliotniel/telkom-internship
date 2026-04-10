@@ -60,14 +60,22 @@ class AttendanceController extends Controller
             return back()->with('error', 'Kamu sudah check-in hari ini!');
         }
 
-        // Time Validation: 07:00 - 09:00 for normal check-in
+        // Time Validation: Start from 07:00
         $now = Carbon::now();
         $startCheckIn = $now->copy()->hour(7)->minute(0)->second(0);
-        $endCheckIn = $now->copy()->hour(9)->minute(0)->second(0);
+        $onTimeLimit = $now->copy()->hour(9)->minute(0)->second(0);
+        $lateLimit = $now->copy()->hour(17)->minute(0)->second(0); // Cannot check-in after check-out starts
 
-        if (!$now->between($startCheckIn, $endCheckIn)) {
-            return back()->with('error', 'Check-in hanya dapat dilakukan antara pukul 07:00 - 09:00 WIB.');
+        if ($now->lt($startCheckIn)) {
+            return back()->with('error', 'Check-in hanya dapat dilakukan mulai pukul 07:00 WIB.');
         }
+
+        if ($now->gt($lateLimit)) {
+            return back()->with('error', 'Batas waktu check-in telah berakhir (17:00 WIB).');
+        }
+
+        // Determine status based on time
+        $status = $now->lte($onTimeLimit) ? 'present' : 'late';
 
         Attendance::create([
             'internship_id' => $internship->id,
@@ -75,10 +83,11 @@ class AttendanceController extends Controller
             'check_in_time' => Carbon::now()->format('H:i:s'),
             'check_in_lat' => $request->latitude,
             'check_in_long' => $request->longitude,
-            'status' => 'present',
+            'status' => $status,
         ]);
 
-        return back()->with('success', 'Berhasil Check-in! Semangat kerjanya.');
+        $msg = $status === 'late' ? 'Berhasil Check-in! Anda tercatat telat hari ini.' : 'Berhasil Check-in! Semangat kerjanya.';
+        return back()->with('success', $msg);
     }
 
     // Fungsi CHECK-OUT (Pulang)

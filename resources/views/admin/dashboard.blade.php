@@ -122,8 +122,8 @@
                         
                         <div class="flex items-center gap-4">
                             <div class="relative flex-shrink-0">
-                                @if($internship->student->studentProfile && $internship->student->studentProfile->photo)
-                                    <img src="{{ asset('storage/' . $internship->student->studentProfile->photo) }}" class="w-11 h-11 rounded-full border-2 border-white dark:border-slate-800 shadow-sm object-cover">
+                                @if($internship->student->avatar_url)
+                                    <img src="{{ $internship->student->avatar_url }}" class="w-11 h-11 rounded-full border-2 border-white dark:border-slate-800 shadow-sm object-cover">
                                 @else
                                     <div class="w-11 h-11 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold border-2 border-white dark:border-slate-800 shadow-sm">
                                         {{ substr(optional($internship->student)->name ?? 'U', 0, 1) }}

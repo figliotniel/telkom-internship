@@ -1,69 +1,74 @@
 <x-app-layout>
     <div class="py-10 relative">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 relative z-10">
-            <!-- Full Width Container -->
-            <div class="bg-white dark:bg-[#090e17] rounded-[2.5rem] shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-200/60 dark:border-slate-800 overflow-hidden min-h-[85vh] flex flex-col relative pb-28 lg:pb-0">
+        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8 relative z-10 text-slate-800 dark:text-slate-200">
+            <!-- Decorative Backglow - Telkom Red Aurora -->
+            <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-red-600/30 dark:bg-red-600/20 blur-[100px] rounded-full pointer-events-none z-0 animate-pulse" style="animation-duration: 8s;"></div>
+            <div class="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-rose-500/25 dark:bg-orange-600/20 blur-[100px] rounded-full pointer-events-none z-0 animate-pulse" style="animation-duration: 12s; animation-delay: 2s;"></div>
+            <div class="absolute top-[30%] left-[50%] w-[400px] h-[400px] bg-red-500/20 dark:bg-slate-800/40 blur-[100px] rounded-full pointer-events-none z-0 -translate-x-1/2"></div>
+
+            <div class="relative z-10 bg-white/70 dark:bg-[#0f172a]/70 backdrop-blur-3xl rounded-[2.5rem] p-8 md:p-12 shadow-[0_20px_50px_rgba(0,0,0,0.05)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white dark:border-slate-700/50 flex flex-col">
                 
-                <!-- Simple Header Area -->
-                <div class="p-8 sm:px-12 sm:pt-10 sm:pb-6 border-b border-slate-100 dark:border-slate-800/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/50 dark:bg-slate-900/30">
-                    <div>
-                        <h1 class="text-3xl font-black tracking-tight text-slate-800 dark:text-slate-100">Catat Aktivitas</h1>
-                        <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">
-                            Isi detail progres kerja dan lampirkan bukti kegiatan Anda hari ini.
-                        </p>
-                    </div>
-                    <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all shadow-sm hover:shadow-md">
+                <div class="mb-10 text-center relative">
+                    <a href="{{ route('dashboard') }}" class="absolute left-0 top-0 hidden md:flex items-center justify-center gap-2 px-5 py-2.5 bg-white/50 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-700/50 rounded-xl text-xs font-bold uppercase tracking-widest text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 transition-all shadow-sm hover:shadow-md backdrop-blur-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                         Kembali
                     </a>
+                    
+                    <span class="px-4 py-1.5 bg-red-100 dark:bg-red-500/10 text-red-600 dark:text-red-400 text-[10px] font-black uppercase tracking-widest rounded-full border border-red-200/50 dark:border-red-500/20 mb-4 inline-block shadow-sm">Laporan Aktivitas Harian</span>
+                    <h3 class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Tulis Logbook Anda</h3>
                 </div>
 
-                <!-- Form Area -->
-                <div class="p-8 sm:p-12 flex-grow flex flex-col w-full">
-                    <form action="{{ route('logbooks.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col h-full relative" id="logbookForm" x-data="{ loading: false }">
-                        @csrf
+                <form action="{{ route('logbooks.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col h-full relative" id="logbookForm" x-data="{ loading: false }">
+                    @csrf
+                    <div class="space-y-8">
                         
-                        <!-- Header Group -->
-                        <div class="group relative mb-6">
-                            <!-- Date Picker -->
-                            <div class="mb-4 flex items-center">
-                                <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-sm font-bold cursor-pointer transition-colors border border-slate-200 dark:border-slate-700 relative">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <!-- Date & Title Area -->
+                        <div class="flex flex-col md:flex-row gap-6">
+                            <!-- Date Input -->
+                            <div class="relative group shrink-0">
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 ml-1">Tanggal Kegiatan</label>
+                                <div class="relative flex items-center bg-white/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-2xl transition-all hover:border-red-300 dark:hover:border-red-700 focus-within:ring-2 focus-within:ring-red-500/20 overflow-hidden cursor-pointer">
+                                    <div class="bg-red-50 dark:bg-red-500/10 p-4 shrink-0 text-red-500 flex items-center justify-center border-r border-slate-200/50 dark:border-slate-700/50">
+                                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                    </div>
                                     <input id="date" type="text" name="date" value="{{ old('date') }}" required
-                                        class="p-0 border-0 bg-transparent text-sm font-bold text-slate-700 dark:text-slate-200 cursor-pointer focus:ring-0 w-32"
+                                        class="w-full sm:w-48 bg-transparent border-0 px-4 py-3 text-base font-bold text-slate-800 dark:text-white focus:ring-0 cursor-pointer placeholder-slate-400"
                                         placeholder="Pilih Tanggal"
                                         x-data
                                         x-init="flatpickr($el, { dateFormat: 'Y-m-d', altInput: true, altFormat: 'd F Y', locale: 'id', disableMobile: true })" />
-                                    <svg class="w-3 h-3 opacity-50 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                                 </div>
-                                <x-input-error :messages="$errors->get('date')" class="ml-3 mt-0 whitespace-nowrap" />
+                                <x-input-error :messages="$errors->get('date')" class="mt-2" />
                             </div>
 
                             <!-- Title Input -->
-                            <div class="relative">
-                                <input id="title" type="text" name="title" value="{{ old('title') }}" required
-                                    class="w-full bg-transparent border-0 p-0 text-3xl sm:text-4xl lg:text-5xl font-black text-slate-800 dark:text-white placeholder-slate-200 dark:placeholder-slate-800 focus:ring-0 transition-opacity"
-                                    placeholder="Judul aktivitas hari ini" />
+                            <div class="flex-grow">
+                                <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 ml-1">Judul Aktivitas</label>
+                                <div class="relative flex items-center bg-white/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-2xl transition-all hover:border-red-300 dark:hover:border-red-700 focus-within:ring-2 focus-within:ring-red-500/20 overflow-hidden px-4">
+                                    <input id="title" type="text" name="title" value="{{ old('title') }}" required
+                                        class="w-full bg-transparent border-0 py-4 text-lg font-black text-slate-800 dark:text-white placeholder-slate-400 focus:ring-0 transition-opacity"
+                                        placeholder="Ketik judul kegiatan hari ini..." />
+                                </div>
                                 <x-input-error :messages="$errors->get('title')" class="mt-2" />
                             </div>
                         </div>
 
-                        <!-- Divider -->
-                        <div class="w-full h-px bg-gradient-to-r from-slate-200 dark:from-slate-800 to-transparent mb-6"></div>
-
-                        <!-- Rich Text Editor -->
-                        <div class="flex-grow flex flex-col relative z-20 mb-10 min-h-[300px]">
-                            <input id="activity" type="hidden" name="activity" value="{{ old('activity') }}">
-                            <trix-editor input="activity" 
-                                class="trix-content flex-grow w-full border-0 focus:ring-0 p-0 text-slate-700 dark:text-slate-300 leading-relaxed text-lg"
-                                placeholder="Ceritakan bagaimana kegiatan magang Anda hari ini...">
-                            </trix-editor>
+                        <!-- Editor Area -->
+                        <div class="relative">
+                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2 ml-1">Deskripsi Kegiatan Lengkap</label>
+                            
+                            <div class="bg-white/50 dark:bg-slate-800/40 border border-slate-200/60 dark:border-slate-700/50 rounded-[2rem] p-4 transition-all focus-within:border-red-400 dark:focus-within:border-red-500 focus-within:shadow-[0_0_20px_rgba(239,68,68,0.15)] focus-within:bg-white dark:focus-within:bg-slate-800/80">
+                                <input id="activity" type="hidden" name="activity" value="{{ old('activity') }}">
+                                <trix-editor input="activity" 
+                                    class="trix-content w-full border-0 focus:ring-0 p-4 text-slate-700 dark:text-slate-300 leading-relaxed text-[15px] min-h-[300px]"
+                                    placeholder="Ceritakan bagaimana kegiatan magang Anda hari ini... (tekan enter untuk baris baru)">
+                                </trix-editor>
+                            </div>
                             <x-input-error :messages="$errors->get('activity')" class="mt-2" />
                         </div>
 
                         <!-- Attachment Area -->
-                        <div class="mt-auto pt-8 border-t border-slate-100 dark:border-slate-800/50 mb-16 lg:mb-20 relative z-10 w-full overflow-hidden">
-                            <p class="text-xs font-bold text-slate-400 border-none uppercase tracking-widest mb-4">Lampiran Bukti (Opsional)</p>
+                        <div class="relative w-full overflow-hidden pt-4">
+                            <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 border-none uppercase tracking-widest mb-4 ml-1">Lampiran Bukti (Opsional)</p>
                             
                             <div x-data="{ 
                                     isDragging: false,
@@ -86,24 +91,24 @@
                                 @dragover.prevent="isDragging = true" 
                                 @dragleave.prevent="isDragging = false" 
                                 @drop.prevent="handleDrop($event)"
-                                :class="{'border-red-400 bg-red-50/50 dark:border-red-500/50 dark:bg-red-500/10 scale-[1.01]': isDragging, 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#090e17]': !isDragging}"
-                                class="relative w-full border-2 border-dashed rounded-3xl p-8 hover:border-red-300 dark:hover:border-red-500/50 hover:bg-slate-100 dark:hover:bg-slate-900 text-center transition-all group flex flex-col items-center justify-center cursor-pointer" onclick="document.getElementById('evidence').click()">
+                                :class="{'border-red-400 bg-red-50/50 dark:border-red-500/50 dark:bg-red-500/10 scale-[1.01]': isDragging, 'border-slate-200/60 dark:border-slate-700/50 bg-white/50 dark:bg-slate-800/40': !isDragging}"
+                                class="relative w-full border-2 border-dashed rounded-3xl p-8 hover:border-red-300 dark:hover:border-red-500/50 hover:bg-white dark:hover:bg-slate-800/80 text-center transition-all group flex flex-col items-center justify-center cursor-pointer backdrop-blur-sm" onclick="document.getElementById('evidence').click()">
                                 
                                 <input id="evidence" name="evidence" type="file" class="sr-only" onchange="previewFile(this)" accept="image/*,.pdf">
                                 
                                 <div id="dropzone_content" class="flex flex-col items-center pointer-events-none transition-transform duration-300 group-hover:scale-105">
-                                    <div class="w-12 h-12 rounded-full bg-white dark:bg-slate-800 shadow-sm flex items-center justify-center text-slate-400 group-hover:text-red-500 transition-colors mb-3">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
+                                    <div class="w-14 h-14 rounded-full bg-slate-100 dark:bg-slate-900 border border-slate-200/50 dark:border-slate-700/50 shadow-sm flex items-center justify-center text-slate-400 group-hover:text-red-500 transition-colors mb-3">
+                                        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg>
                                     </div>
                                     <h4 class="text-slate-600 dark:text-slate-300 font-bold mb-1 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors text-sm">Tarik gambar PDF / PNG ke sini</h4>
-                                    <p class="text-[10px] text-slate-400 font-medium tracking-wide">Atau klik untuk memilih file (Maks 5MB)</p>
+                                    <p class="text-[10px] text-slate-400 font-medium tracking-wide">Atau klik untuk memilih (Maks 5MB)</p>
                                 </div>
 
-                                <div id="preview_container" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm z-20 transition-all p-4">
-                                    <img id="preview_image" src="" alt="Preview" class="max-h-[120px] max-w-full object-contain drop-shadow-md rounded-lg mb-2">
-                                    <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 max-w-[80%]">
-                                        <p id="fileName" class="text-xs text-slate-700 dark:text-slate-300 font-bold truncate"></p>
-                                        <button type="button" class="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/20 rounded-full p-1 shrink-0" onclick="event.stopPropagation(); document.getElementById('evidence').value = ''; document.getElementById('preview_container').classList.add('hidden'); document.getElementById('dropzone_content').classList.remove('hidden');">
+                                <div id="preview_container" class="hidden absolute inset-0 flex flex-col items-center justify-center bg-white/95 dark:bg-[#0f172a]/95 backdrop-blur-md z-20 transition-all p-4 rounded-3xl">
+                                    <img id="preview_image" src="" alt="Preview" class="max-h-[140px] max-w-full object-contain drop-shadow-md rounded-lg mb-3">
+                                    <div class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 px-4 py-2 rounded-full border border-slate-200 dark:border-slate-700 max-w-[80%] shadow-sm">
+                                        <p id="fileName" class="text-sm text-slate-700 dark:text-slate-300 font-bold truncate"></p>
+                                        <button type="button" class="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/20 rounded-full p-1.5 shrink-0 transition-colors" onclick="event.stopPropagation(); document.getElementById('evidence').value = ''; document.getElementById('preview_container').classList.add('hidden'); document.getElementById('dropzone_content').classList.remove('hidden');">
                                             <svg class="w-4 h-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" /></svg>
                                         </button>
                                     </div>
@@ -111,109 +116,173 @@
                             </div>
                         </div>
 
-                        <!-- Fixed Bottom Submit Bar -->
-                        <div class="absolute bottom-0 left-0 w-full bg-white dark:bg-[#090e17] border-t border-slate-200 dark:border-slate-800 p-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4 z-30 rounded-b-[2.5rem]">
-                            <span class="text-xs text-slate-400 font-medium hidden sm:inline-block">Semua koneksi data terenkripsi aman</span>
-                            <div class="flex items-center gap-3 w-full sm:w-auto">
-                                <a href="{{ route('dashboard') }}" class="w-1/2 sm:w-auto text-center px-6 py-3 rounded-full text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 transition-all text-sm font-bold border border-slate-200 dark:border-slate-700">
-                                    Batal
-                                </a>
-                                <button type="button" @click="confirmSaveLogbook($data)" 
-                                    x-bind:disabled="loading"
-                                    :class="{'opacity-50 cursor-not-allowed': loading, 'hover:shadow-red-600/40 hover:-translate-y-0.5': !loading}"
-                                    class="w-1/2 sm:w-auto px-8 py-3 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold shadow-lg shadow-red-600/30 transition-all flex items-center justify-center gap-2 text-sm whitespace-nowrap">
-                                    <span x-show="!loading">Kirim Logbook</span>
-                                    <span x-show="loading" class="flex items-center gap-2">
-                                        <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                                    </span>
-                                </button>
-                            </div>
+                        <!-- Action Bar -->
+                        <div class="pt-6 flex flex-col sm:flex-row items-center justify-center sm:justify-end gap-4">
+                            <a href="{{ route('dashboard') }}" class="w-full sm:w-auto text-center px-8 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 transition-all text-sm font-bold border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
+                                Batal
+                            </a>
+                            <button type="button" @click="confirmSaveLogbook($data)" 
+                                x-bind:disabled="loading"
+                                :class="{'opacity-50 cursor-not-allowed': loading, 'hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(220,38,38,0.3)]': !loading}"
+                                class="w-full sm:w-auto px-10 py-3.5 rounded-2xl font-bold text-white bg-gradient-to-r from-red-600 to-red-500 transition-all flex items-center justify-center gap-3 text-sm uppercase tracking-wider transform">
+                                <span x-show="!loading">Kirim Logbook</span>
+                                <span x-show="loading" class="flex items-center gap-2">
+                                    <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                                    Memproses...
+                                </span>
+                            </button>
                         </div>
-
-                    </form>
-                </div>
+                        
+                    </div>
+                </form>
             </div>
         </div>
     </div>
     
     <style>
-        /* Custom Styling for Seamless Trix "Document" Feel */
+        /* Custom Styling for Option 2 Floating Trix Toolbar */
         trix-editor {
             border: none;
             padding: 0;
             background-color: transparent;
-            font-size: 1.125rem;
+            font-size: 0.9375rem; 
             line-height: 1.8;
-            font-family: 'Inter', sans-serif;
             box-shadow: none;
         }
         .dark trix-editor {
             background-color: transparent;
             color: #f8fafc;
-            border: none;
-            box-shadow: none;
         }
         trix-editor:focus {
             outline: none;
         }
+        
         trix-toolbar {
             position: sticky;
             top: 0;
             z-index: 20;
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
+            background-color: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(8px);
             border: none;
-            border-bottom: 1px solid #f1f5f9;
+            border-bottom: 1px dashed rgba(203, 213, 225, 0.5); /* border-slate-300/50 */
             border-radius: 0;
-            padding: 0.5rem 0;
+            padding: 0.5rem 1rem;
             margin-bottom: 1rem;
+            margin-top: -0.5rem;
+            margin-left: -0.5rem;
+            margin-right: -0.5rem;
             box-shadow: none;
-            width: fit-content;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            align-items: center;
         }
         .dark trix-toolbar {
-            background-color: rgba(9, 14, 23, 0.9);
-            border-bottom-color: #1e293b;
+            background-color: rgba(15, 23, 42, 0.4);
+            border-bottom-color: rgba(51, 65, 85, 0.5);
         }
+        
         trix-toolbar .trix-button-group {
-            border: none;
-            background-color: transparent;
-            margin-bottom: 0;
-            padding: 0;
+            border: none !important;
+            background-color: transparent !important;
+            margin-bottom: 0 !important;
+            padding: 0 !important;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
-        .dark trix-toolbar .trix-button-group {
-            border: none;
-            background-color: transparent;
+        
+        /* Add dividers between button groups natively */
+        trix-toolbar .trix-button-group:not(:last-child)::after {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 1.25rem;
+            background-color: #cbd5e1;
+            margin: 0 0.5rem;
         }
+        .dark trix-toolbar .trix-button-group:not(:last-child)::after {
+            background-color: #334155;
+        }
+
         trix-toolbar .trix-button {
-            border-radius: 0.5rem;
+            border-radius: 0.75rem !important; /* rounded-xl */
             color: #64748b;
-            background: transparent;
-            border: none;
-            transition: all 0.2s;
+            background: transparent !important;
+            border: none !important;
+            transition: all 0.2s !important;
+            padding: 0.5rem !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: auto !important;
+            min-width: 36px;
         }
-        trix-toolbar .trix-button:hover { background-color: #f1f5f9; }
-        .dark trix-toolbar .trix-button { color: #f8fafc; }
-        .dark trix-toolbar .trix-button:hover { background-color: #334155; color: #ffffff; }
-        .dark trix-toolbar .trix-button::before { filter: brightness(0) invert(1); opacity: 0.8; }
-        .dark trix-toolbar .trix-button--active::before { opacity: 1; }
-        trix-toolbar .trix-button--active { background-color: #fee2e2; color: #ef4444; }
-        .dark trix-toolbar .trix-button--active { background-color: #ed1e28; color: #fca5a5; }
+        trix-toolbar .trix-button:hover { background-color: #f1f5f9 !important; color: #dc2626; }
+        .dark trix-toolbar .trix-button { color: #94a3b8; }
+        .dark trix-toolbar .trix-button:hover { background-color: rgba(30, 41, 59, 0.8) !important; color: #fca5a5; }
+        
+        .dark trix-toolbar .trix-button::before { filter: brightness(0) invert(0.8); }
+        .dark trix-toolbar .trix-button--active::before { filter: brightness(0) invert(1); }
+        
+        trix-toolbar .trix-button--active { background-color: #fee2e2 !important; color: #ef4444 !important; }
+        .dark trix-toolbar .trix-button--active { background-color: rgba(239, 68, 68, 0.2) !important; color: #fca5a5 !important; }
+        
         .trix-button-group--file-tools { display: none !important; }
         trix-editor:empty:before { color: #cbd5e1; }
+        .dark trix-editor:empty:before { color: #475569; }
         
-        trix-editor h1 { font-size: 1.5em; font-weight: 800; margin-bottom: 0.5em; line-height: 1.2; color: #0f172a; letter-spacing: -0.025em; }
-        .dark trix-editor h1 { color: #f8fafc; }
-        trix-editor blockquote { border-left: 4px solid #ef4444; padding-left: 1.5rem; color: #475569; font-style: italic; margin: 1.5rem 0; }
-        .dark trix-editor blockquote { border-left-color: #dc2626; color: #94a3b8; }
+        trix-editor h1 { font-size: 1.75em; font-weight: 900; margin-bottom: 0.75em; line-height: 1.2; color: #0f172a; letter-spacing: -0.025em; }
+        .dark trix-editor h1 { color: #fff; }
+        trix-editor blockquote { border-left: 4px solid #ef4444; padding-left: 1.5rem; color: #475569; font-style: italic; margin: 1.5rem 0; background: #fef2f2; padding: 1rem 1.5rem; border-radius: 0 1rem 1rem 0; }
+        .dark trix-editor blockquote { border-left-color: #dc2626; color: #cbd5e1; background: rgba(239, 68, 68, 0.05); }
         trix-editor code { background-color: #f1f5f9; padding: 0.2rem 0.5rem; border-radius: 0.5rem; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 0.9em; color: #dc2626; }
         .dark trix-editor code { background-color: #1e293b; color: #fca5a5; }
         trix-editor pre { background-color: #0f172a; color: #f8fafc; padding: 1.5rem; border-radius: 1rem; overflow-x: auto; margin: 1.5rem 0; font-family: ui-monospace, monospace; border: 1px solid #1e293b; }
-        .dark trix-editor pre { background-color: #020617; border: 1px solid #334155; }
+        .dark trix-editor pre { background-color: #020617; border: 1px solid #1e293b; }
         trix-editor ul, trix-editor ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
         trix-editor li { margin-bottom: 0.5rem; }
+
+        /* Support custom text alignments generated by JS */
+        .text-justify { text-align: justify; }
     </style>
 
     <script>
+        // Custom Trix Configuration for alignment
+        document.addEventListener("trix-initialize", function(event) {
+            Trix.config.blockAttributes.alignLeft = {
+                tagName: "div",
+                class: "text-left"
+            };
+            Trix.config.blockAttributes.alignCenter = {
+                tagName: "div",
+                class: "text-center"
+            };
+            Trix.config.blockAttributes.alignRight = {
+                tagName: "div",
+                class: "text-right"
+            };
+
+            const toolbar = event.target.toolbarElement;
+            const blockGroup = toolbar.querySelector(".trix-button-group--block-tools");
+            
+            // Add custom SVGs for text alignment to the block tools group
+            if(blockGroup && !toolbar.querySelector('[data-trix-attribute="alignLeft"]')) {
+                const alignButtons = `
+                    <button type="button" class="trix-button" data-trix-attribute="alignLeft" title="Rata Kiri" tabindex="-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h10M4 18h16"></path></svg>
+                    </button>
+                    <button type="button" class="trix-button" data-trix-attribute="alignCenter" title="Rata Tengah" tabindex="-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M7 12h10M4 18h16"></path></svg>
+                    </button>
+                    <button type="button" class="trix-button" data-trix-attribute="alignRight" title="Rata Kanan" tabindex="-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M10 12h10M4 18h16"></path></svg>
+                    </button>
+                `;
+                blockGroup.insertAdjacentHTML("beforeend", alignButtons);
+            }
+        });
+
         document.addEventListener("trix-file-accept", function(event) {
             event.preventDefault();
             Swal.fire({
@@ -223,9 +292,9 @@
                 confirmButtonText: 'Baik, saya mengerti',
                 buttonsStyling: false,
                 customClass: {
-                    popup: 'bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-2xl shadow-xl',
-                    title: 'text-slate-900 dark:text-slate-100 font-bold',
-                    htmlContainer: 'text-slate-600 dark:text-slate-400',
+                    popup: 'bg-white dark:bg-[#0f172a] border border-transparent dark:border-slate-800 rounded-3xl shadow-xl',
+                    title: 'text-slate-900 dark:text-slate-100 font-black',
+                    htmlContainer: 'text-slate-500 dark:text-slate-400',
                     confirmButton: 'px-6 py-2.5 mx-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all active:scale-95',
                 }
             });
@@ -276,9 +345,9 @@
                     icon: 'warning',
                     buttonsStyling: false,
                     customClass: {
-                        popup: 'bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-2xl shadow-xl',
-                        title: 'text-slate-900 dark:text-slate-100 font-bold',
-                        htmlContainer: 'text-slate-600 dark:text-slate-400',
+                        popup: 'bg-white dark:bg-[#0f172a] border border-transparent dark:border-slate-800 rounded-3xl shadow-xl',
+                        title: 'text-slate-900 dark:text-slate-100 font-black',
+                        htmlContainer: 'text-slate-500 dark:text-slate-400',
                         confirmButton: 'px-6 py-2.5 mx-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all active:scale-95',
                     }
                 });
@@ -288,7 +357,7 @@
             if (form.reportValidity()) {
                 Swal.fire({
                     title: 'Simpan Logbook?',
-                    text: "Pastikan data sudah benar sebelum dikirimkan.",
+                    text: "Pastikan data kegiatan sudah lengkap dan benar.",
                     icon: 'question',
                     showCancelButton: true,
                     reverseButtons: true,
@@ -296,11 +365,11 @@
                     cancelButtonText: 'Batal',
                     buttonsStyling: false,
                     customClass: {
-                        popup: 'bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-2xl shadow-xl',
-                        title: 'text-slate-900 dark:text-slate-100 font-bold',
-                        htmlContainer: 'text-slate-600 dark:text-slate-400',
+                        popup: 'bg-white dark:bg-[#0f172a] border border-transparent dark:border-slate-800 rounded-3xl shadow-xl',
+                        title: 'text-slate-900 dark:text-slate-100 font-black',
+                        htmlContainer: 'text-slate-500 dark:text-slate-400',
                         confirmButton: 'px-6 py-2.5 mx-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all active:scale-95',
-                        cancelButton: 'px-6 py-2.5 mx-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 font-bold rounded-xl transition-all active:scale-95',
+                        cancelButton: 'px-6 py-2.5 mx-2 bg-slate-200 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 hover:bg-slate-300 dark:hover:bg-slate-700 font-bold rounded-xl transition-all active:scale-95 border border-transparent dark:border-slate-700/50',
                     }
                 }).then((result) => {
                     if (result.isConfirmed) {
@@ -311,9 +380,9 @@
                             didOpen: () => Swal.showLoading(),
                             buttonsStyling: false,
                             customClass: {
-                                popup: 'bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-2xl shadow-xl',
-                                title: 'text-slate-900 dark:text-slate-100 font-bold',
-                                htmlContainer: 'text-slate-600 dark:text-slate-400',
+                                popup: 'bg-white dark:bg-[#0f172a] border border-transparent dark:border-slate-800 rounded-3xl shadow-xl',
+                                title: 'text-slate-900 dark:text-slate-100 font-black',
+                                htmlContainer: 'text-slate-500 dark:text-slate-400',
                             }
                         });
                         alpineData.loading = true;

@@ -1,37 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <meta charset="utf-8">
-    <title>Pengajuan Izin Magang</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifikasi Pengajuan Izin Magang</title>
+    <!--[if mso]>
+    <style type="text/css">
+        body, table, td, a { font-family: Arial, Helvetica, sans-serif !important; }
+    </style>
+    <![endif]-->
 </head>
-<body style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #334155; line-height: 1.6; padding: 30px; background-color: #f8fafc;">
-    <div style="max-width: 600px; margin: 0 auto; background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border: 1px solid #e2e8f0;">
-        <h2 style="color: #0f172a; margin-top: 0; font-size: 24px; font-weight: 800;">Pengajuan Izin Baru</h2>
-        
-        <p style="font-size: 16px; color: #475569;">Halo Bapak/Ibu Mentor,</p>
-        <p style="font-size: 16px; color: #475569;">Terdapat pengajuan izin ketidakhadiran baru dari mahasiswa/siswa magang binaan Anda yang membutuhkan review. Berikut rinciannya:</p>
-        
-        <div style="background-color: #f1f5f9; padding: 20px; border-radius: 8px; margin: 25px 0;">
-            <ul style="list-style: none; padding: 0; margin: 0;">
-                <li style="margin-bottom: 10px;"><strong style="color: #1e293b; display: inline-block; width: 140px;">Nama:</strong> {{ $internUser->name }}</li>
-                <li style="margin-bottom: 10px;"><strong style="color: #1e293b; display: inline-block; width: 140px;">Asal Instansi:</strong> {{ $internUser->studentProfile->institution ?? 'Instansi' }}</li>
-                <li style="margin-bottom: 10px;"><strong style="color: #1e293b; display: inline-block; width: 140px;">Kategori Izin:</strong> {{ $permissionData['permit_type'] === 'full' ? 'Full Day' : 'Sementara' }}</li>
-                <li style="margin-bottom: 10px;"><strong style="color: #1e293b; display: inline-block; width: 140px;">Waktu Pelaksanaan:</strong> {{ $permissionData['duration_text'] }}</li>
-                <li style="margin-bottom: 0;"><strong style="color: #1e293b; display: inline-block; width: 140px; vertical-align: top;">Alasan/Keterangan:</strong> <span style="display: inline-block; width: calc(100% - 150px); vertical-align: top;">{{ $permissionData['reason'] }}</span></li>
-            </ul>
-        </div>
+<body style="margin: 0; padding: 0; background-color: #F3F4F6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="table-layout: fixed; background-color: #F3F4F6; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);">
+                    <!-- Header Accent -->
+                    <tr>
+                        <td style="background-color: #ED1E28; height: 6px;"></td>
+                    </tr>
+                    
+                    <!-- Header Title -->
+                    <tr>
+                        <td style="padding: 40px 40px 20px 40px; text-align: center;">
+                            <h1 style="margin: 0; color: #111827; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">Pengajuan Izin Masuk</h1>
+                            <p style="margin: 8px 0 0 0; color: #6B7280; font-size: 15px;">Dibutuhkan peninjauan persetujuan dari Anda</p>
+                        </td>
+                    </tr>
 
-        <div style="text-align: center; margin: 35px 0;">
-            <a href="{{ route('mentor.dashboard') }}" style="background-color: #e11d48; color: #ffffff; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; font-size: 16px; box-shadow: 0 4px 6px -1px rgba(225, 29, 72, 0.4);">
-                Review Pengajuan di Dashboard
-            </a>
-        </div>
+                    <!-- Body Content -->
+                    <tr>
+                        <td style="padding: 10px 40px 30px 40px;">
+                            <p style="margin: 0 0 20px 0; color: #374151; font-size: 16px; line-height: 1.6;">
+                                Halo <strong>Bapak/Ibu Mentor</strong>,<br><br>
+                                Salah satu peserta magang di bawah bimbingan Anda baru saja mengirimkan permohonan izin ketidakhadiran kerja. Harap tinjau detail pengajuan berikut ini:
+                            </p>
+                            
+                            <!-- Information Table -->
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 8px; margin-bottom: 30px;">
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td width="35%" style="padding: 8px 0; color: #6B7280; font-size: 14px; font-weight: 600;">Nama Lengkap</td>
+                                                <td width="65%" style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 700;">{{ $internUser->name }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #6B7280; font-size: 14px; font-weight: 600; border-top: 1px solid #E5E7EB;">Instansi</td>
+                                                <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 700; border-top: 1px solid #E5E7EB;">{{ $internUser->studentProfile->university ?? ($internUser->studentProfile->institution ?? '-') }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #6B7280; font-size: 14px; font-weight: 600; border-top: 1px solid #E5E7EB;">Jenis Izin</td>
+                                                <td style="padding: 8px 0; border-top: 1px solid #E5E7EB;">
+                                                    <span style="display: inline-block; padding: 4px 10px; background-color: {{ $permissionData['permit_type'] === 'full' ? '#EEF2FF' : '#FFFBEB' }}; color: {{ $permissionData['permit_type'] === 'full' ? '#4F46E5' : '#D97706' }}; font-size: 12px; font-weight: 700; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                        {{ $permissionData['permit_type'] === 'full' ? 'Izin Seharian' : 'Izin Sementara' }}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 8px 0; color: #6B7280; font-size: 14px; font-weight: 600; border-top: 1px solid #E5E7EB;">Waktu Izin</td>
+                                                <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 700; border-top: 1px solid #E5E7EB;">{{ $permissionData['duration_text'] }}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding: 12px 0 8px 0; color: #6B7280; font-size: 14px; font-weight: 600; border-top: 1px solid #E5E7EB; vertical-align: top;">Keterangan</td>
+                                                <td style="padding: 12px 0 8px 0; color: #111827; font-size: 14px; line-height: 1.5; border-top: 1px solid #E5E7EB; vertical-align: top; font-style: italic;">"{{ $permissionData['reason'] }}"</td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
 
-        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin-top: 40px; margin-bottom: 20px;">
-        
-        <p style="font-size: 12px; color: #94a3b8; text-align: center; margin-bottom: 0;">
-            Email ini dikirim secara otomatis oleh Sistem Manajemen Magang Telkom Witel Semarang. Mohon untuk tidak membalas langsung ke alamat email ini.
-        </p>
-    </div>
+                            <!-- Call to Action -->
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td align="center">
+                                        <a href="{{ route('mentor.dashboard') }}" style="display: inline-block; background-color: #ED1E28; color: #ffffff; text-decoration: none; font-size: 15px; font-weight: 700; padding: 14px 32px; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Tinjau di Dashboard Anda</a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="margin: 30px 0 0 0; color: #6B7280; font-size: 14px; line-height: 1.6; text-align: center;">
+                                Silakan akses portal Dashboard Anda untuk melihat riwayat absensi atau menangani izin peserta didik.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #F9FAFB; padding: 24px 40px; border-top: 1px solid #E5E7EB; text-align: center;">
+                            <p style="margin: 0; color: #9CA3AF; font-size: 12px; line-height: 1.6;">
+                                Pesan ini di-generate secara otomatis oleh sistem<br>
+                                <strong>Aplikasi Monitoring Magang Telkom Witel Semarang</strong><br>
+                                © {{ date('Y') }} PT. Telekomunikasi Indonesia, Tbk.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

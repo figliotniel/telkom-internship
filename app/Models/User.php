@@ -12,6 +12,7 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    protected $appends = ['avatar_url'];
 
     /**
      * The attributes that are mass assignable.
@@ -80,6 +81,18 @@ class User extends Authenticatable
     public function mentoredInternships()
     {
         return $this->hasMany(Internship::class , 'mentor_id');
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        $photo = null;
+        if ($this->role === 'student' && $this->studentProfile) {
+            $photo = $this->studentProfile->photo;
+        } elseif ($this->role === 'mentor' && $this->mentorProfile) {
+            $photo = $this->mentorProfile->photo;
+        }
+
+        return $photo ? \Illuminate\Support\Facades\Storage::url($photo) : null;
     }
 
     public function divisions()

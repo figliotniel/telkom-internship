@@ -188,9 +188,9 @@
                             <!-- LEFT: Identity Info -->
                             <div class="flex items-center gap-6 min-w-0">
                                 <div class="relative shrink-0">
-                                    @if($intern->student->studentProfile && $intern->student->studentProfile->photo)
+                                    @if($intern->student->avatar_url)
                                         <div class="w-16 h-16 rounded-[1.5rem] overflow-hidden border border-slate-200 dark:border-slate-800 shadow-sm transition-transform duration-500 group-hover:scale-110">
-                                            <img src="{{ asset('storage/' . $intern->student->studentProfile->photo) }}" class="w-full h-full object-cover">
+                                            <img src="{{ $intern->student->avatar_url }}" class="w-full h-full object-cover">
                                         </div>
                                     @else
                                         <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br from-{{ $divTheme }}-500/20 to-transparent flex items-center justify-center text-2xl font-black text-{{ $divTheme }}-600 dark:text-{{ $divTheme }}-400 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-sm uppercase">

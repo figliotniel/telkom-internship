@@ -60,8 +60,8 @@
 
                 <!-- Photo -->
                 <div class="shrink-0 relative z-10">
-                    @if($profile && $profile->photo)
-                        <img class="h-32 w-32 rounded-3xl object-cover shadow-lg shadow-emerald-500/20 dark:shadow-none border-4 border-white dark:border-slate-800 transition-colors" src="{{ asset('storage/' . $profile->photo) }}" alt="{{ $internship->student->name }}">
+                    @if($internship->student->avatar_url)
+                        <img class="h-32 w-32 rounded-3xl object-cover shadow-lg shadow-emerald-500/20 dark:shadow-none border-4 border-white dark:border-slate-800 transition-colors" src="{{ $internship->student->avatar_url }}" alt="{{ $internship->student->name }}">
                     @else
                         <div class="h-32 w-32 rounded-3xl bg-gradient-to-tr from-emerald-400 to-teal-500 flex items-center justify-center text-white text-5xl font-black shadow-lg shadow-emerald-500/20 dark:shadow-none border-4 border-white dark:border-slate-800 transition-colors">
                             {{ substr($internship->student->name, 0, 1) }}
@@ -395,6 +395,7 @@
                                 <label class="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-2">Status Penetapan</label>
                                 <select name="status" required class="w-full border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 rounded-xl shadow-sm focus:ring-indigo-500 focus:border-indigo-500 font-bold">
                                     <option value="present">Hadir</option>
+                                    <option value="late">Telat</option>
                                     <option value="alpha">Absen</option>
                                     <option value="sick">Sakit</option>
                                     <option value="permit">Izin</option>

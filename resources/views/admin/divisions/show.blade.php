@@ -103,8 +103,8 @@
                             <!-- Profile Header -->
                             <div class="flex items-center gap-4 mb-5 mt-1 pr-20"> <!-- Padding right to prevent overlapping with status badge -->
                                 <div class="relative flex-shrink-0">
-                                    @if($intern->student && $intern->student->studentProfile && $intern->student->studentProfile->photo)
-                                        <img src="{{ asset('storage/' . $intern->student->studentProfile->photo) }}" class="w-12 h-12 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm object-cover ring-2 ring-white dark:ring-slate-900">
+                                    @if($intern->student->avatar_url)
+                                        <img src="{{ $intern->student->avatar_url }}" class="w-12 h-12 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm object-cover ring-2 ring-white dark:ring-slate-900">
                                     @else
                                         <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900 flex items-center justify-center font-bold text-xl text-slate-600 dark:text-slate-300 ring-2 ring-white dark:ring-slate-900 shadow-sm border border-slate-200 dark:border-slate-800">
                                             {{ substr(optional($intern->student)->name ?? 'U', 0, 1) }}

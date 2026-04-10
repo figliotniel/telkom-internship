@@ -172,9 +172,13 @@
                             <!-- LEFT: Profile Info -->
                             <div class="flex items-center gap-6 min-w-0">
                                 <div class="relative shrink-0">
-                                    <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br {{ $config['from'] }} to-transparent border {{ $config['border'] }} flex items-center justify-center text-2xl font-black {{ $config['text'] }} group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-sm">
-                                        {{ strtoupper(substr($user->name, 0, 1)) }}
-                                    </div>
+                                    @if($user->avatar_url)
+                                        <img src="{{ $user->avatar_url }}" class="w-16 h-16 rounded-[1.5rem] object-cover border {{ $config['border'] }} group-hover:scale-110 transition-transform duration-500 shadow-sm">
+                                    @else
+                                        <div class="w-16 h-16 rounded-[1.5rem] bg-gradient-to-br {{ $config['from'] }} to-transparent border {{ $config['border'] }} flex items-center justify-center text-2xl font-black {{ $config['text'] }} group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500 shadow-sm">
+                                            {{ strtoupper(substr($user->name, 0, 1)) }}
+                                        </div>
+                                    @endif
                                     <div class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 rounded-full border-4 border-white dark:border-slate-900 group-hover:animate-pulse shadow-sm"></div>
                                 </div>
                                 <div class="min-w-0 pr-4">
@@ -206,9 +210,13 @@
                                             @php $interns = $user->mentoredInternships->take(3); @endphp
                                             <div class="flex -space-x-3">
                                                 @foreach($interns as $intern)
-                                                    <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-slate-950 flex items-center justify-center text-[10px] font-black text-slate-500 shadow-sm" title="{{ $intern->student->name }}">
-                                                        {{ substr($intern->student->name, 0,1) }}
-                                                    </div>
+                                                    @if($intern->student->avatar_url)
+                                                        <img src="{{ $intern->student->avatar_url }}" class="w-9 h-9 rounded-xl border-2 border-white dark:border-slate-950 object-cover shadow-sm" title="{{ $intern->student->name }}">
+                                                    @else
+                                                        <div class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-white dark:border-slate-950 flex items-center justify-center text-[10px] font-black text-slate-500 shadow-sm" title="{{ $intern->student->name }}">
+                                                            {{ substr($intern->student->name, 0,1) }}
+                                                        </div>
+                                                    @endif
                                                 @endforeach
                                                 @if($user->mentoredInternships->count() > 3)
                                                     <div class="w-9 h-9 rounded-xl bg-[#ed1e28] border-2 border-white dark:border-slate-950 flex items-center justify-center text-[10px] font-black text-white shadow-sm">

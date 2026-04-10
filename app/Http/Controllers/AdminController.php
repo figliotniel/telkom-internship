@@ -815,7 +815,7 @@ class AdminController extends Controller
         $request->validate([
             'internship_id' => 'required|exists:internships,id',
             'date' => 'required|date',
-            'status' => 'required|in:present,sick,permit,alpha',
+            'status' => 'required|in:present,late,sick,permit,alpha',
             'check_in_time' => 'nullable|date_format:H:i',
             'check_out_time' => 'nullable|date_format:H:i',
             'note' => 'nullable|string'
