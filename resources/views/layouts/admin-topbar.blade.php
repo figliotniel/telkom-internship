@@ -18,26 +18,32 @@
                 time: '',
                 updateTime() {
                     const now = new Date();
+                    // Day & Date string
                     this.day = now.toLocaleDateString('id-ID', { weekday: 'long' });
                     this.date = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-                    this.time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+                    
+                    // Manual Time Formatting (Fixes the dot separator issue in some browsers)
+                    const hours = now.getHours().toString().padStart(2, '0');
+                    const minutes = now.getMinutes().toString().padStart(2, '0');
+                    const seconds = now.getSeconds().toString().padStart(2, '0');
+                    this.time = `${hours}:${minutes}:${seconds}`;
                 }
              }"
              x-init="updateTime(); setInterval(() => updateTime(), 1000)">
             
-            <div class="flex items-center gap-4 bg-slate-50/50 dark:bg-slate-800/30 backdrop-blur-sm px-5 py-2 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm group/clock transition-all hover:bg-white dark:hover:bg-slate-800/50">
-                <div class="flex flex-col border-r border-slate-200 dark:border-slate-700 pr-4">
-                    <span x-text="day" class="text-[10px] font-black text-red-600 dark:text-red-500 uppercase tracking-[0.2em] leading-none mb-1"></span>
-                    <span x-text="date" class="text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap leading-none"></span>
+            <div class="flex items-center gap-4 bg-slate-50/50 dark:bg-white/5 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-slate-100 dark:border-white/10 shadow-sm group/clock transition-all hover:bg-white dark:hover:bg-white/10">
+                <div class="flex flex-col border-r border-slate-200 dark:border-white/10 pr-5">
+                    <span x-text="day" class="text-[10px] font-black text-red-600 dark:text-red-500 uppercase tracking-[0.2em] leading-tight mb-0.5"></span>
+                    <span x-text="date" class="text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap leading-tight"></span>
                 </div>
                 
                 <div class="flex items-center gap-3">
-                    <div class="text-2xl font-black text-slate-800 dark:text-white tracking-tighter tabular-nums leading-none flex items-center">
+                    <div class="text-3xl font-black text-slate-800 dark:text-white tracking-tighter tabular-nums leading-none flex items-center">
                         <span x-text="time"></span>
-                        <span class="flex h-2 w-2 relative ml-3">
+                        <div class="flex h-2.5 w-2.5 relative ml-4">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                        </span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.5)]"></span>
+                        </div>
                     </div>
                 </div>
             </div>
