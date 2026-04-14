@@ -1,5 +1,5 @@
 <x-guest-layout>
-    <div x-data="registrationForm" class="w-full max-w-6xl mx-auto my-10 bg-white shadow-2xl rounded-2xl font-sans">
+    <div x-data="registrationFormData()" class="w-full max-w-6xl mx-auto my-10 bg-white shadow-2xl rounded-2xl font-sans">
 
         <!-- Header / Progress -->
         <div class="bg-gray-50 border-b border-gray-100 p-8">
@@ -236,6 +236,7 @@
                             <div>
                                 <x-input-label for="end_date" class="!text-xs text-gray-500" :value="__('Selesai Intern')" />
                                 <div class="relative">
+                                    <p class="absolute -top-6 right-0 text-[10px] font-bold text-red-500 uppercase tracking-tighter">* Minimal 60 Hari</p>
                                     <x-text-input 
                                         type="text" 
                                         name="end_date" 
@@ -514,8 +515,7 @@
     </div>
 
     <script>
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('registrationForm', () => ({
+        window.registrationFormData = () => ({
                 step: 1,
                 studentType: null, // 'mahasiswa' or 'siswa'
                 educationLevel: '',
@@ -721,7 +721,6 @@
                 get isUniversity() {
                      return this.studentType === 'mahasiswa';
                 }
-            }));
-        });
+            });
     </script>
 </x-guest-layout>

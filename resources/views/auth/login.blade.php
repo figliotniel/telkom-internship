@@ -103,9 +103,14 @@
                         @endif
                     </div>
 
-                    <button type="submit" class="w-full p-[14px] bg-gradient-to-br from-[#ff4d4d] to-[#b30000] border-2 border-white/20 text-white font-extrabold rounded-full cursor-pointer shadow-[0_8px_20px_rgba(179,0,0,0.3)] text-base uppercase tracking-[1px] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_12px_25px_rgba(179,0,0,0.4)] hover:border-white/40 active:translate-y-0">
+                    <button type="submit" class="w-full p-[14px] bg-gradient-to-br from-[#ff4d4d] to-[#b30000] border-2 border-white/20 text-white font-extrabold rounded-full cursor-pointer shadow-[0_8px_20px_rgba(179,0,0,0.3)] text-base uppercase tracking-[1px] transition-all duration-300 hover:-translate-y-[2px] hover:shadow-[0_12px_25px_rgba(179,0,0,0.4)] hover:border-white/40 active:translate-y-0 mb-4">
                         LOGIN
                     </button>
+
+                    <p class="text-center text-white/80 text-xs font-semibold">
+                        Belum punya akun? 
+                        <a href="{{ route('register') }}" class="text-white hover:underline hover:text-white transition-colors">Daftar sekarang</a>
+                    </p>
                 </form>
             </div>
 

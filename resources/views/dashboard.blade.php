@@ -404,13 +404,15 @@
                                         <input type="hidden" name="latitude" id="lat_in">
                                         <input type="hidden" name="longitude" id="long_in">
                                         <button type="button" onclick="confirmCheckIn()" class="w-full bg-slate-900 hover:bg-slate-800 dark:bg-white dark:hover:bg-slate-100 text-white dark:text-slate-900 font-semibold py-4 rounded-full transition-all duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.1)] flex justify-between items-center px-6 group">
-                                            <span>Lakukan Presensi</span>
+                                            <span>Lakukan Presensi {{ \Carbon\Carbon::now()->hour >= 9 ? '(Terlambat)' : '' }}</span>
                                             <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                                         </button>
                                     </form>
                                 @else
                                     <div class="w-full mt-auto bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 text-slate-400 font-semibold py-4 rounded-full text-center flex flex-col justify-center items-center cursor-not-allowed">
-                                        <span class="text-sm">Check-In Ditutup (07:00-09:00)</span>
+                                        <span class="text-sm">
+                                            {{ \Carbon\Carbon::now()->hour < 7 ? 'Check-In Belum Dibuka' : 'Check-In Sudah Ditutup' }}
+                                        </span>
                                     </div>
                                 @endif
                                 
@@ -630,8 +632,27 @@
         });
     }
 
-    // 1. Fungsi Konfirmasi CHECK-IN
+    // Geofencing Constants (Kantor Telkom Pahlawan Semarang)
+    const OFFICE_LAT = -6.9941902;
+    const OFFICE_LONG = 110.4216824;
+    const ALLOWED_RADIUS = 150; // meter
 
+    /**
+     * Menghitung jarak antara dua koordinat (Haversine Formula) di JavaScript
+     */
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371000; // Radius bumi dalam meter
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = 
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    // 1. Fungsi Konfirmasi CHECK-IN
     function confirmCheckIn() {
         Swal.fire({
             title: 'Siap untuk Check-In?',
@@ -675,8 +696,30 @@
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 function(position) {
-                    document.getElementById('lat_in').value = position.coords.latitude;
-                    document.getElementById('long_in').value = position.coords.longitude;
+                    const userLat = position.coords.latitude;
+                    const userLong = position.coords.longitude;
+                    
+                    // Hitung jarak ke titik kantor
+                    const distance = calculateDistance(userLat, userLong, OFFICE_LAT, OFFICE_LONG);
+
+                    if (distance > ALLOWED_RADIUS) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Di Luar Radius!',
+                            html: `Anda berada <strong>${Math.round(distance)} meter</strong> dari kantor.<br><br>Presensi hanya dapat dilakukan jika Anda berada dalam radius <strong>${ALLOWED_RADIUS} meter</strong> dari Telkom Pahlawan.`,
+                            buttonsStyling: false,
+                            customClass: {
+                                popup: 'bg-white dark:bg-slate-900 border border-transparent dark:border-slate-800 rounded-2xl shadow-xl',
+                                title: 'text-slate-900 dark:text-slate-100 font-bold',
+                                htmlContainer: 'text-slate-600 dark:text-slate-400',
+                                confirmButton: 'px-6 py-2.5 mx-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-all active:scale-95',
+                            }
+                        });
+                        return;
+                    }
+
+                    document.getElementById('lat_in').value = userLat;
+                    document.getElementById('long_in').value = userLong;
                     document.getElementById('checkInForm').submit();
                 },
                 function(error) {

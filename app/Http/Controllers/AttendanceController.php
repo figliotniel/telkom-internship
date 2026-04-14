@@ -12,6 +12,11 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
+    // Koordinat Kantor Telkom Pahlawan Semarang
+    private const OFFICE_LAT = -6.9941902;
+    private const OFFICE_LONG = 110.4216824;
+    private const ALLOWED_RADIUS = 150; // dalam meter
+
     // Fungsi CHECK-IN (Datang)
     public function checkIn(CheckInRequest $request)
     {
@@ -76,6 +81,18 @@ class AttendanceController extends Controller
 
         // Determine status based on time
         $status = $now->lte($onTimeLimit) ? 'present' : 'late';
+
+        // 3. Geofencing Validation (Backend Security)
+        $distance = $this->calculateDistance(
+            $request->latitude,
+            $request->longitude,
+            self::OFFICE_LAT,
+            self::OFFICE_LONG
+        );
+
+        if ($distance > self::ALLOWED_RADIUS) {
+            return back()->with('error', 'Presensi gagal! Anda terdeteksi berada di luar radius kantor (' . round($distance) . 'm dari titik kantor).');
+        }
 
         Attendance::create([
             'internship_id' => $internship->id,
@@ -292,5 +309,25 @@ class AttendanceController extends Controller
         // If no view exists yet, we can create one.
         // For now, assume we will create 'reports.monthly'
         return view('reports.monthly', compact('internship', 'attendances', 'logbooks', 'month', 'year'));
+    }
+
+    /**
+     * Menghitung jarak antara dua titik koordinat (Haversine Formula)
+     * Output dalam meter.
+     */
+    private function calculateDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371000; // Radius bumi dalam meter
+
+        $latDelta = deg2rad($lat2 - $lat1);
+        $lonDelta = deg2rad($lon2 - $lon1);
+
+        $a = sin($latDelta / 2) * sin($latDelta / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($lonDelta / 2) * sin($lonDelta / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c;
     }
 }

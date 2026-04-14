@@ -19,8 +19,7 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        $divisions = \App\Models\Division::all();
-        return view('auth.register', compact('divisions'));
+        return view('auth.register');
     }
 
     /**
@@ -42,8 +41,19 @@ class RegisteredUserController extends Controller
 
             // Internship Details
             // 'division_id' => ['required', 'exists:divisions,id'], // Removed as per user request
-            'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after:start_date'],
+            'start_date' => ['required', 'date', 'after_or_equal:today'],
+            'end_date' => [
+                'required', 
+                'date', 
+                'after:start_date',
+                function ($attribute, $value, $fail) use ($request) {
+                    $start = \Carbon\Carbon::parse($request->start_date);
+                    $end = \Carbon\Carbon::parse($value);
+                    if ($end->diffInDays($start) < 60) {
+                        $fail('Durasi magang minimal adalah 60 hari (2 bulan).');
+                    }
+                },
+            ],
             'semester' => ['required', 'string'],
             'duration' => ['required', 'string'],
             'reason' => ['required', 'string'],

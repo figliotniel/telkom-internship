@@ -83,10 +83,7 @@ class DashboardController extends Controller
         $attendancePercentage = $totalWorkingDays > 0 ? round(($totalPresent / $totalWorkingDays) * 100) : 0;
 
         // Attendance Window Logic (for buttons visibility)
-        $isCheckInTime = $now->between(
-            $now->copy()->setTime(7, 0),
-            $now->copy()->setTime(9, 0)
-        );
+        $isCheckInTime = $now->hour >= 7 && $now->hour < 17;
         $isCheckOutTime = $now->between(
             $now->copy()->setTime(17, 0),
             $now->copy()->setTime(19, 0)

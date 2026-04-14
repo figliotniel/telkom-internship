@@ -49,16 +49,15 @@
 
                 <!-- Right: Login Button -->
                 <div class="hidden sm:flex items-center gap-4">
-                     @if (Route::has('login'))
+                    @if (Route::has('login'))
                         @auth
                             <a href="{{ url('/dashboard') }}" class="w-full sm:w-auto text-center px-6 py-3 rounded-full text-[16px] font-bold bg-red-600 text-white hover:bg-red-700 transition-colors shadow-lg shadow-red-600/20">Dashboard</a>
                         @else
-                            <a href="{{ route('login') }}" class="flex items-center gap-2.5 px-6 py-2.5 rounded-full border-2 border-gray-200 text-gray-600 hover:text-red-600 hover:border-red-600 hover:bg-white transition-all text-[14px] font-bold uppercase tracking-wider">
-                                Login 
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-4 h-4">
-                                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-                                </svg>
-                            </a>
+                            <div class="flex items-center gap-2">
+                                <a href="{{ route('login') }}" class="flex items-center gap-2.5 px-5 py-2.5 rounded-full border-2 border-gray-200 text-gray-600 hover:text-red-600 hover:border-red-600 hover:bg-white transition-all text-[14px] font-bold uppercase tracking-wider">
+                                    Login 
+                                </a>
+                            </div>
                         @endauth
                     @endif
                 </div>
@@ -72,6 +71,32 @@
                         </svg>
                     </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div x-show="open" 
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 -translate-y-2"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 translate-y-0"
+             x-transition:leave-end="opacity-0 -translate-y-2"
+             class="sm:hidden bg-white border-t border-gray-100 pb-6 shadow-xl" 
+             @click.away="open = false"
+             style="display: none;">
+            <div class="px-4 pt-2 pb-3 space-y-1">
+                <a href="#internship" @click="open = false" class="block px-4 py-3 rounded-xl text-base font-bold text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all">Internship</a>
+                <a href="#berita" @click="open = false" class="block px-4 py-3 rounded-xl text-base font-bold text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all">Berita</a>
+                <a href="#benefit" @click="open = false" class="block px-4 py-3 rounded-xl text-base font-bold text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all">Benefit</a>
+                <a href="#aboutUs" @click="open = false" class="block px-4 py-3 rounded-xl text-base font-bold text-gray-600 hover:text-red-600 hover:bg-red-50 transition-all">About Us</a>
+            </div>
+            <div class="px-4 pt-4 border-t border-gray-100 flex flex-col gap-3">
+                @auth
+                    <a href="{{ url('/dashboard') }}" class="w-full text-center px-6 py-3 rounded-xl text-[16px] font-bold bg-red-600 text-white shadow-lg shadow-red-600/20">Dashboard</a>
+                @else
+                    <a href="{{ route('login') }}" class="w-full text-center px-6 py-3 rounded-xl border-2 border-gray-200 text-gray-600 font-bold uppercase tracking-wider transition-all hover:border-red-600 hover:text-red-600">Login</a>
+                @endauth
             </div>
         </div>
     </nav>
