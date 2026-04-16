@@ -56,7 +56,7 @@ class EvaluationController extends Controller
         }
 
         // Redirect ke detail mahasiswa
-        return redirect()->route('mentor.students.show', $internship->student_id)
+        return redirect()->route('mentor.students.show', $internship->id)
             ->with('success', 'Nilai berhasil disimpan!');
     }
 }

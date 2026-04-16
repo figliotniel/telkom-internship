@@ -42,13 +42,8 @@ class AttendanceController extends Controller
             ->first();
 
         if ($existingAttendance) {
-            // Logic Izin Sementara: Boleh check-in jika jam izin sudah lewat
+            // Logic Izin Sementara: Pekerja dapat check-in kapan saja setelah kembali
             if ($existingAttendance->status === 'pending' && $existingAttendance->permit_type === 'temporary') {
-                $permitEndTime = Carbon::parse($existingAttendance->date . ' ' . $existingAttendance->permit_end_time);
-
-                if (Carbon::now()->lt($permitEndTime)) {
-                    return back()->with('error', 'Anda masih dalam jam izin sementara. Check-in baru bisa dilakukan setelah ' . $permitEndTime->format('H:i'));
-                }
 
                 // Update record yang sudah ada, jangan buat baru
                 $existingAttendance->update([
@@ -130,10 +125,10 @@ class AttendanceController extends Controller
         // Time Validation: 17:00 - 19:00
         $now = Carbon::now();
         $startCheckOut = $now->copy()->hour(17)->minute(0)->second(0);
-        $endCheckOut = $now->copy()->hour(19)->minute(0)->second(0);
+        $endCheckOut = $now->copy()->hour(23)->minute(59)->second(59);
 
         if (!$now->between($startCheckOut, $endCheckOut)) {
-            return back()->with('error', 'Check-out hanya dapat dilakukan antara pukul 17:00 - 19:00 WIB.');
+            return back()->with('error', 'Check-out hanya dapat dilakukan setelah pukul 17:00 WIB.');
         }
 
         // Silent Block: Jika izin full day, jangan lakukan apa-apa
