@@ -105,6 +105,16 @@
                         <textarea id="address" name="address" rows="3" class="w-full rounded-[1.25rem] border-slate-200 dark:border-slate-800 focus:border-red-500 focus:ring-red-500 dark:bg-slate-950 shadow-sm transition-all py-4 px-5 text-slate-700 dark:text-slate-200 font-medium">{{ old('address', $user->studentProfile->address ?? '') }}</textarea>
                         <x-input-error class="mt-2" :messages="$errors->get('address')" />
                     </div>
+
+                    <div class="md:col-span-2">
+                        <x-input-label for="telegram_username" :value="__('Username Telegram')" class="text-slate-600 dark:text-slate-400 font-bold ml-1 mb-2" />
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-5 text-slate-400 font-bold">@</span>
+                            <input id="telegram_username" name="telegram_username" type="text" class="w-full rounded-[1.25rem] border-slate-200 dark:border-slate-800 focus:border-red-500 focus:ring-red-500 dark:bg-slate-950 shadow-sm transition-all py-3 pl-11 pr-5 text-slate-700 dark:text-slate-200 font-medium font-mono" value="{{ old('telegram_username', $user->studentProfile->telegram_username ?? '') }}" placeholder="username" />
+                        </div>
+                        <p class="text-[11px] text-slate-500 ml-1 mt-2 font-medium">Kosongkan jika tidak ada. Isi tanpa awalan '@'.</p>
+                        <x-input-error class="mt-2" :messages="$errors->get('telegram_username')" />
+                    </div>
                 @endif
 
                 @if($user->role === 'mentor')

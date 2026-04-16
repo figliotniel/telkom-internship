@@ -103,6 +103,7 @@ class RegisteredUserController extends Controller
                 'student_type' => $request->student_type,
                 'education_level' => $request->student_type === 'siswa' ? 'SMK' : $request->education_level,
                 'phone_number' => $request->phone ?? null,
+                'telegram_username' => $request->telegram ?? null, // Capture telegram username
                 'address' => $request->address ?? null,
                 'photo' => $photoPath, // Save photo path
             ]);

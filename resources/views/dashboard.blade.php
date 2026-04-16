@@ -62,21 +62,31 @@
                         $endDate = \Carbon\Carbon::parse($internship->end_date)->endOfDay();
                         $now = \Carbon\Carbon::now();
                         
-                        $totalDays = $startDate->diffInDays($endDate);
-                        $totalDays = $totalDays > 0 ? $totalDays : 1;
+                        // Hitung target hari aktif (Senin-Jumat) dari Start s.d End
+                        $totalTargetDays = $startDate->diffInDaysFiltered(function (\Carbon\Carbon $date) {
+                            return !$date->isWeekend();
+                        }, $endDate);
+                        $totalTargetDays = $totalTargetDays > 0 ? $totalTargetDays : 1;
                         
+                        // Hari yang sah diakui progresnya (Masuk + Izin Sah + Sakit)
+                        $accountedDays = $totalPresent + $totalPermit + $totalSick;
+                        
+                        // Set Sisa Waktu & Capaian Akhir
                         if ($now->lt($startDate)) {
-                            $daysPassed = 0;
+                            // Belum mulai (Masa Induksi)
                             $diff = $now->diff($endDate);
+                            $progressPercent = 0;
                         } elseif ($now->gt($endDate)) {
-                            $daysPassed = $totalDays;
+                            // Sudah melebihi waktu akhir
                             $diff = \Carbon\Carbon::now()->diff(\Carbon\Carbon::now()); // 0 interval
+                            // Pastikan jika ada alfa di masa lalu, capainya sesuai akunnya (misal 95%), 
+                            // kalau tidak ada alfa, ya 100%.
+                            $progressPercent = min(100, round(($accountedDays / $totalTargetDays) * 100));
                         } else {
-                            $daysPassed = $startDate->diffInDays($now);
+                            // Sedang berjalan normal
                             $diff = $now->diff($endDate);
+                            $progressPercent = min(100, round(($accountedDays / $totalTargetDays) * 100));
                         }
-                            
-                        $progressPercent = min(100, max(0, round(($daysPassed / $totalDays) * 100)));
                     @endphp
                     <!-- Circular Progressive Timeline Widget (HUD Style) -->
                     <div class="w-full md:w-auto shrink-0 flex flex-col md:flex-row items-center gap-6 md:gap-10 relative z-20 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 p-6 md:p-8 rounded-[2rem] shadow-xl dark:shadow-2xl transition-colors duration-300">
@@ -501,23 +511,34 @@
                                 </div>
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Mentor Pendamping</p>
                                 <h4 class="font-black text-slate-800 dark:text-slate-200 text-xl tracking-tight leading-none mb-1">{{ $internship->mentor->name }}</h4>
-                                <p class="text-sm font-medium text-slate-500 mb-6">{{ $internship->division->name ?? 'Digital Service Division' }}</p>
+                                <p class="text-sm font-medium text-slate-500 mb-2">{{ $internship->division->name ?? 'Digital Service Division' }}</p>
+                                
+                                @if(optional($internship->mentor->mentorProfile)->telegram_username)
+                                <div class="inline-flex items-center justify-center gap-1.5 px-3 py-1 bg-blue-50 dark:bg-blue-500/10 rounded-lg border border-blue-100 dark:border-blue-500/20 mb-6 group-hover:border-blue-200 dark:group-hover:border-blue-500/30 transition-colors">
+                                    <svg class="w-3.5 h-3.5 text-blue-500" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.508-.163-.911-.247-.872-.516.02-.14.24-.28.665-.42 2.607-1.134 4.346-1.884 5.216-2.25 2.478-1.042 2.992-1.22 3.328-1.228z"/></svg>
+                                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400 font-mono">{{ '@' . ltrim($internship->mentor->mentorProfile->telegram_username, '@') }}</span>
+                                </div>
+                                @else
+                                <div class="mb-6"></div>
+                                @endif
                                 
                                 <div class="flex justify-center gap-3 w-full">
                                     <a href="mailto:{{ $internship->mentor->email }}" class="flex-1 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 border border-slate-200/60 dark:border-slate-700" title="Kirim Email">
-                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                                        Email
+                                        <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                                        <span class="hidden sm:inline">Email</span>
                                     </a>
                                     
-                                    @if($internship->mentor->mentorProfile && $internship->mentor->mentorProfile->phone_number)
-                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $internship->mentor->mentorProfile->phone_number) }}" target="_blank" class="w-12 bg-slate-50 dark:bg-slate-800 hover:bg-emerald-50 hover:text-emerald-500 dark:hover:bg-emerald-500/10 dark:hover:text-emerald-400 hover:border-emerald-200 dark:hover:border-emerald-500/30 text-slate-400 rounded-xl flex items-center justify-center transition-colors border border-slate-200/60 dark:border-slate-700" title="Chat WhatsApp">
-                                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5v12h16V6z" /></svg>
+                                    @if(optional($internship->mentor->mentorProfile)->phone_number)
+                                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $internship->mentor->mentorProfile->phone_number) }}" target="_blank" class="flex-1 bg-emerald-50 dark:bg-emerald-900/20 hover:bg-emerald-100 dark:hover:bg-emerald-800/30 text-emerald-600 dark:text-emerald-400 px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 border border-emerald-200/60 dark:border-emerald-700/30" title="Chat WhatsApp">
+                                        <svg class="w-4 h-4 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6zm-2 0l-8 5-8-5v12h16V6z" /></svg>
+                                        <span class="hidden sm:inline">WA</span>
                                     </a>
                                     @endif
 
-                                    @if($internship->mentor->mentorProfile && $internship->mentor->mentorProfile->telegram_username)
-                                    <a href="https://t.me/{{ $internship->mentor->mentorProfile->telegram_username }}" target="_blank" class="w-12 bg-slate-50 dark:bg-slate-800 hover:bg-blue-50 hover:text-blue-500 dark:hover:bg-blue-500/10 dark:hover:text-blue-400 hover:border-blue-200 dark:hover:border-blue-500/30 text-slate-400 rounded-xl flex items-center justify-center transition-colors border border-slate-200/60 dark:border-slate-700" title="Chat Telegram">
-                                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.508-.163-.911-.247-.872-.516.02-.14.24-.28.665-.42 2.607-1.134 4.346-1.884 5.216-2.25 2.478-1.042 2.992-1.22 3.328-1.228z"/></svg>
+                                    @if(optional($internship->mentor->mentorProfile)->telegram_username)
+                                    <a href="https://t.me/{{ ltrim($internship->mentor->mentorProfile->telegram_username, '@') }}" target="_blank" class="flex-1 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-800/30 text-blue-600 dark:text-blue-400 px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-widest transition-colors flex items-center justify-center gap-2 border border-blue-200/60 dark:border-blue-700/30" title="Chat Telegram">
+                                        <svg class="w-4 h-4 text-blue-500" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.508-.163-.911-.247-.872-.516.02-.14.24-.28.665-.42 2.607-1.134 4.346-1.884 5.216-2.25 2.478-1.042 2.992-1.22 3.328-1.228z"/></svg>
+                                        <span class="hidden sm:inline">Tele</span>
                                     </a>
                                     @endif
                                 </div>

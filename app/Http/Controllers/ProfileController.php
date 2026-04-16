@@ -48,6 +48,8 @@ class ProfileController extends Controller
                 $data['phone_number'] = $request->phone_number;
             if ($request->has('address'))
                 $data['address'] = $request->address;
+            if ($request->has('telegram_username'))
+                $data['telegram_username'] = $request->telegram_username;
 
             // Handle Photo Upload
             if ($request->hasFile('photo')) {

@@ -156,6 +156,24 @@
                                     <p class="text-slate-800 dark:text-slate-200 font-mono text-sm font-bold transition-colors">{{ $profile->phone_number ?? '-' }}</p>
                                 </div>
                             </div>
+                            <div class="grid grid-cols-1 gap-4">
+                                <div>
+                                    <p class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest mb-1.5 transition-colors flex items-center gap-1.5">
+                                        <svg class="w-3.5 h-3.5 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.508-.163-.911-.247-.872-.516.02-.14.24-.28.665-.42 2.607-1.134 4.346-1.884 5.216-2.25 2.478-1.042 2.992-1.22 3.328-1.228z"/>
+                                        </svg>
+                                        Username Telegram
+                                    </p>
+                                    @if($profile->telegram_username)
+                                        <a href="https://t.me/{{ ltrim($profile->telegram_username, '@') }}" target="_blank" class="text-blue-500 hover:text-blue-600 font-mono text-sm font-bold transition-colors inline-flex items-center gap-1.5 focus:outline-none">
+                                            {{ '@' . ltrim($profile->telegram_username, '@') }}
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" class="w-3 h-3"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+                                        </a>
+                                    @else
+                                        <p class="text-slate-400 dark:text-slate-500 font-mono text-sm font-bold transition-colors">Belum diisi</p>
+                                    @endif
+                                </div>
+                            </div>
                             <div class="pt-2">
                                 <p class="text-[10px] text-slate-400 dark:text-slate-500 font-extrabold uppercase tracking-widest mb-1.5 flex items-center gap-1.5 transition-colors">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-3.5 h-3.5 text-red-400 dark:text-red-500"><path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 00.281-.14c.186-.096.446-.24.757-.433.62-.384 1.445-.966 2.274-1.765C15.302 14.988 17 12.493 17 9A7 7 0 103 9c0 3.492 1.698 5.988 3.355 7.584a13.731 13.731 0 002.273 1.765 11.842 11.842 0 00.976.544l.062.029.018.008.006.003zM10 11.25a2.25 2.25 0 100-4.5 2.25 2.25 0 000 4.5z" clip-rule="evenodd" /></svg>
