@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup 1: Split Screen Onboarding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased overflow-hidden selection:bg-red-500 selection:text-white">
+    <div class="min-h-screen flex w-full">
+        <!-- Left Side: Splash Graphic (Hidden on mobile) -->
+        <div class="hidden lg:flex lg:w-5/12 xl:w-1/2 relative bg-gradient-to-br from-[#EE2A24] to-[#C81B15] overflow-hidden items-center justify-center p-12">
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
+                <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <path d="M0,0 L100,0 L100,100 Z" fill="url(#grid)" />
+                    <defs>
+                        <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                            <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"/>
+                        </pattern>
+                    </defs>
+                </svg>
+            </div>
+            <div class="absolute -bottom-32 -left-32 w-96 h-96 bg-white/20 blur-3xl rounded-full mix-blend-overlay"></div>
+            <div class="absolute -top-32 -right-32 w-96 h-96 bg-yellow-400/20 blur-3xl rounded-full mix-blend-overlay"></div>
+            
+            <div class="relative z-10 text-white max-w-lg">
+                <div class="flex items-center gap-3 mb-16">
+                    <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg">
+                        <svg class="w-8 h-8 text-[#EE2A24]" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-black tracking-tight leading-none">Magang.</h1>
+                        <p class="text-xs text-white/80 font-bold tracking-widest uppercase">Telkom Indonesia</p>
+                    </div>
+                </div>
+
+                <span class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur border border-white/30 rounded-full text-xs font-bold uppercase tracking-widest mb-6">Tahap Terakhir</span>
+                <h2 class="text-5xl font-black mb-6 leading-tight">Satu Langkah Lagi Menuju<br>Awal Karirmu.</h2>
+                <p class="text-white/80 text-lg leading-relaxed mb-8">
+                    Persiapkan dirimu. Selesaikan administrasi ini untuk membuka kunci ke ekosistem kerja nyata Telkom Indonesia.
+                </p>
+                
+                <div class="flex items-center gap-4 text-sm font-medium text-white/60">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Akses Dashboard akan terbuka setelah statusmu Aktif.
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side: Content Area -->
+        <div class="w-full lg:w-7/12 xl:w-1/2 flex flex-col min-h-screen bg-slate-50 relative">
+            <!-- Top Nav Dummy -->
+            <div class="absolute top-6 right-6 flex items-center justify-end z-50 w-full px-6 gap-3">
+                <button class="px-4 py-2 bg-white border border-slate-200 hover:border-red-500 hover:bg-red-50 text-slate-600 hover:text-red-500 text-sm font-bold rounded-full transition-all shadow-sm">
+                    Keluar &rarr;
+                </button>
+            </div>
+
+            <!-- Main Content Container -->
+            <div class="flex-1 flex items-center justify-center p-8 sm:p-12 lg:p-16 overflow-y-auto w-full">
+                <div class="w-full max-w-xl mx-auto">
+                    <div class="mb-10 text-center lg:text-left mt-8">
+                        <h3 class="text-3xl sm:text-4xl font-black text-slate-800 mb-3 block">Lengkapi Dokumen.</h3>
+                        <p class="text-slate-500 leading-relaxed text-sm sm:text-base">
+                            Pengajuan magangmu diterima. Langkah selanjutnya adalah meninjau dan menandatangani Pakta Integritas sebelum memulai pekerjaanmu.
+                        </p>
+                    </div>
+
+                    <!-- Divisi Info -->
+                    <div class="bg-white border border-slate-200 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 shadow-sm">
+                        <div>
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1 mt-0">Divisi Penempatan</p>
+                            <p class="font-black text-slate-800 text-lg">Digital Tech</p>
+                        </div>
+                        <div class="hidden sm:block w-px h-10 bg-slate-200 mx-4"></div>
+                        <div class="w-full h-px sm:hidden bg-slate-100 my-4"></div>
+                        <div class="sm:text-right">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mb-1 mt-0">Mentor Pendamping</p>
+                            <p class="font-black text-slate-800 text-lg">Bpk. John Doe</p>
+                        </div>
+                    </div>
+
+                    <!-- Peringatan -->
+                    <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl flex items-start gap-3 mb-8 text-left">
+                        <svg class="w-5 h-5 text-amber-600 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <div>
+                            <p class="font-bold text-amber-800 text-sm mb-1">Perhatian Khusus</p>
+                            <p class="text-amber-700 text-xs sm:text-sm">Tulis secara manual nama Divisi: <strong class="text-amber-900">Digital Tech</strong> pada dokumen cetak sebelum dipindai (scan).</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <!-- Step 1 -->
+                        <div class="relative bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="absolute -left-3 -top-3 w-8 h-8 rounded-full bg-[#111] text-white flex items-center justify-center font-black shadow-lg">1</div>
+                            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 ml-2">
+                                <div>
+                                    <h4 class="font-bold text-slate-800">Unduh Format Dokumen</h4>
+                                    <p class="text-xs text-slate-500 mt-1">Dapatkan salinan surat & template pakta.</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                                    <button class="px-4 py-2 bg-slate-100 text-slate-700 font-bold text-[10px] uppercase tracking-wider rounded-lg hover:bg-slate-200 transition-colors">Surat Jawaban</button>
+                                    <button class="px-4 py-2 bg-amber-100 text-amber-700 font-bold text-[10px] uppercase tracking-wider rounded-lg hover:bg-amber-200 transition-colors">Template Pakta</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div class="relative bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+                            <div class="absolute -left-3 -top-3 w-8 h-8 rounded-full bg-[#EE2A24] text-white flex items-center justify-center font-black shadow-lg shadow-red-500/30">2</div>
+                            <div class="ml-2 mb-4">
+                                <h4 class="font-bold text-slate-800">Unggah Pakta Integritas</h4>
+                                <p class="text-xs text-slate-500 mt-1">Hanya format PDF, maksimal 5MB, tertanda tangan riil.</p>
+                            </div>
+                            
+                            <div class="w-full border-2 border-dashed border-slate-300 rounded-xl p-8 flex flex-col items-center justify-center relative cursor-pointer hover:border-amber-400 hover:bg-slate-50 transition-all mb-4">
+                                <div class="inline-flex w-12 h-12 rounded-full bg-white shadow-sm border border-slate-200 items-center justify-center text-slate-400 mb-3">
+                                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                                </div>
+                                <span class="font-bold text-slate-700 block text-sm">Klik atau Seret file kemari</span>
+                            </div>
+
+                            <button class="w-full flex items-center justify-center py-3 bg-[#EE2A24] hover:bg-[#C81B15] text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-red-500/20 active:scale-95">
+                                Unggah Dokumen Pakta &rarr;
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center p-6 text-xs font-medium text-slate-400">
+                &copy; 2026 PT Telkom Indonesia (Persero) Tbk.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

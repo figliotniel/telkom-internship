@@ -58,20 +58,25 @@
                 
                 @if(isset($internship) && $internship->end_date)
                     @php
-                        $endDate = \Carbon\Carbon::parse($internship->end_date);
+                        $startDate = \Carbon\Carbon::parse($internship->start_date)->startOfDay();
+                        $endDate = \Carbon\Carbon::parse($internship->end_date)->endOfDay();
                         $now = \Carbon\Carbon::now();
-                        $diff = $now->diff($endDate);
                         
-                        $totalWorkingDays = $internship->start_date && $internship->end_date 
-                            ? \Carbon\Carbon::parse($internship->start_date)->diffInDaysFiltered(function (\Carbon\Carbon $date) {
-                                return true; // Just simple days count for progress bar
-                            }, $endDate) : 1;
-                        $daysPassed = $internship->start_date 
-                            ? \Carbon\Carbon::parse($internship->start_date)->diffInDaysFiltered(function (\Carbon\Carbon $date) {
-                                return true;
-                            }, $now) : 0;
+                        $totalDays = $startDate->diffInDays($endDate);
+                        $totalDays = $totalDays > 0 ? $totalDays : 1;
+                        
+                        if ($now->lt($startDate)) {
+                            $daysPassed = 0;
+                            $diff = $now->diff($endDate);
+                        } elseif ($now->gt($endDate)) {
+                            $daysPassed = $totalDays;
+                            $diff = \Carbon\Carbon::now()->diff(\Carbon\Carbon::now()); // 0 interval
+                        } else {
+                            $daysPassed = $startDate->diffInDays($now);
+                            $diff = $now->diff($endDate);
+                        }
                             
-                        $progressPercent = $totalWorkingDays > 0 ? min(100, round(($daysPassed / $totalWorkingDays) * 100)) : 0;
+                        $progressPercent = min(100, max(0, round(($daysPassed / $totalDays) * 100)));
                     @endphp
                     <!-- Circular Progressive Timeline Widget (HUD Style) -->
                     <div class="w-full md:w-auto shrink-0 flex flex-col md:flex-row items-center gap-6 md:gap-10 relative z-20 bg-white/40 dark:bg-slate-900/40 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50 p-6 md:p-8 rounded-[2rem] shadow-xl dark:shadow-2xl transition-colors duration-300">
@@ -155,8 +160,8 @@
                         
                         <div class="w-full bg-emerald-100 dark:bg-slate-800/80 rounded-full h-1.5 overflow-hidden border border-transparent">
                             @php
-                                $totalWorkingDays = isset($totalWorkingDays) && $totalWorkingDays > 0 ? $totalWorkingDays : 1;
-                                $presentPercentage = min(100, ($totalPresent / $totalWorkingDays) * 100);
+                                $totalDays = isset($totalDays) && $totalDays > 0 ? $totalDays : 1;
+                                $presentPercentage = min(100, ($totalPresent / $totalDays) * 100);
                             @endphp
                             <div class="bg-gradient-to-r from-emerald-500 to-emerald-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(52,211,153,0.5)]" style="width: {{ $presentPercentage > 0 ? max(2, $presentPercentage) : 0 }}%"></div>
                         </div>
@@ -182,7 +187,7 @@
                         
                         <div class="w-full bg-amber-100 dark:bg-slate-800/80 rounded-full h-1.5 overflow-hidden border border-transparent">
                             @php
-                                $leavePercentage = min(100, (($totalPermit + $totalSick) / max(1, $totalWorkingDays)) * 100);
+                                $leavePercentage = min(100, (($totalPermit + $totalSick) / max(1, $totalDays)) * 100);
                             @endphp
                             <div class="bg-gradient-to-r from-amber-500 to-amber-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(251,191,36,0.5)]" style="width: {{ $leavePercentage > 0 ? max(2, $leavePercentage) : 0 }}%"></div>
                         </div>
@@ -211,7 +216,7 @@
                         
                         <div class="w-full bg-blue-100 dark:bg-slate-800/80 rounded-full h-1.5 overflow-hidden border border-transparent">
                             @php
-                                $logbookPercentage = min(100, ($validLogbooks / max(1, $totalWorkingDays)) * 100);
+                                $logbookPercentage = min(100, ($validLogbooks / max(1, $totalDays)) * 100);
                             @endphp
                             <div class="bg-gradient-to-r from-blue-500 to-blue-400 h-1.5 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]" style="width: {{ $logbookPercentage > 0 ? max(2, $logbookPercentage) : 0 }}%"></div>
                         </div>

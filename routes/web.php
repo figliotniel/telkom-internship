@@ -72,6 +72,9 @@ Route::middleware('auth')->group(function () {
 
         // -- Notification Route --
         Route::post('/notifications/mark-read', [NotificationController::class , 'markAllRead'])->name('notifications.markAllRead');
+        
+        // -- Telegram Onboarding Route --
+        Route::post('/intern/joined-telegram', [DashboardController::class, 'markTelegramJoined'])->name('intern.joinedTelegram');
     });
 
 

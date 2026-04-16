@@ -105,4 +105,17 @@ class DashboardController extends Controller
             'hasTemporaryPermitToday' => $hasTemporaryPermitToday,
         ]);
     }
+
+    /**
+     * Mark that the user has joined the Telegram group via the onboarding link.
+     */
+    public function markTelegramJoined()
+    {
+        $internship = Internship::where('student_id', Auth::id())->first();
+        if ($internship) {
+            $internship->update(['has_joined_telegram' => true]);
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success' => false], 404);
+    }
 }

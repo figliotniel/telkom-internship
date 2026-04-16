@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup 2: Glassmorphism Onboarding</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05), inset 0 0 0 1px rgba(255,255,255,0.4);
+        }
+        .glass-inner {
+            background: rgba(255, 255, 255, 0.9);
+        }
+        /* Animated gradient background */
+        .bg-dynamic {
+            background: linear-gradient(-45deg, #f8f9fa, #e9ecef, #f1f3f5, #ffffff);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* Telkom Colors Blobs */
+        .blob-1 { position: absolute; top: -100px; right: -100px; width: 400px; height: 400px; background: rgba(238, 42, 36, 0.15); filter: blur(50px); border-radius: 50%; z-index: -1; animation: float 6s ease-in-out infinite; }
+        .blob-2 { position: absolute; bottom: -150px; left: -100px; width: 500px; height: 500px; background: rgba(85, 86, 91, 0.12); filter: blur(60px); border-radius: 50%; z-index: -1; animation: float 8s ease-in-out infinite reverse; }
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+    </style>
+</head>
+<body class="bg-dynamic text-[#55565b] antialiased min-h-screen relative flex flex-col items-center justify-center p-4 selection:bg-[#EE2A24] selection:text-white">
+    
+    <div class="blob-1"></div>
+    <div class="blob-2"></div>
+
+    <!-- Top Right Nav -->
+    <div class="absolute top-6 right-6 z-50">
+        <button class="px-5 py-2 glass-inner border border-white/50 text-[#55565b] hover:text-[#EE2A24] text-sm font-bold rounded-full transition-all shadow-md">
+            Keluar &rarr;
+        </button>
+    </div>
+    
+    <!-- Branding -->
+    <div class="absolute top-8 left-8 flex items-center gap-3 group z-50">
+        <div class="relative w-11 h-11 flex items-center justify-center">
+            <div class="absolute inset-0 bg-white/50 rounded-xl blur-md group-hover:blur-xl transition-all duration-300 shadow-xl"></div>
+            <div class="relative w-full h-full bg-white rounded-xl overflow-hidden border border-white/50 flex items-center justify-center shadow-lg group-hover:-translate-y-1 transition-all duration-300">
+                <img src="images/icon-telkom.png" class="w-full h-full object-contain p-1.5 ">
+            </div>
+            <div class="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-white rounded-full border-[3px] border-slate-100 group-hover:animate-pulse"></div>
+        </div>
+        <div class="flex flex-col">
+            <span class="font-extrabold text-2xl tracking-tight text-[#EE2A24] leading-none drop-shadow-sm">Magang<span class="text-red-300">.</span></span>
+            <span class="text-[9px] font-bold text-[#EE2A24]/70 tracking-[0.2em] uppercase mt-1">Monitoring System</span>
+        </div>
+    </div>
+
+    <!-- Centered Glass Card -->
+    <div class="w-full max-w-2xl glass-card rounded-[2.5rem] p-8 md:p-12 relative z-10 mx-auto mt-12 md:mt-0">
+        
+        <div class="text-center mb-10">
+            <h3 class="text-3xl sm:text-4xl font-black text-[#55565b] mb-4 block tracking-tight">Tahap Terakhir.</h3>
+            <p class="text-[#55565b]/80 leading-relaxed text-sm lg:text-base px-4">
+                Lengkapi Pakta Integritas untuk menyelesaikan administrasi dan membuka akses menuju ekosistem kerja nyata Telkom Indonesia.
+            </p>
+        </div>
+
+         <!-- Divisi Info -->
+         <div class="glass-inner rounded-3xl p-6 flex flex-col sm:flex-row items-center justify-between mb-8 shadow-sm">
+            <div class="text-center sm:text-left">
+                <p class="text-[10px] text-[#55565b]/60 font-bold uppercase tracking-widest mb-1 mt-0">Divisi Penempatan</p>
+                <p class="font-black text-[#55565b] text-lg">Internet of Things</p>
+            </div>
+            <div class="w-full h-px sm:w-px sm:h-12 bg-[#55565b]/10 my-4 sm:my-0 mx-4"></div>
+            <div class="text-center sm:text-left">
+                <p class="text-[10px] text-[#55565b]/60 font-bold uppercase tracking-widest mb-1 mt-0">Mentor Utama</p>
+                <p class="font-black text-[#55565b] text-lg">Bpk. Robert Wilson</p>
+            </div>
+        </div>
+
+        <div class="space-y-6">
+            <!-- Step 1 -->
+            <div class="glass-inner rounded-2xl p-6 relative shadow-[0_4px_20px_-5px_rgba(0,0,0,0.05)] border border-white/60">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div class="flex items-center gap-5">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 text-[#55565b] flex items-center justify-center font-black flex-shrink-0">1</div>
+                        <div>
+                            <h4 class="font-bold text-[#55565b]">Unduh Dokumen Syarat</h4>
+                            <p class="text-xs text-[#55565b]/70 mt-1">Dapatkan panduan dan formulir isian.</p>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 ml-14 sm:ml-0 mt-2 sm:mt-0">
+                        <button class="px-4 py-2 bg-white border border-slate-100 text-[#55565b] font-bold text-[10px] uppercase tracking-widest rounded-xl hover:bg-slate-50 transition-colors shadow-sm">Surat Kebijakan</button>
+                        <button class="px-4 py-2 bg-[#EE2A24]/10 border border-[#EE2A24]/20 text-[#EE2A24] font-bold text-[10px] uppercase tracking-widest rounded-xl hover:bg-[#EE2A24]/20 transition-colors shadow-sm">Form Template</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="glass-inner rounded-2xl p-6 relative shadow-[0_4px_20px_-5px_rgba(0,0,0,0.05)] border border-white/60">
+                <div class="flex items-center gap-5 mb-5">
+                    <div class="w-10 h-10 rounded-xl bg-[#EE2A24] text-white shadow-lg shadow-[#EE2A24]/30 flex items-center justify-center font-black flex-shrink-0">2</div>
+                    <div>
+                        <h4 class="font-bold text-[#55565b]">Unggah Pakta Valid</h4>
+                        <p class="text-xs text-[#55565b]/70 mt-1">Upload PDF Max 5MB berserta ttd asli.</p>
+                    </div>
+                </div>
+                
+                <div class="ml-0 sm:ml-14 bg-white/50 border-2 border-dashed border-[#EE2A24]/30 hover:border-[#EE2A24] rounded-xl p-8 flex flex-col items-center justify-center relative cursor-pointer hover:bg-white transition-all mb-4 group">
+                    <div class="inline-flex w-12 h-12 rounded-full bg-white shadow-sm border border-slate-100 items-center justify-center text-[#55565b]/40 mb-3 group-hover:text-[#EE2A24] transition-colors">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                    </div>
+                    <span class="font-bold text-[#55565b]/80 block text-sm">Ketuk untuk Memilih File PDF</span>
+                </div>
+
+                <div class="ml-0 sm:ml-14">
+                    <button class="w-full flex items-center justify-center py-3.5 bg-[#EE2A24] hover:bg-[#C81B15] text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-[#EE2A24]/30 active:scale-95">
+                        <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
+                        Mulai Pengunggahan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer snippet -->
+    <div class="absolute bottom-6 w-full text-center text-[#55565b]/70 font-medium text-xs">
+        Membutuhkan Bantuan? <a href="#" class="text-[#EE2A24] font-bold hover:underline">Hubungi Tim</a>
+    </div>
+
+</body>
+</html>

@@ -210,6 +210,10 @@
         </script>
         @endif
 
+        @if(auth()->check() && auth()->user()->role === 'student' && auth()->user()->internship && auth()->user()->internship->status === 'active' && auth()->user()->internship->telegram_invite_link)
+            @include('components.telegram-onboarding')
+        @endif
+
         @stack('scripts')
     </body>
 </html>

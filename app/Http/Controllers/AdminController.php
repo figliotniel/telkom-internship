@@ -684,6 +684,30 @@ class AdminController extends Controller
             'status' => 'active',
         ]);
 
+        // Generate Telegram Invite Link
+        try {
+            $botToken = env('TELEGRAM_BOT_TOKEN');
+            $groupId = env('TELEGRAM_GROUP_ID');
+            
+            if ($botToken && $groupId) {
+                $response = \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$botToken}/createChatInviteLink", [
+                    'chat_id' => $groupId,
+                    'member_limit' => 1,
+                    'creates_join_request' => false
+                ]);
+
+                if ($response->successful() && isset($response['result']['invite_link'])) {
+                    $internship->update([
+                        'telegram_invite_link' => $response['result']['invite_link']
+                    ]);
+                } else {
+                    \Illuminate\Support\Facades\Log::error('Telegram API Error: ' . $response->body());
+                }
+            }
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to generate Telegram Invite Link: ' . $e->getMessage());
+        }
+
         $inductionData = [
             'date' => $request->induction_date,
             'time' => $request->induction_time,
