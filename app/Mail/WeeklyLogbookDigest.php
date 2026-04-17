@@ -13,12 +13,16 @@ class WeeklyLogbookDigest extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $mentor;
+    public $studentsData;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($mentor, $studentsData)
     {
-        //
+        $this->mentor = $mentor;
+        $this->studentsData = $studentsData;
     }
 
     /**
@@ -27,7 +31,7 @@ class WeeklyLogbookDigest extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Weekly Logbook Digest',
+            subject: 'Pengingat: Evaluasi Logbook Harian Magang',
         );
     }
 
@@ -37,14 +41,16 @@ class WeeklyLogbookDigest extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.weekly_logbook_digest',
+            with: [
+                'mentor' => $this->mentor,
+                'studentsData' => $this->studentsData,
+            ]
         );
     }
 
     /**
      * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {

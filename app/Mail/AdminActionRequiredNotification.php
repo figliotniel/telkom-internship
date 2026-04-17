@@ -13,12 +13,16 @@ class AdminActionRequiredNotification extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $internship;
+    public $type;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($internship, $type)
     {
-        //
+        $this->internship = $internship;
+        $this->type = $type;
     }
 
     /**
@@ -27,7 +31,7 @@ class AdminActionRequiredNotification extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Admin Action Required Notification',
+            subject: 'Pemberitahuan Sistem: Aksi Admin Diperlukan',
         );
     }
 
@@ -37,14 +41,16 @@ class AdminActionRequiredNotification extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.admin_action_required',
+            with: [
+                'internship' => $this->internship,
+                'type' => $this->type,
+            ]
         );
     }
 
     /**
      * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {

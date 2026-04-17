@@ -63,9 +63,9 @@
     </div>
     
     <div class="content">
-        <p>Halo, <strong>{{ $internship->student->name }}</strong>,</p>
+        <p>Halo, <strong>{{ $internship->student?->name ?? 'Mahasiswa' }}</strong>,</p>
         
-        <p>Mentor Anda, <strong>{{ $internship->mentor->name }}</strong>, telah memberikan nilai akhir (*Evaluation*) untuk program magang Anda di divisi <strong>{{ $internship->division->name }}</strong>.</p>
+        <p>Mentor Anda, <strong>{{ $internship->mentor?->name ?? '-' }}</strong>, telah memberikan nilai akhir (*Evaluation*) untuk program magang Anda di divisi <strong>{{ $internship->division?->name ?? '-' }}</strong>.</p>
         
         <div class="score-box">
             <p style="margin: 0;">Nilai Akhir Anda:</p>

@@ -13,12 +13,16 @@ class EvaluationSubmitted extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $internship;
+    public $evaluation;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($internship, $evaluation)
     {
-        //
+        $this->internship = $internship;
+        $this->evaluation = $evaluation;
     }
 
     /**
@@ -27,7 +31,7 @@ class EvaluationSubmitted extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Evaluation Submitted',
+            subject: 'Pemberitahuan: Nilai Magang Telah Keluar',
         );
     }
 
@@ -37,14 +41,16 @@ class EvaluationSubmitted extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'emails.evaluation_submitted',
+            with: [
+                'internship' => $this->internship,
+                'evaluation' => $this->evaluation,
+            ]
         );
     }
 
     /**
      * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
      */
     public function attachments(): array
     {

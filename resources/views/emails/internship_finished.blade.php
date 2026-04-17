@@ -49,11 +49,11 @@
     </div>
     
     <div class="content">
-        <p>Halo, <strong>{{ $internship->student->name }}</strong>,</p>
+        <p>Halo, <strong>{{ $internship->student?->name ?? 'Mahasiswa' }}</strong>,</p>
         
         <p>Selamat! Program magang Anda di <strong>PT Telkom Indonesia (Persero) Tbk</strong> telah resmi dinyatakan selesai (*Finished*).</p>
 
-        <p>Terima kasih atas kontribusi, dedikasi, dan kerja keras Anda selama menjalankan program magang ini di divisi <strong>{{ $internship->division->name }}</strong> bersama Mentor <strong>{{ $internship->mentor->name }}</strong>.</p>
+        <p>Terima kasih atas kontribusi, dedikasi, dan kerja keras Anda selama menjalankan program magang ini di divisi <strong>{{ $internship->division?->name ?? '-' }}</strong> bersama Mentor <strong>{{ $internship->mentor?->name ?? '-' }}</strong>.</p>
         
         <p>Saat ini, sertifikat dan transkrip nilai magang Anda mungkin sudah dapat diunduh. Silakan masuk ke aplikasi Telkom Internship untuk melihat informasi kelulusan Anda dan mengunduh dokumen yang diperlukan pada menu <strong>Documents</strong>.</p>
 

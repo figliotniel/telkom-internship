@@ -5,7 +5,7 @@
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
 
-    <p>Yth. {{ $internship->student->name }},</p>
+    <p>Yth. {{ $internship->student?->name ?? 'Mahasiswa' }},</p>
 
     <p>Terima kasih atas ketertarikan saudara pada program magang PT Telkom Indonesia.</p>
 

@@ -4,14 +4,14 @@
     <title>Magang Diterima</title>
 </head>
 <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-    <h2>Halo, {{ $internship->student->name }}!</h2>
+    <h2>Halo, {{ $internship->student?->name ?? 'Mahasiswa' }}!</h2>
     
     <p>Selamat! Pengajuan magang Anda di <strong>Telkom Witel Jateng Semarang Utara</strong> telah verifikasi dan <strong>DITERIMA</strong>.</p>
     
     <h3>Detail Magang:</h3>
     <ul>
-        <li><strong>Posisi:</strong> {{ $internship->division->name }}</li>
-        <li><strong>Mentor:</strong> {{ $internship->mentor->name ?? 'Akan diinformasikan' }}</li>
+        <li><strong>Posisi:</strong> {{ $internship->division?->name ?? '-' }}</li>
+        <li><strong>Mentor:</strong> {{ $internship->mentor?->name ?? 'Akan diinformasikan' }}</li>
         <li><strong>Tanggal Mulai:</strong> {{ \Carbon\Carbon::parse($internship->start_date)->format('d M Y') }}</li>
         <li><strong>Tanggal Selesai:</strong> {{ \Carbon\Carbon::parse($internship->end_date)->format('d M Y') }}</li>
     </ul>

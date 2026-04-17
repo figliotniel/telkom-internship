@@ -43,11 +43,11 @@
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
                                                 <td width="35%" style="padding: 8px 0; color: #6B7280; font-size: 14px; font-weight: 600;">Nama Lengkap</td>
-                                                <td width="65%" style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 700;">{{ $internUser->name }}</td>
+                                                <td width="65%" style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 700;">{{ $internUser?->name ?? '-' }}</td>
                                             </tr>
                                             <tr>
                                                 <td style="padding: 8px 0; color: #6B7280; font-size: 14px; font-weight: 600; border-top: 1px solid #E5E7EB;">Instansi</td>
-                                                <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 700; border-top: 1px solid #E5E7EB;">{{ $internUser->studentProfile->university ?? ($internUser->studentProfile->institution ?? '-') }}</td>
+                                                <td style="padding: 8px 0; color: #111827; font-size: 14px; font-weight: 700; border-top: 1px solid #E5E7EB;">{{ $internUser?->studentProfile?->university ?? ($internUser?->studentProfile?->institution ?? '-') }}</td>
                                             </tr>
                                             <tr>
                                                 <td style="padding: 8px 0; color: #6B7280; font-size: 14px; font-weight: 600; border-top: 1px solid #E5E7EB;">Jenis Izin</td>

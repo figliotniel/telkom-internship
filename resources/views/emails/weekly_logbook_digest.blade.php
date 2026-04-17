@@ -56,7 +56,7 @@
     </div>
     
     <div class="content">
-        <p>Halo, <strong>{{ $mentor->name }}</strong>,</p>
+        <p>Halo, <strong>{{ $mentor?->name ?? 'Mentor' }}</strong>,</p>
         
         <p>Terdapat logbook harian dari mahasiswa magang bimbingan Anda yang belum dinilai/di-review minggu ini. Berikut adalah rinciannya:</p>
 
