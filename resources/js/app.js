@@ -21,7 +21,8 @@ window.Swal = Swal.mixin({
 Alpine.plugin(intersect);
 Alpine.start();
 
-import "@hotwired/turbo";
+import * as Turbo from "@hotwired/turbo";
+Turbo.setProgressBarDelay(50);
 
 // Re-initialize AOS on every Turbo page load
 document.addEventListener("turbo:load", function () {

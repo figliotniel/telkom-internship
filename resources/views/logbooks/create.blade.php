@@ -18,7 +18,7 @@
                     <h3 class="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Tulis Logbook Anda</h3>
                 </div>
 
-                <form action="{{ route('logbooks.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col h-full relative" id="logbookForm" x-data="{ loading: false }">
+                <form action="{{ route('logbooks.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col h-full relative" id="logbookForm" x-data="{ loading: false }" @submit.prevent="confirmSaveLogbook($data)">
                     @csrf
                     <div class="space-y-8">
                         
@@ -121,7 +121,7 @@
                             <a href="{{ route('dashboard') }}" class="w-full sm:w-auto text-center px-8 py-3.5 rounded-2xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50 hover:text-slate-900 transition-all text-sm font-bold border border-transparent hover:border-slate-200 dark:hover:border-slate-700">
                                 Batal
                             </a>
-                            <button type="button" @click="confirmSaveLogbook($data)" 
+                            <button type="submit" 
                                 x-bind:disabled="loading"
                                 :class="{'opacity-50 cursor-not-allowed': loading, 'hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(220,38,38,0.3)]': !loading}"
                                 class="w-full sm:w-auto px-10 py-3.5 rounded-2xl font-bold text-white bg-gradient-to-r from-red-600 to-red-500 transition-all flex items-center justify-center gap-3 text-sm uppercase tracking-wider transform">
@@ -373,6 +373,7 @@
                     }
                 }).then((result) => {
                     if (result.isConfirmed) {
+                        if (alpineData.loading) return;
                         Swal.fire({
                             title: 'Mengirim...',
                             text: 'Mohon tunggu sebentar',

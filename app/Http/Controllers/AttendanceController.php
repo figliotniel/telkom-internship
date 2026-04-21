@@ -89,14 +89,21 @@ class AttendanceController extends Controller
             return back()->with('error', 'Presensi gagal! Anda terdeteksi berada di luar radius kantor (' . round($distance) . 'm dari titik kantor).');
         }
 
-        Attendance::create([
-            'internship_id' => $internship->id,
-            'date' => $dateCheck,
-            'check_in_time' => Carbon::now()->format('H:i:s'),
-            'check_in_lat' => $request->latitude,
-            'check_in_long' => $request->longitude,
-            'status' => $status,
-        ]);
+        try {
+            Attendance::create([
+                'internship_id' => $internship->id,
+                'date' => $dateCheck,
+                'check_in_time' => Carbon::now()->format('H:i:s'),
+                'check_in_lat' => $request->latitude,
+                'check_in_long' => $request->longitude,
+                'status' => $status,
+            ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000') {
+                return back()->with('error', 'Kamu sudah check-in hari ini!');
+            }
+            throw $e;
+        }
 
         $msg = $status === 'late' ? 'Berhasil Check-in! Anda tercatat telat hari ini.' : 'Berhasil Check-in! Semangat kerjanya.';
         return back()->with('success', $msg);
@@ -217,17 +224,25 @@ class AttendanceController extends Controller
             }
             else {
                 // No attendance exists yet. Create a new one.
-                Attendance::create([
-                    'internship_id' => $internship->id,
-                    'date' => $processDate,
-                    'status' => $request->permit_type === 'full' ? 'permit' : 'pending', // Temporary permit shouldn't mean they took a full day off.
-                    'permit_type' => $request->permit_type,
-                    'permit_start_time' => $request->permit_type === 'temporary' ? $request->start_time : null,
-                    'permit_end_time' => $request->permit_type === 'temporary' ? $request->end_time : null,
-                    'note' => $request->note,
-                    'attachment' => $attachmentPath,
-                ]);
-                $successCount++;
+                try {
+                    Attendance::create([
+                        'internship_id' => $internship->id,
+                        'date' => $processDate,
+                        'status' => $request->permit_type === 'full' ? 'permit' : 'pending', // Temporary permit shouldn't mean they took a full day off.
+                        'permit_type' => $request->permit_type,
+                        'permit_start_time' => $request->permit_type === 'temporary' ? $request->start_time : null,
+                        'permit_end_time' => $request->permit_type === 'temporary' ? $request->end_time : null,
+                        'note' => $request->note,
+                        'attachment' => $attachmentPath,
+                    ]);
+                    $successCount++;
+                } catch (\Illuminate\Database\QueryException $e) {
+                    if ($e->getCode() === '23000') {
+                        $errorDates[] = $processDate;
+                        continue;
+                    }
+                    throw $e;
+                }
             }
         }
 

@@ -32,9 +32,9 @@
              x-init="updateTime(); setInterval(() => updateTime(), 1000)">
             
             <div class="flex items-center gap-4 bg-slate-50/50 dark:bg-white/5 backdrop-blur-md px-5 py-2.5 rounded-2xl border border-slate-100 dark:border-white/10 shadow-sm group/clock transition-all hover:bg-white dark:hover:bg-white/10">
-                <div class="flex flex-col border-r border-slate-200 dark:border-white/10 pr-5">
-                    <span x-text="day" class="text-[10px] font-black text-red-600 dark:text-red-500 uppercase tracking-[0.2em] leading-tight mb-0.5"></span>
-                    <span x-text="date" class="text-xs font-bold text-slate-500 dark:text-slate-400 whitespace-nowrap leading-tight"></span>
+                <div class="flex items-center gap-2 border-r border-slate-200 dark:border-white/10 pr-5">
+                    <span x-text="day + ','" class="text-sm font-black text-red-600 dark:text-red-500 uppercase tracking-widest"></span>
+                    <span x-text="date" class="text-base font-bold text-slate-600 dark:text-slate-400 whitespace-nowrap"></span>
                 </div>
                 
                 <div class="flex items-center gap-3">

@@ -119,14 +119,21 @@ class LogbookController extends Controller
         }
 
         // 4. Simpan ke Database
-        DailyLogbook::create([
-            'internship_id' => $internship->id,
-            'date' => $targetDate,
-            'title' => $request->title,
-            'activity' => $request->activity,
-            'evidence' => $evidencePath,
-            'status' => 'pending', // Default status menunggu persetujuan mentor
-        ]);
+        try {
+            DailyLogbook::create([
+                'internship_id' => $internship->id,
+                'date' => $targetDate,
+                'title' => $request->title,
+                'activity' => $request->activity,
+                'evidence' => $evidencePath,
+                'status' => 'pending', // Default status menunggu persetujuan mentor
+            ]);
+        } catch (\Illuminate\Database\QueryException $e) {
+            if ($e->getCode() === '23000') { // Integrity constraint violation
+                return back()->with('error', 'Logbook untuk tanggal tersebut sudah ada.');
+            }
+            throw $e;
+        }
 
         return redirect()->route('logbooks.index')->with('success', 'Logbook berhasil disimpan!');
     }

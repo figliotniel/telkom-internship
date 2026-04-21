@@ -477,21 +477,18 @@
                             <!-- SECONDARY LINKS LOGIC (Izin) -->
                             <div class="flex flex-col gap-3 mt-6 border-t border-slate-100 dark:border-slate-800/80 pt-5">
                                 @if((!$todayAttendance || ($todayAttendance && !$todayAttendance->check_out_time)) && (!isset($todayAttendance->permit_type) || $todayAttendance->permit_type !== 'full'))
-                                    
                                     <button type="button" @click="{{ $hasTemporaryPermitToday ? 'showDuplicatePermitError()' : '$dispatch(\'open-permission-modal\')' }}" class="flex justify-between items-center text-sm font-medium {{ $hasTemporaryPermitToday ? 'text-slate-300 dark:text-slate-700 cursor-not-allowed' : 'text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 group/link' }} transition-colors py-1">
                                         <span>Ajukan Izin Sementara</span>
                                         @if(!$hasTemporaryPermitToday)
                                         <svg class="w-3.5 h-3.5 opacity-0 group-hover/link:opacity-100 transform -translate-x-2 group-hover/link:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
                                         @endif
                                     </button>
-                                    
-                                    @if(!$todayAttendance)
-                                    <button type="button" @click="$dispatch('open-full-day-permission-modal')" class="flex justify-between items-center text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group/link py-1">
-                                        <span>Ajukan Izin Seharian</span>
-                                        <svg class="w-3.5 h-3.5 opacity-0 group-hover/link:opacity-100 transform -translate-x-2 group-hover/link:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
-                                    </button>
-                                    @endif
                                 @endif
+                                
+                                <button type="button" @click="$dispatch('open-full-day-permission-modal')" class="flex justify-between items-center text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 transition-colors group/link py-1">
+                                    <span>Ajukan Izin Seharian</span>
+                                    <svg class="w-3.5 h-3.5 opacity-0 group-hover/link:opacity-100 transform -translate-x-2 group-hover/link:translate-x-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path></svg>
+                                </button>
                             </div>
 
                         </div>
