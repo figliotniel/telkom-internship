@@ -120,7 +120,13 @@ return [
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
-        'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom App Configurations
+    |--------------------------------------------------------------------------
+    */
+    'pakta_integritas_link' => env('PAKTA_INTEGRITAS_LINK', 'https://docs.google.com/document/d/1MYswMj78AfqPH9yBIeH8U9VBA5jDaRguTzwQX-9ARe8/edit?tab=t.0'),
 
 ];

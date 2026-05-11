@@ -580,9 +580,8 @@ class AdminController extends Controller
 
     /**
      * Approve Internship (Pending -> Onboarding)
-     * Admin uploads Surprise Jawaban & Pakta Integrity Template
      */
-    public function approveInternship(Request $request, $id)
+    public function approveInternship(Request $request, $id, \App\Services\InternshipService $internshipService)
     {
         $internship = Internship::findOrFail($id);
 
@@ -600,31 +599,7 @@ class AdminController extends Controller
             return back()->with('error', 'Divisi yang dipilih belum memiliki Kepala Mentor. Silakan assign mentor ke divisi ini terlebih dahulu di Master Divisi.');
         }
 
-        // Hardcoded Link (per user request)
-        $paktaLink = 'https://docs.google.com/document/d/1MYswMj78AfqPH9yBIeH8U9VBA5jDaRguTzwQX-9ARe8/edit?tab=t.0';
-
-        // Store Google Docs Link
-        $internship->documents()->create([
-            'name' => 'Link Template Pakta Integritas',
-            'type' => 'pakta_integritas',
-            'file_path' => $paktaLink, // Storing URL directly
-            'is_verified' => true
-        ]);
-
-        $internship->update([
-            'status' => 'onboarding',
-            'division_id' => $request->division_id,
-            'mentor_id' => $division->mentor_id,
-        ]);
-
-        try {
-            // Optional: Send Notification to Student (Queued)
-            if ($internship->student && $internship->student->email) {
-                \Illuminate\Support\Facades\Mail::to($internship->student->email)->queue(new \App\Mail\InternshipApproved($internship));
-            }
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Failed to send InternshipApproved email: ' . $e->getMessage());
-        }
+        $internshipService->approve($internship, $division);
 
         return redirect()->route('admin.internships.index', ['status' => 'pending'])
             ->with('success', 'Pengajuan diterima! Mahasiswa kini statusnya Pending (Melengkapi Berkas).');
@@ -633,7 +608,7 @@ class AdminController extends Controller
     /**
      * Reject Internship (Pending -> Rejected)
      */
-    public function rejectInternship(Request $request, $id)
+    public function rejectInternship(Request $request, $id, \App\Services\InternshipService $internshipService)
     {
         $internship = Internship::findOrFail($id);
 
@@ -641,17 +616,7 @@ class AdminController extends Controller
             return back()->with('error', 'Status magang tidak valid untuk ditolak.');
         }
 
-        // Update status to rejected
-        $internship->update(['status' => 'rejected']);
-
-        try {
-            // Send Rejection Email (Queued)
-            if ($internship->student && $internship->student->email) {
-                \Illuminate\Support\Facades\Mail::to($internship->student->email)->queue(new \App\Mail\InternshipRejected($internship));
-            }
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Failed to send InternshipRejected email: ' . $e->getMessage());
-        }
+        $internshipService->reject($internship);
 
         return redirect()->route('admin.internships.index', ['status' => 'pending'])
             ->with('success', 'Pengajuan magang ditolak. Data akan dihapus otomatis dalam 3 hari.');
@@ -660,7 +625,7 @@ class AdminController extends Controller
     /**
      * Activate Internship (Onboarding -> Active)
      */
-    public function activateInternship(Request $request, $id)
+    public function activateInternship(Request $request, $id, \App\Services\InternshipService $internshipService)
     {
         $internship = Internship::with('documents')->findOrFail($id);
 
@@ -680,53 +645,12 @@ class AdminController extends Controller
             'induction_time' => 'required',
         ]);
 
-        $internship->update([
-            'status' => 'active',
-        ]);
-
-        // Generate Telegram Invite Link
-        try {
-            $botToken = env('TELEGRAM_BOT_TOKEN');
-            $groupId = env('TELEGRAM_GROUP_ID');
-            
-            if ($botToken && $groupId) {
-                $response = \Illuminate\Support\Facades\Http::post("https://api.telegram.org/bot{$botToken}/createChatInviteLink", [
-                    'chat_id' => $groupId,
-                    'member_limit' => 1,
-                    'creates_join_request' => false
-                ]);
-
-                if ($response->successful() && isset($response['result']['invite_link'])) {
-                    $internship->update([
-                        'telegram_invite_link' => $response['result']['invite_link']
-                    ]);
-                } else {
-                    \Illuminate\Support\Facades\Log::error('Telegram API Error: ' . $response->body());
-                }
-            }
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Failed to generate Telegram Invite Link: ' . $e->getMessage());
-        }
-
         $inductionData = [
             'date' => $request->induction_date,
             'time' => $request->induction_time,
-            'location' => 'Ruang Kompeten Unit Shared Service & General Support Witel Semarang Jateng Utara Lantai 2 GMP Pahlawan, Jl. Pahlawan No. 10, Kota Semarang',
-            'activity' => 'Induksi Peserta Magang & Pengambilan ID Card',
         ];
 
-        $message = 'Program magang berhasil diaktifkan. Mahasiswa kini berstatus Aktif dengan Mentor & Divisi terpilih.';
-
-        try {
-            // Trigger Email Notification (Queued)
-            if ($internship->student && $internship->student->email) {
-                \Illuminate\Support\Facades\Mail::to($internship->student->email)->queue(new \App\Mail\InternshipActive($internship, $inductionData));
-                $message .= ' Email notifikasi telah antre dikirim.';
-            }
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Failed to send InternshipActive email: ' . $e->getMessage());
-            $message .= ' Namun email gagal dikirim (Cek konfigurasi SMTP Anda).';
-        }
+        $message = $internshipService->activate($internship, $inductionData);
 
         return redirect()->route('admin.internships.index', ['status' => 'pending'])
             ->with('success', $message);
@@ -735,38 +659,17 @@ class AdminController extends Controller
     /**
      * Complete Internship (Upload Certificate & Assessment)
      */
-    public function completeInternship(Request $request, $id)
+    public function completeInternship(Request $request, $id, \App\Services\InternshipService $internshipService)
     {
         $internship = Internship::with('student.studentProfile')->findOrFail($id);
 
         $request->validate([
             'dokumen_kelulusan' => 'required|array|min:1',
-            'dokumen_kelulusan.*' => 'file|mimes:pdf|max:5120', // Increased to 5MB per file
+            'dokumen_kelulusan.*' => 'file|mimes:pdf|max:5120',
         ]);
 
-        // Optional: Remove old completion documents if re-uploading
-        $internship->documents()->whereIn('type', ['sertifikat_kelulusan', 'laporan_penilaian_pkl', 'dokumen_kelulusan'])->delete();
-
         if ($request->hasFile('dokumen_kelulusan')) {
-            foreach ($request->file('dokumen_kelulusan') as $file) {
-                $path = $file->store('documents/admin', 'public');
-                $originalName = $file->getClientOriginalName();
-
-                $internship->documents()->create([
-                    'type' => 'dokumen_kelulusan',
-                    'name' => $originalName,
-                    'file_path' => $path,
-                    'is_verified' => true
-                ]);
-            }
-        }
-
-        try {
-            if ($internship->student && $internship->student->email) {
-                \Illuminate\Support\Facades\Mail::to($internship->student->email)->queue(new \App\Mail\InternshipFinished($internship));
-            }
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Failed to send InternshipFinished email: ' . $e->getMessage());
+            $internshipService->complete($internship, $request->file('dokumen_kelulusan'));
         }
 
         return redirect()->back()->with('success', 'Dokumen kelulusan berhasil dikirim!');
