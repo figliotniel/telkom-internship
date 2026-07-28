@@ -1,83 +1,120 @@
 # Telkom Internship Management System
 
-<p align="center">
-    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
-</p>
+A comprehensive web-based application built with Laravel to manage the end-to-end internship process. This system streamlines attendance tracking, daily logbooks, document management, and performance evaluation for interns, mentors, and administrators.
 
-Sistem Manajemen Magang (Internship Management System) adalah aplikasi berbasis web yang dibangun menggunakan **Laravel 12** untuk mengelola kegiatan magang di Telkom Witel Semarang. Aplikasi ini memfasilitasi pencatatan logbook harian, absensi, hingga penilaian akhir mahasiswa oleh mentor.
+## 🌟 Key Features
 
-## 🚀 Fitur Utama
+*   **Role-Based Access Control:** Distinct dashboards and permissions for Admins, Mentors, and Students (Interns).
+*   **Attendance Management:** Daily check-in and check-out system with late status tracking.
+*   **Daily Logbooks:** Interns can submit daily activity logs, which mentors can review and grade. Includes automated weekly digest emails.
+*   **Document Management:** Upload and manage internship-related documents (Proposals, Final Reports, etc.).
+*   **Leave/Permission System:** Interns can request leave or permission days.
+*   **Performance Evaluation:** Mentors can submit final evaluations and grading for their interns.
+*   **Telegram Integration:** Integrated with Telegram for real-time notifications and mentor-student communication.
+*   **Automated Tasks:** Scheduled commands for cleaning up rejected applicants, unused images, and sending weekly reports.
+*   **Export Data:** Export logbook and attendance data (Excel/CSV).
 
-Aplikasi ini menggunakan sistem *Role-Based Access Control* (RBAC) dengan tiga peran utama:
+## 🛠 Prerequisites
 
-* **Mahasiswa/SMK (Student)**
-    * Melakukan absensi masuk (*check-in*) dan pulang (*check-out*) harian.
-    * Mengisi dan mengelola logbook aktivitas harian.
-    * Melihat status magang dan dokumen pendukung lainnya.
-* **Mentor**
-    * Memantau daftar mahasiswa bimbingan secara *real-time*.
-    * Melakukan verifikasi (Persetujuan/Penolakan) terhadap logbook harian mahasiswa.
-    * Memberikan evaluasi dan penilaian performa mahasiswa magang.
-* **Admin**
-    * Manajemen data pengguna (*User Management*) dan divisi perusahaan.
-    * Melakukan pengaturan (*Setup*) penempatan magang bagi mahasiswa baru.
-    * Monitoring seluruh aktivitas magang di dalam sistem.
-    * Manajemen laporan ekspor dan evaluasi.
+Before installing the project, ensure your local machine has the following installed:
 
-## 📸 Tangkapan Layar (Screenshots)
+*   PHP >= 8.2
+*   Composer
+*   Node.js & NPM
+*   MySQL / PostgreSQL (or SQLite for local testing)
+*   Git
 
-<p align="center">
-  <img src="https://via.placeholder.com/800x450?text=Admin+Dashboard" width="400" alt="Admin Dashboard">
-  <img src="https://via.placeholder.com/800x450?text=Mentor+Students+View" width="400" alt="Mentor View">
-</p>
+## 🚀 Installation Guide
 
-## 🛠️ Stack Teknologi
+Follow these steps to set up the project locally:
 
-* **Framework:** Laravel 12.0
-* **Bahasa Pemrograman:** PHP ^8.2
-* **Authentication:** Laravel Breeze
-* **Frontend:** Tailwind CSS & Alpine.js
-* **Tooling:** Laravel Sail, Pint, Pail, dan Concurrently
+**1. Clone the repository**
+```Bash
+git clone [https://github.com/ovaltinegif/telkom-internship.git](https://github.com/ovaltinegif/telkom-internship.git)
+cd telkom-internship
+```
 
-## 📋 Persyaratan Sistem
+**2. Install PHP dependencies**
+```Bash
+composer install
+```
 
-Pastikan perangkat kamu sudah terpasang:
-* PHP >= 8.2
-* Composer
-* Node.js & NPM
-* Database (MySQL atau SQLite)
+**3. Install NPM dependencies**
+```Bash
+npm install
+npm run build
+```
 
-## ⚙️ Instalasi Lokal
+**4. Environment Setup**
+Copy the example environment file and generate an application key:
+```Bash
+cp .env.example .env
+php artisan key:generate
+```
 
-1.  **Clone Repositori**
-    ```bash
-    git clone https://github.com/ovaltinegif/telkom-internship.git
-    cd telkom-internship
-    ```
+**5. Database Configuration**
+Open the .env file and configure your database settings:
+```Code Snippet
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_user
+DB_PASSWORD=your_database_password
+```
 
-2.  **Setup Cepat (Otomatis)**
-    Gunakan script setup yang sudah dikonfigurasi di `composer.json` untuk menginstal dependensi dan menyiapkan database:
-    ```bash
-    composer run setup
-    ```
+**6. Run Migrations and Seeders**
+This will create the necessary tables and populate the database with initial dummy data (Divisions, Roles, Admin account, etc.).
+```Bash
+php artisan migrate --seed
+```
 
-3.  **Jalankan Aplikasi**
-    Gunakan perintah berikut untuk menjalankan server development, queue, dan Vite secara bersamaan:
-    ```bash
-    composer run dev
-    ```
-    > [!TIP]
-    > Perintah `composer run dev` di proyek ini menggunakan package `concurrently` untuk menjalankan HTTP server PHP, background queue worker, log viewer (`pail`), dan Vite dev server secara simultan dalam satu jendela terminal.
+**7. Create Storage Link**
+To make uploaded files (documents, logbook images, profile photos) accessible from the web:
+```Bash
+php artisan storage:link
+```
 
-## 🗄️ Struktur Database
+**8. Run the Application**
+Start the Laravel development server:
+```Bash
+php artisan serve
+```
+Visit http://localhost:8000 in your browser.
 
-Sistem ini memiliki beberapa tabel inti untuk mendukung operasionalnya:
-* `users`: Data kredensial dan role pengguna.
-* `internships`: Data utama hubungan mahasiswa, mentor, divisi, dan status magang.
-* `daily_logbooks`: Catatan aktivitas harian mahasiswa yang diverifikasi mentor.
-* `attendances`: Data kehadiran mahasiswa.
-* `evaluations`: Data penilaian akhir mahasiswa.
-* `divisions`: Daftar unit kerja/divisi di Telkom Witel Semarang.
 
----
-*Proyek ini dikembangkan sebagai bagian dari program magang di Telkom Witel Semarang.*
+## ⚙️ Additional Configuration
+### Telegram Bot Setup
+This application uses Telegram for notifications. You need to configure the bot token in your .env file:
+```Bash
+TELEGRAM_BOT_TOKEN=your_bot_token_here
+```
+
+### Mail Setup
+To enable email notifications (Approvals, Weekly Digests, etc.), configure the SMTP settings in .env:
+```Bash
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_username
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="hello@example.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+### Task Scheduling (Cron Jobs)
+To run automated background tasks (like SendWeeklyLogbookDigest or CleanupLogbookImages), add the following Cron entry to your server to run every minute:
+```Bash
+* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+## 👥 Default Login Credentials
+(If applicable, specify the default credentials generated by DatabaseSeeder.php here for easier testing)
+
+* **Admin: admin@example.com / password**
+* **Mentor: (Check seeder)**
+* **Student: (Check seeder)**
+
+## 📄 License
+This project is open-sourced software licensed under the MIT license.
